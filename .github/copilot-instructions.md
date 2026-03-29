@@ -3,6 +3,7 @@
 Project-specific guidance for GitHub Copilot. Keep this file updated as the codebase evolves.
 
 ## Project Overview
+
 - **Name**: Compare OpenAI Models
 - **Purpose**: Simple app that sends a user prompt to the OpenAI Responses API, shows progress while waiting, and displays the response.
 - **Primary Language(s)**: TypeScript, JavaScript
@@ -10,12 +11,14 @@ Project-specific guidance for GitHub Copilot. Keep this file updated as the code
 - **Target Environment**: Vercel
 
 ## Repo Structure
+
 - **Entry Points**: <paths>
 - **Key Modules**: <paths>
 - **Generated Code**: <paths or patterns>
 - **Third-Party Code**: <paths>
 
 ## Build, Run, Test
+
 - **Install**:
   - `<command>`
 - **Run**:
@@ -26,6 +29,7 @@ Project-specific guidance for GitHub Copilot. Keep this file updated as the code
   - `<command>`
 
 ## Coding Standards
+
 - **Style Guide**: <link or brief summary>
 - **Naming**: <rules>
 - **Error Handling**: <rules>
@@ -33,27 +37,32 @@ Project-specific guidance for GitHub Copilot. Keep this file updated as the code
 - **Performance Considerations**: <rules>
 
 ## API & Data Contracts
+
 - **Public APIs**: OpenAI Responses API
 - **Schemas**: <paths>
 - **Backward Compatibility**: <rules>
 
 ## Security & Compliance
+
 - **Secrets Handling**: Store the OpenAI API key in a local `.env` file; ensure it is excluded from git via `.gitignore`.
 - **Input Validation**: <rules>
 - **Dependencies**: <approval rules>
 
 ## Documentation
+
 - **Docs Location**: <paths>
 - **Changelog**: <path>
 - **Examples**: <path>
 
 ## Workflow Preferences
+
 - **Branching**: <model>
 - **Commit Style**: <rules>
 - **PR Checklist**:
   - <item>
 
 ## Copilot Behavior Preferences
+
 - **Do**: Prefer Nuxt 4 + Vue 3 idioms, Composition API, and TypeScript types.
 - **Do**: Keep OpenAI Responses API calls in server routes or server utilities.
 - **Do**: Show a loading/progress UI state while awaiting responses.
@@ -65,4 +74,5 @@ Project-specific guidance for GitHub Copilot. Keep this file updated as the code
 - **Tooling**: Use Nuxt CLI and Vite defaults unless otherwise specified.
 
 ## Notes for This Repo
+
 - <any repo-specific guidance>
