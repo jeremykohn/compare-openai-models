@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Nuxt / build artifacts
+.nuxt/
+.output/
+dist/
+coverage/
+
+# Test and report outputs
+test-results/
+.playwright/
+
+# Deployment/build tool outputs
+.vercel/
+
+# Misc generated files
+*.tsbuildinfo
