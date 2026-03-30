@@ -12,54 +12,59 @@ Project-specific guidance for GitHub Copilot. Keep this file updated as the code
 
 ## Repo Structure
 
-- **Entry Points**: <paths>
-- **Key Modules**: <paths>
-- **Generated Code**: <paths or patterns>
-- **Third-Party Code**: <paths>
+- **Entry Points**: `app/app.vue`, `app/pages/`, `server/`
+- **Key Modules**: `app/components/`, `app/composables/`, `server/api/`, `server/utils/`
+- **Generated Code**: `.nuxt/`, `.output/`
+- **Third-Party Code**: `node_modules/`
 
 ## Build, Run, Test
 
 - **Install**:
-  - `<command>`
+  - `npm install`
 - **Run**:
-  - `<command>`
+  - `npm run dev`
 - **Test**:
-  - `<command>`
+  - `npm test` (unit + integration)
+  - `npm run test:e2e` (Playwright)
 - **Lint/Format**:
-  - `<command>`
+  - `npm run lint` (typecheck + ESLint + Prettier check)
+  - `npm run lint:fix` (auto-fix)
 
 ## Coding Standards
 
-- **Style Guide**: <link or brief summary>
-- **Naming**: <rules>
-- **Error Handling**: <rules>
-- **Logging**: <rules>
-- **Performance Considerations**: <rules>
+- **Style Guide**: Vue 3 Composition API with `<script setup lang="ts">`. See `.github/instructions/` for detailed guidelines.
+- **Naming**: PascalCase for components; camelCase for composables/utilities; kebab-case for filenames.
+- **Error Handling**: Wrap async calls in `try/catch`; surface user-facing errors via UI state; log errors with `console.error`.
+- **Logging**: Use `console.warn`/`console.error` only; avoid `console.log` in production code.
+- **Performance Considerations**: Keep server routes lean; cache model lists where possible.
 
 ## API & Data Contracts
 
-- **Public APIs**: OpenAI Responses API
-- **Schemas**: <paths>
-- **Backward Compatibility**: <rules>
+- **Public APIs**: OpenAI Responses API (`https://api.openai.com/v1`)
+- **Schemas**: Define in `types/` directory
+- **Backward Compatibility**: Keep server route response shapes stable; version breaking changes
 
 ## Security & Compliance
 
-- **Secrets Handling**: Store the OpenAI API key in a local `.env` file; ensure it is excluded from git via `.gitignore`.
-- **Input Validation**: <rules>
-- **Dependencies**: <approval rules>
+- **Secrets Handling**: Store the OpenAI API key in a local `.env` file; ensure it is excluded from git via `.gitignore`. Use `runtimeConfig` (server-only) — never expose secrets to client-side code.
+- **Input Validation**: Validate and sanitize all user input in server routes before passing to OpenAI API.
+- **Dependencies**: Run `npm audit` before adding new dependencies; prefer minimal additions.
 
 ## Documentation
 
-- **Docs Location**: <paths>
-- **Changelog**: <path>
-- **Examples**: <path>
+- **Docs Location**: `README.md` for project overview; `.github/copilot-instructions.md` for Copilot guidance
+- **Changelog**: Not yet established — document significant changes in PR descriptions
+- **Examples**: `scripts/` for bootstrap/utility scripts
 
 ## Workflow Preferences
 
-- **Branching**: <model>
-- **Commit Style**: <rules>
+- **Branching**: Feature branches off `main`; use descriptive branch names
+- **Commit Style**: Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `style:`, `refactor:`, `test:`)
 - **PR Checklist**:
-  - <item>
+  - Typecheck passes (`npm run typecheck`)
+  - Lint passes (`npm run lint`)
+  - Tests pass (`npm test`)
+  - `.env.example` updated if new env vars added
 
 ## Copilot Behavior Preferences
 
@@ -75,4 +80,6 @@ Project-specific guidance for GitHub Copilot. Keep this file updated as the code
 
 ## Notes for This Repo
 
-- <any repo-specific guidance>
+- This is a bootstrapped project. Replace `app/app.vue` placeholder with actual pages and components as the app is built out.
+- Server routes that call the OpenAI API should live under `server/api/`; shared helpers under `server/utils/`.
+- The `scripts/` directory contains the bootstrap script and implementation plans used to set up the repo.
