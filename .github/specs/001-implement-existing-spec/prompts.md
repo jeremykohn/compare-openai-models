@@ -35,6 +35,32 @@ For each discrepancy that was resolved, update the discrepancy report to mark th
 
 ---
 
+## Implement technical design by following plan and tasks
+
+Implement a technical design by following an implementation plan with tasks.
+
+Technical design: 
+- .github/specs/001-implement-existing-spec/spec-2-for-call-openai-api-repo.md
+
+Implementation plan with tasks:
+- .github/specs/001-implement-existing-spec/implementation-plan-tasks-2.md
+
+If anything is vague, unclear, or ambiguous, pause and ask me for guidance before you continue.
+
+After each phase is complete, check the newly modified files for problems, propose how to fix the problems, and implement the proposed fixes.
+
+And, after all phases are complete, check all modified files for problems, propose how to fix the problems, and implement the proposed fixes.
+
+Then run prettier to format all code files that were modified.
+
+After all this is done, check for inconsistencies or other discrepancies between the modifications made and the implementation plan with tasks. Report your findings as a clear, detailed list of discrepancies and save the report to:
+- .github/specs/001-implement-existing-spec/discrepancy-reports/modifications-vs-implementation-plan-tasks-2.md
+
+Also, check for inconsistencies or other discrepancies between the modifications made and the technical design. Report your findings as a clear, detailed list of discrepancies and save the report to:
+- .github/specs/001-implement-existing-spec/discrepancy-reports/modifications-vs-design-2.md
+
+---
+
 ## Manual Steps
 
 - **Incremental commits:** After each phase (or even after each task), make a commit so progress is trackable and rollback is possible if needed.

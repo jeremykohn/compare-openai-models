@@ -3,6 +3,11 @@ import { defineNuxtConfig } from "nuxt/config";
 
 export default defineNuxtConfig({
   compatibilityDate: "2026-02-05",
+  app: {
+    head: {
+      title: "ChatGPT prompt tester - Compare OpenAI Models",
+    },
+  },
   modules: ["@nuxtjs/tailwindcss"],
   runtimeConfig: {
     openaiApiKey: process.env.OPENAI_API_KEY ?? "",
@@ -11,6 +16,8 @@ export default defineNuxtConfig({
     openaiAllowInsecureHttp: process.env.OPENAI_ALLOW_INSECURE_HTTP ?? "false",
     openaiDisableModelsCache:
       process.env.OPENAI_DISABLE_MODELS_CACHE ?? "false",
+    openaiDisableModelValidationCache:
+      process.env.OPENAI_DISABLE_MODEL_VALIDATION_CACHE ?? "false",
   },
   css: ["~/assets/main.css"],
   typescript: {

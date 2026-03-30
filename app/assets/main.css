@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sr-only {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.sr-only:focus,
+.sr-only:active {
+  clip: auto;
+  clip-path: none;
+  height: auto;
+  overflow: visible;
+  position: static;
+  width: auto;
+}
