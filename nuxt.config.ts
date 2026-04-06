@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: "ChatGPT prompt tester - Compare OpenAI Models",
+      htmlAttrs: {
+        lang: "en",
+      },
     },
   },
   modules: ["@nuxtjs/tailwindcss"],
