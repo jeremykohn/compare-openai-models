@@ -23,8 +23,14 @@
 
 ```bash
 npm install
+npm run setup:playwright
 cp .env.example .env
 ```
+
+The Playwright setup command uses a fallback strategy:
+
+- first: `playwright install --with-deps chromium`
+- fallback on failure: `playwright install chromium`
 
 Configure `.env`:
 
@@ -76,7 +82,18 @@ Useful shortcuts:
 npm test
 npm run test:a11y:unit
 npm run test:a11y:e2e
+npm run setup:playwright
 ```
+
+## Test Architecture
+
+- Unit tests live in `tests/unit` and focus on component/composable behavior, state transitions, and accessibility semantics.
+- Integration tests live in `tests/integration` and validate route-handler contracts for `GET /api/models` and `POST /api/respond`.
+- Route-level integration helpers are in `tests/integration/helpers/route-harness.ts` (runtime config mocking, `readBody` mocking, route loading).
+- E2E tests live in `tests/e2e` and verify browser flows for happy-path, model-loading states, retry/error handling, and fallback note visibility.
+- Shared Playwright API mocks are in `tests/e2e/helpers/mock-api.ts`.
+
+When adding tests, prefer deterministic network mocking and role/label-based selectors to keep suites stable and accessible.
 
 ## Deployment
 
