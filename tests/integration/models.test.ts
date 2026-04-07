@@ -1,4 +1,5 @@
 import { writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { clearModelsResponseCache } from "../../server/utils/models-response-cache";
 import {
@@ -7,8 +8,9 @@ import {
   mockFetchImplementation,
 } from "./helpers/route-harness";
 
-const modelsConfigFilePath =
-  "/workspaces/compare-openai-models/server/assets/models/openai-models.json";
+const modelsConfigFilePath = fileURLToPath(
+  new URL("../../server/assets/models/openai-models.json", import.meta.url),
+);
 
 async function writeValidConfig(): Promise<void> {
   await writeFile(
