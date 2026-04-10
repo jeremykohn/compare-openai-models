@@ -32,6 +32,11 @@ Do not guess. Do not assume. Do not silently choose an interpretation. Clarify f
 6. **Proceed only after confirmation**
    - Once clarified, restate the confirmed interpretation and continue with execution.
 
+7. **Handle user permission to proceed with ambiguity**
+   - If the user says to proceed despite ambiguity (for example, "use your best judgment"), you must still define your proposed resolution.
+   - Show the user the proposed resolution and ask for explicit approval.
+   - Do not proceed until the user approves that resolution.
+
 ## Situations That Require Clarification
 
 - Scope is unclear (which file, module, endpoint, or component to modify)
