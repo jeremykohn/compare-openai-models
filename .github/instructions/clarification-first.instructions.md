@@ -80,3 +80,11 @@ Proceed directly only when all of the following are true:
 ## Priority
 
 This policy applies repo-wide and should be treated as mandatory process guidance.
+
+## Conflict Resolution
+
+If this policy conflicts with any other instruction file:
+
+- Explicitly show the user the conflict.
+- Ask the user how to resolve the conflict.
+- Do not proceed until the conflict is resolved.
