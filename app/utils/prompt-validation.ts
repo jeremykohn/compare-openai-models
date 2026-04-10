@@ -1,4 +1,4 @@
-import type { PromptValidationResult } from "../../types/api";
+import type { PromptValidationResult } from "~~/types/api";
 
 const EMPTY_PROMPT_MESSAGE = "Please enter a prompt.";
 const MAX_PROMPT_MESSAGE = "Prompt must be 4000 characters or fewer.";

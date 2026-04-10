@@ -3,14 +3,14 @@ import { useRuntimeConfig } from "#imports";
 import {
   RESPOND_ROUTE_ERROR_MESSAGE,
   DEFAULT_MODEL,
-} from "../../shared/constants/models";
+} from "~~/shared/constants/models";
 import type {
   ApiErrorResponse,
   RespondRequest,
   RespondSuccessResponse,
-} from "../../types/api";
-import { sanitizeOptionalErrorText } from "../../app/utils/error-sanitization";
-import { validatePrompt } from "../../app/utils/prompt-validation";
+} from "~~/types/api";
+import { sanitizeOptionalErrorText } from "~~/app/utils/error-sanitization";
+import { validatePrompt } from "~~/app/utils/prompt-validation";
 import { validateOpenAIRuntimeConfig } from "../utils/openai-security";
 import { extractResponseText } from "../utils/openai-response-parser";
 import { validateSelectedModel } from "../utils/openai-model-validation";

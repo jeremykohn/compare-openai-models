@@ -3,7 +3,7 @@ import type {
   ModelsApiResponse,
   RequestStatus,
   OpenAIModel,
-} from "../../types/api";
+} from "~~/types/api";
 import { normalizeUiError } from "../utils/error-normalization";
 import { logNormalizedUiError } from "../utils/log-normalized-ui-error";
 

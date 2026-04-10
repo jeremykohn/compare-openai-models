@@ -1,9 +1,9 @@
 import { fileURLToPath } from "node:url";
 import { createError, defineEventHandler } from "h3";
 import { useRuntimeConfig } from "#imports";
-import { MODELS_ROUTE_ERROR_MESSAGE } from "../../shared/constants/models";
-import type { ModelsApiResponse, OpenAIModel } from "../../types/api";
-import { sanitizeOptionalErrorText } from "../../app/utils/error-sanitization";
+import { MODELS_ROUTE_ERROR_MESSAGE } from "~~/shared/constants/models";
+import type { ModelsApiResponse, OpenAIModel } from "~~/types/api";
+import { sanitizeOptionalErrorText } from "~~/app/utils/error-sanitization";
 import {
   buildExclusionSet,
   loadOpenAIModelsConfig,

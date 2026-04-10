@@ -1,4 +1,4 @@
-import type { OpenAIModel } from "../../types/api";
+import type { OpenAIModel } from "~~/types/api";
 
 export function sortModelsById(models: OpenAIModel[]): OpenAIModel[] {
   return [...models].sort((left, right) => left.id.localeCompare(right.id));
