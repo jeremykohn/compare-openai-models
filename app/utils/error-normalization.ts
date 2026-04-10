@@ -1,4 +1,4 @@
-import type { ApiErrorResponse } from "../../types/api";
+import type { ApiErrorResponse } from "~~/types/api";
 import {
   sanitizeOptionalErrorText,
   sanitizeErrorText,

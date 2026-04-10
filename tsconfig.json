@@ -6,6 +6,7 @@
   "include": [
     "app",
     "server",
+    "shared",
     "tests",
     "types",
     "nuxt.config.ts",

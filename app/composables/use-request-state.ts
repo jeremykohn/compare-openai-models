@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import type { RequestStatus } from "../../types/api";
+import type { RequestStatus } from "~~/types/api";
 
 type RequestState = {
   status: RequestStatus;
