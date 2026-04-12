@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { validatePrompt } from "../../app/utils/prompt-validation";
 
 describe("validatePrompt", () => {

@@ -1,6 +1,7 @@
+import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { mount, flushPromises } from "@vue/test-utils";
 import { axe } from "vitest-axe";
+
 import App from "../../app/app.vue";
 
 const fetchMock = vi.fn();

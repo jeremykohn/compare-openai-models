@@ -1,4 +1,5 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+
 import { mockModelsSuccess } from "./helpers/mock-api";
 
 test("shows loading indicator then model options", async ({ page }) => {

@@ -1,7 +1,8 @@
 import type { ApiErrorResponse } from "~~/types/api";
+
 import {
-  sanitizeOptionalErrorText,
   sanitizeErrorText,
+  sanitizeOptionalErrorText,
 } from "./error-sanitization";
 import { isApiError, isNetworkFetchError } from "./type-guards";
 
