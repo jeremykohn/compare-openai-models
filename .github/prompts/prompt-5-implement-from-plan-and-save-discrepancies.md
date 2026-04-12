@@ -59,8 +59,6 @@ Each discrepancy should:
 - Include a severity label: `critical`, `important`, or `minor`.
 - If applicable, include a mapping table: Discrepancy → Planned Fix.
 
-Prefer saving reports in a `discrepancy-reports/` subfolder.
-
 If resolving a discrepancy requires changing requirements or design intent, pause and request approval.
 
 Do not resolve discrepancies by changing intended behavior without explicit user confirmation.
