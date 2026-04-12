@@ -32,7 +32,7 @@ After I provide those files:
 7. Run formatting on the modified code files.
 8. Compare the completed modifications against the implementation plan.
 9. Compare the completed modifications against the technical design.
-10. Save discrepancy reports for both comparisons.
+10. Save or update discrepancy reports for both comparisons.
 
 ## Required Output Files
 
@@ -43,6 +43,11 @@ Confirm output filenames before saving.
 Save these files:
 - `discrepancy-reports/modifications-vs-implementation-plan.md`
 - `discrepancy-reports/modifications-vs-design.md`
+
+If a report file already exists at either path, update it rather than replacing it:
+- Mark each previously reported discrepancy as resolved, no longer present, or still open, based on the current state of the code.
+- Add any new discrepancies found during this run.
+- Preserve the history of prior discrepancy entries so the report reflects the full evolution of issues across runs.
 
 If the destination folder is already clear, save them there.
 
