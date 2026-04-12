@@ -2,7 +2,7 @@
 
 Use this prompt with GitHub Copilot when you want Copilot to convert a saved update description into a clear, detailed requirements document.
 
-Apply the behavior rules from `.github/prompts/_shared-behavior-contract.md`.
+Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
 ## Prompt
 

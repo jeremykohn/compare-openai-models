@@ -2,7 +2,7 @@
 
 Use this prompt with GitHub Copilot when you want Copilot to convert a discrepancy report into a concrete remediation plan that brings implemented code back into alignment with the technical design.
 
-Apply the behavior rules from `.github/prompts/_shared-behavior-contract.md`.
+Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
 ## Prompt
 

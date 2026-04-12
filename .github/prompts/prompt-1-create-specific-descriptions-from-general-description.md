@@ -2,7 +2,7 @@
 
 Use this prompt with GitHub Copilot to convert a high-level software update idea into one or more specific update descriptions.
 
-Apply the behavior rules from `.github/prompts/_shared-behavior-contract.md`.
+Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
 ## Prompt
 
