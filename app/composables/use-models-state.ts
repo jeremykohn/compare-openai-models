@@ -1,9 +1,11 @@
 import { reactive } from "vue";
+
 import type {
   ModelsApiResponse,
-  RequestStatus,
   OpenAIModel,
+  RequestStatus,
 } from "~~/types/api";
+
 import { normalizeUiError } from "../utils/error-normalization";
 import { logNormalizedUiError } from "../utils/log-normalized-ui-error";
 

@@ -1,13 +1,16 @@
 import { fileURLToPath } from "node:url";
+
 import { createError, defineEventHandler } from "h3";
+
 import { useRuntimeConfig } from "#imports";
+import { sanitizeOptionalErrorText } from "~~/app/utils/error-sanitization";
 import { MODELS_ROUTE_ERROR_MESSAGE } from "~~/shared/constants/models";
 import type { ModelsApiResponse, OpenAIModel } from "~~/types/api";
-import { sanitizeOptionalErrorText } from "~~/app/utils/error-sanitization";
+
 import {
-  buildExclusionSet,
-  loadOpenAIModelsConfig,
-} from "../utils/openai-models-config-loader";
+  filterModelsByExclusionSet,
+  sortModelsById,
+} from "../utils/models-list";
 import {
   clearModelsResponseCache,
   getCachedModelsResponse,
@@ -15,9 +18,9 @@ import {
   setCachedModelsResponse,
 } from "../utils/models-response-cache";
 import {
-  filterModelsByExclusionSet,
-  sortModelsById,
-} from "../utils/models-list";
+  buildExclusionSet,
+  loadOpenAIModelsConfig,
+} from "../utils/openai-models-config-loader";
 import {
   parseBooleanConfig,
   validateOpenAIRuntimeConfig,

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { OpenAIModel, RequestStatus } from "~~/types/api";
 import { MODELS_FALLBACK_NOTE_TEXT } from "~~/shared/constants/models";
+import type { OpenAIModel, RequestStatus } from "~~/types/api";
+
 import UiErrorAlert from "./UiErrorAlert.vue";
 
 const props = withDefaults(

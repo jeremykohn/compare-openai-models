@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { normalizeUiError } from "../../app/utils/error-normalization";
 
 describe("normalizeUiError", () => {

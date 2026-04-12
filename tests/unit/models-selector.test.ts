@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
+import { describe, expect, it } from "vitest";
+
 import ModelsSelector from "../../app/components/ModelsSelector.vue";
 import { makeModel } from "../helpers/fixtures";
 
