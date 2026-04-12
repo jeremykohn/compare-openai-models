@@ -1,5 +1,7 @@
 // @ts-check
 import { createConfigForNuxt } from "@nuxt/eslint-config/flat";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import unusedImports from "eslint-plugin-unused-imports";
 
 export default createConfigForNuxt({
   features: {
@@ -23,6 +25,17 @@ export default createConfigForNuxt({
     rules: {
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-debugger": "warn",
+    },
+  })
+  .append({
+    plugins: {
+      "simple-import-sort": simpleImportSort,
+      "unused-imports": unusedImports,
+    },
+    rules: {
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+      "unused-imports/no-unused-imports": "error",
     },
   })
   .append({
