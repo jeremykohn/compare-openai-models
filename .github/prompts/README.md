@@ -14,7 +14,7 @@ Each prompt produces an artifact that feeds the next step.
 | 5 | `prompt-5-implement-from-plan-and-save-discrepancies.md` | `design.md` + `implementation-plan.md` | Code changes + discrepancy reports (created or updated in place) |
 | 6 | `prompt-6-create-remediation-plan-from-discrepancy-report.md` | `design.md` + discrepancy report | `implementation-plan-resolve-discrepancies.md` |
 
-After step 6, re-run step 5 with the remediation plan to close remaining discrepancies. Step 5 will update the existing discrepancy reports in place — marking resolved issues and adding any new ones — rather than replacing them.
+After step 6, re-run step 5 with the remediation plan to close remaining discrepancies. Step 5 will update the existing discrepancy reports in place — marking resolved issues and adding any new ones — rather than replacing them. Step 6 is only needed when there are open discrepancies; if none exist, or all have been resolved, the workflow is complete.
 
 ## Shared Behavior Contract
 

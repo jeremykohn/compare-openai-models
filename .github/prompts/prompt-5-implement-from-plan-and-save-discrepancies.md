@@ -49,6 +49,8 @@ If a report file already exists at either path, update it rather than replacing 
 - Add any new discrepancies found during this run.
 - Preserve the history of prior discrepancy entries so the report reflects the full evolution of issues across runs.
 
+If no discrepancies were found and the report file does not yet exist, create it with a brief note stating that no discrepancies were found.
+
 If the destination folder is already clear, save them there.
 
 ## Discrepancy Report Expectations
@@ -80,4 +82,4 @@ The implementation and discrepancy reports must be specific enough that remediat
 
 ---
 
-Next step: Use `.github/prompts/prompt-6-create-remediation-plan-from-discrepancy-report.md` with `design.md` and `discrepancy-reports/modifications-vs-design.md`.
+Next step: If there are open discrepancies, use `.github/prompts/prompt-6-create-remediation-plan-from-discrepancy-report.md` with `design.md` and `discrepancy-reports/modifications-vs-design.md`. If there are no discrepancies, or all discrepancies have been resolved, no remediation plan is needed.
