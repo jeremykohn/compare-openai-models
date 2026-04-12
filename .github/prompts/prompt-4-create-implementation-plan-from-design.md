@@ -36,7 +36,7 @@ The implementation plan should:
 
 For each phase, include:
 - Objective
-- Tasks (small, dependency-ordered)
+- Tasks (small, dependency-ordered, each formatted as a markdown checkbox: `- [ ] Task description`)
   - Each task should have: description, dependencies, validation command, expected result
 - Validation
 - Exit Criteria ("Done when...")
