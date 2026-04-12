@@ -16,17 +16,18 @@ Ask me for:
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
 After I provide those files:
-1. Read and analyze both documents carefully.
-2. Identify the discrepancies that still need to be resolved.
-3. Create a concrete remediation implementation plan for closing those discrepancies.
-4. Structure the plan into logical phases.
-5. For each phase, describe the approach in detail.
-6. For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
-7. Include testing strategy throughout the plan, including unit tests, integration tests, and end-to-end tests where applicable to scope.
-8. If destination folder is not explicitly provided, ask for it.
-9. If destination folder is implied by the source path, confirm before saving.
-10. Confirm output filename (`implementation-plan-resolve-discrepancies.md`) before saving.
-11. Save the remediation plan to `implementation-plan-resolve-discrepancies.md` in that folder.
+1. Read the discrepancy report. If there are no open discrepancies, inform me that no remediation plan is needed and stop.
+2. Read and analyze both documents carefully.
+3. Identify the discrepancies that still need to be resolved.
+4. Create a concrete remediation implementation plan for closing those discrepancies.
+5. Structure the plan into logical phases.
+6. For each phase, describe the approach in detail.
+7. For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
+8. Include testing strategy throughout the plan, including unit tests, integration tests, and end-to-end tests where applicable to scope.
+9. If destination folder is not explicitly provided, ask for it.
+10. If destination folder is implied by the source path, confirm before saving.
+11. Confirm output filename (`implementation-plan-resolve-discrepancies.md`) before saving.
+12. Save the remediation plan to `implementation-plan-resolve-discrepancies.md` in that folder.
 
 ## Remediation Plan Expectations
 
