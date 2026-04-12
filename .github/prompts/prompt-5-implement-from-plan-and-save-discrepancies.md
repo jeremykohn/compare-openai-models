@@ -32,7 +32,7 @@ After I provide those files:
 7. Run formatting on the modified code files.
 8. Compare the completed modifications against the implementation plan.
 9. Compare the completed modifications against the technical design.
-10. Save or update discrepancy reports for both comparisons.
+10. Save, update, or create discrepancy reports for both comparisons.
 
 ## Required Output Files
 
