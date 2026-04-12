@@ -54,4 +54,4 @@ The remediation plan must be specific enough that execution can proceed without 
 
 ---
 
-Next step: Execute the remediation plan and produce updated discrepancy reports.
+Next step: Use `.github/prompts/prompt-5-implement-from-plan-and-save-discrepancies.md` with `design.md` and `implementation-plan-resolve-discrepancies.md` to execute the remediation plan and produce updated discrepancy reports.
