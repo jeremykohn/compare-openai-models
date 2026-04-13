@@ -26,9 +26,10 @@ After I provide those files:
 8. Include testing strategy throughout the plan, including unit tests, integration tests, and end-to-end tests where applicable to scope.
 9. If destination folder is not explicitly provided, ask for it.
 10. If destination folder is implied by the source path, confirm before saving.
-11. Check whether an `implementation-plan.md` already exists in the destination folder.
-    - If it does, add the remediation tasks to it as a new phase rather than creating a separate file.
-    - If it does not exist, confirm the output filename (`implementation-plan-resolve-discrepancies.md`) before saving and create that file.
+11. Check whether an `implementation-plan.md` or `implementation-plan-resolve-discrepancies.md` already exists in the destination folder.
+    - If `implementation-plan.md` exists, add the remediation tasks to it as a new phase rather than creating a separate file.
+    - If `implementation-plan-resolve-discrepancies.md` exists (and `implementation-plan.md` does not), append the new remediation tasks to it as a new phase.
+    - If neither file exists, confirm the output filename (`implementation-plan-resolve-discrepancies.md`) before saving and create that file.
 12. Save the plan to the determined file in that folder.
 
 ## Remediation Plan Expectations
