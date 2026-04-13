@@ -5,6 +5,7 @@
 - If destination folder is not explicitly provided, ask for it.
 - If destination folder is implied by a source path, confirm before saving.
 - Confirm output filename(s) before writing files.
+- Do not overwrite any files. If a file already exists and the instructions seem to require overwriting the file, pause and ask what to do.
 - Create only requested output files; do not create extra documentation or reports unless asked.
 - Keep output focused on the requested update.
 - Do not write any code unless the prompt explicitly instructs you to implement code.
