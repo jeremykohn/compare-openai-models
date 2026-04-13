@@ -14,7 +14,7 @@ After I provide the design file:
 2. Create a concrete implementation plan for delivering the design.
 3. Structure the plan into logical phases.
 4. For each phase, describe the approach in detail.
-5. For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
+5. For each phase, include a list of small, specific, independently testable tasks ordered by dependency, each formatted as a markdown checkbox (`- [ ] Task description`).
 6. Use a Test-Driven Development approach where appropriate, including unit tests, integration tests, and end-to-end tests where applicable to scope.
 7. If destination folder is not explicitly provided, ask for it.
 8. If destination folder is implied by the source path, confirm before saving.
