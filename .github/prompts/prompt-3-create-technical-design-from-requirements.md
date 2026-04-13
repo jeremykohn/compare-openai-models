@@ -12,9 +12,7 @@ After I provide the requirements file:
 
 1. Read and analyze the requirements carefully.
 2. Create a clear, detailed technical design for implementing the requested update.
-3. If destination folder is not explicitly provided, ask for it.
-4. If destination folder is implied by the source path, confirm before saving.
-5. Save the technical design to `design.md` in that folder.
+3. Save the technical design to `design.md` in that folder.
 
 ## Input Contract
 - Source file path to `requirements.md`

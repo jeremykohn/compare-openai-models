@@ -37,10 +37,6 @@ After I provide those files:
 
 ## Required Output Files
 
-If destination folder is not explicitly provided, ask for it.
-If destination folder is implied by the source paths, confirm before saving.
-Confirm output filenames before saving.
-
 Save these files:
 - `discrepancy-reports/modifications-vs-implementation-plan.md`
 - `discrepancy-reports/modifications-vs-design.md`

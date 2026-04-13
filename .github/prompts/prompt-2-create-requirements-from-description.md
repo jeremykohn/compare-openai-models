@@ -15,9 +15,7 @@ After I provide the description file:
    - Functional requirements
    - Technical requirements
 3. If there are gaps, missing details, conflicting expectations, or anything vague or ambiguous, pause and ask me focused clarifying questions before continuing.
-4. If destination folder is not explicitly provided, ask for it.
-5. If destination folder is implied by a source path, confirm before saving.
-6. Save the requirements to `requirements.md` in that folder.
+4. Save the requirements to `requirements.md` in that folder.
 
 ## Input Contract
 - Source file path to `description.md`
