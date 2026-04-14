@@ -8,21 +8,19 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 
 Ask me for:
 
-- The path to the technical design document, for example: `.github/specs/001-new-feature/design.md`
 - The path to the implementation plan document, for example: `.github/specs/001-new-feature/implementation-plan.md`
 
 ## Input Contract
 
-- Source file path to `design.md`
 - Source file path to the implementation plan `implementation-plan.md`
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
-After I provide those files:
+After I provide that file:
 
-1. Read and analyze both documents carefully.
+1. Read and analyze the implementation plan carefully.
 2. Implement each incomplete task from the implementation plan.
 3. Work phase-by-phase and task-by-task rather than trying to do everything at once.
-4. If anything is vague, unclear, inconsistent, or ambiguous in the design or plan, pause and ask focused clarifying questions before continuing.
+4. If anything is vague, unclear, inconsistent, or ambiguous in the plan, pause and ask focused clarifying questions before continuing.
 5. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
 6. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 7. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).

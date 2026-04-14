@@ -100,4 +100,4 @@ The discrepancy outputs and remediation tasks must be specific enough that Promp
 **Next step:**
 
 - If no discrepancies were found, workflow is complete.
-- If discrepancies were found and remediation tasks were appended, use `.github/prompts/prompt-5-implement-from-plan.md` — pass `design.md` and the updated implementation plan to implement the new tasks.
+- If discrepancies were found and remediation tasks were appended, use `.github/prompts/prompt-5-implement-from-plan.md` — pass the updated implementation plan to implement the new tasks.

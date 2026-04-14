@@ -58,4 +58,4 @@ The plan must be specific enough that implementation can proceed without introdu
 
 ---
 
-**Next step:** `.github/prompts/prompt-5-implement-from-plan.md` — pass `design.md` and `implementation-plan.md` to begin implementation.
+**Next step:** `.github/prompts/prompt-5-implement-from-plan.md` — pass `implementation-plan.md` to begin implementation.
