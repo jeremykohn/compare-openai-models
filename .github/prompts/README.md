@@ -14,7 +14,9 @@ Each prompt produces an artifact that feeds the next step.
 | 5 | `prompt-5-implement-from-plan.md` | implementation plan (`implementation-plan.md`) | Code changes + updated task checkboxes (`- [x]`) |
 | 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + implementation plan (`implementation-plan.md`) | If discrepancies found: report files + remediation tasks appended to plan; otherwise: no-discrepancy note appended to plan |
 
-Step 5 is execution-only: it implements open plan tasks from `implementation-plan.md` and marks completed checkboxes (`- [x]`), including tasks added by remediation. Step 6 is review/remediation: it compares implemented code against design + implementation plan, then either (a) appends a no-discrepancy note and ends the workflow without creating discrepancy report files, or (b) creates discrepancy reports and saves them to files, appends remediation tasks to the implementation plan, and directs the user back to Step 5. Discrepancy reports should use a stable section layout: `Current Run Summary`, `Open Discrepancies`, `Resolved Since Last Run`, and optionally `Historical Discrepancies`.
+Step 5 is execution-only: it implements open plan tasks from `implementation-plan.md`, marks completed checkboxes (`- [x]`), runs a quality gate after each phase (check newly modified files, document and apply scope-relevant fixes), and runs a final quality gate after all phases (check all modified files, document and apply remaining fixes).
+
+Step 6 is review/remediation: it compares implemented code against design + implementation plan, then either (a) appends a no-discrepancy note and ends the workflow without creating discrepancy report files, or (b) creates discrepancy reports and saves them to files, appends remediation tasks to the implementation plan, and directs the user back to Step 5. Discrepancy reports should use a stable section layout: `Current Run Summary`, `Open Discrepancies`, `Resolved Since Last Run`, and optionally `Historical Discrepancies`.
 
 ## Shared Behavior Contract
 
