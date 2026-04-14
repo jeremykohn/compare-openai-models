@@ -24,7 +24,7 @@ After I provide those files:
 5. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
 6. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 7. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
-8. End by directing the user to run `.github/prompts/prompt-6-create-remediation-plan-from-discrepancy-report.md` for discrepancy checking and remediation planning.
+8. End by directing the user to run `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` for discrepancy checking and remediation planning.
 
 ## Execution Requirements
 
@@ -40,4 +40,4 @@ The implementation execution must be specific enough that Prompt 6 can evaluate 
 
 ---
 
-Next step: Use `.github/prompts/prompt-6-create-remediation-plan-from-discrepancy-report.md` with `design.md` and the same implementation plan file to check discrepancies and, if needed, append remediation tasks.
+Next step: Use `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` with `design.md` and the same implementation plan file to check discrepancies and, if needed, append remediation tasks.

@@ -66,4 +66,4 @@ The plan must be specific enough that implementation can proceed without introdu
 
 ---
 
-Next step: Use `.github/prompts/prompt-5-implement-from-plan-and-save-discrepancies.md` with `design.md` and `implementation-plan.md`.
+Next step: Use `.github/prompts/prompt-5-implement-from-plan.md` with `design.md` and `implementation-plan.md`.
