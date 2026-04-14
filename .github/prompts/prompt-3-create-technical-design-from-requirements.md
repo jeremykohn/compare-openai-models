@@ -34,7 +34,9 @@ Include, where applicable to scope:
 - Testing strategy
 - Assumptions, constraints, and open questions
 
-## Output Structure Recommendation
+## Output Structure
+
+Required sections (must be present in every `design.md`):
 - Overview
 - Architecture
 - Interfaces
@@ -42,9 +44,10 @@ Include, where applicable to scope:
 - Validation/Error Handling
 - Security
 - Testing
-- Open Questions
 
-If unresolved requirement ambiguities remain after clarification attempts, include a `Blocked Questions` section and stop before finalizing.
+Optional sections (include when applicable):
+- Open Questions
+- Blocked Questions (include and stop here if requirement ambiguities remain unresolved after clarification attempts)
 
 ## Consistency Requirements
 
@@ -56,4 +59,4 @@ The design must be specific enough that the implementation-plan prompt can proce
 
 ---
 
-Next step: Use `.github/prompts/prompt-4-create-implementation-plan-from-design.md` with the generated `design.md`.
+**Next step:** `.github/prompts/prompt-4-create-implementation-plan-from-design.md` — pass the generated `design.md` to create an implementation plan.

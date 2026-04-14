@@ -46,12 +46,12 @@ For each phase, include:
 At the end of each phase, add quality-gate tasks to do the following:
    - Check the newly modified files for problems.
    - Document scope-relevant findings and proposed fixes.
-   - Convert approved fixes into explicit follow-up tasks in the plan instead of applying them during the quality gate.
+   - Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
 
 After all phases, add final quality-gate tasks to do the following:
    - Check all modified files for problems.
    - Document remaining scope-relevant findings and proposed fixes.
-   - Convert approved fixes into explicit follow-up tasks in the plan.
+   - Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
    - Finally, run formatting on the modified code files.
 
 Optionally, flag design ambiguities before writing the full plan.
@@ -66,4 +66,4 @@ The plan must be specific enough that implementation can proceed without introdu
 
 ---
 
-Next step: Use `.github/prompts/prompt-5-implement-from-plan.md` with `design.md` and `implementation-plan.md`.
+**Next step:** `.github/prompts/prompt-5-implement-from-plan.md` — pass `design.md` and `implementation-plan.md` to begin implementation.

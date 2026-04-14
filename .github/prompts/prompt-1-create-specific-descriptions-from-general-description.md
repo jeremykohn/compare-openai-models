@@ -48,4 +48,4 @@ The description must be specific enough that the next prompt can produce require
 
 ---
 
-Next step: Use `.github/prompts/prompt-2-create-requirements-from-description.md` with each generated `description.md`.
+**Next step:** `.github/prompts/prompt-2-create-requirements-from-description.md` — pass each generated `description.md` to create requirements.

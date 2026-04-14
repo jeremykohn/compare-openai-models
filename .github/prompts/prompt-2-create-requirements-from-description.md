@@ -39,4 +39,4 @@ When generating `requirements.md`:
 
 ---
 
-Next step: Use `.github/prompts/prompt-3-create-technical-design-from-requirements.md` with the generated `requirements.md`.
+**Next step:** `.github/prompts/prompt-3-create-technical-design-from-requirements.md` — pass the generated `requirements.md` to create a technical design.

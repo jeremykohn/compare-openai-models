@@ -34,10 +34,10 @@ After I provide those files:
 - Prefer small, reviewable changes.
 - Use targeted validation and testing throughout the work.
 - Do not fix unrelated issues unless I explicitly ask you to.
-- If there are no open tasks (`- [ ]`) at the start, state that implementation is already complete and direct the user to Prompt 6.
+- If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan (e.g., `Prompt 5 run [date]: no open tasks found — forwarding to Prompt 6`), state that implementation is already complete, and direct the user to Prompt 6.
 
 The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions.
 
 ---
 
-Next step: Use `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` with `design.md` and the same implementation plan file to check discrepancies and, if needed, append remediation tasks.
+**Next step:** `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` — pass `design.md` and the same implementation plan to check discrepancies and, if needed, append remediation tasks.
