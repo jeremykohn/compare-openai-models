@@ -16,7 +16,7 @@ After I provide the design file:
 4. For each phase, describe the approach in detail.
 5. For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
 6. Use a Test-Driven Development (TDD) red-green-refactor approach. Include unit tests, integration tests, and end-to-end tests where applicable to scope.
-7. Save the implementation plan to `implementation-plan.md` in that folder.
+7. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
 
 ## Input Contract
 
