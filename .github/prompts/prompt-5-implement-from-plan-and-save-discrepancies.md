@@ -53,6 +53,11 @@ If the destination folder is already clear, save them there.
 ## Discrepancy Report Expectations
 
 Each discrepancy report should:
+- Contain these top-level sections in order:
+   1. `Current Run Summary`
+   2. `Open Discrepancies`
+   3. `Resolved Since Last Run`
+   4. `Historical Discrepancies` (optional archive)
 - Clearly identify each discrepancy.
 - Explain what was expected.
 - Explain what was actually implemented.

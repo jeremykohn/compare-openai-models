@@ -14,7 +14,12 @@ After I provide the design file:
 2. Create a concrete implementation plan for delivering the design.
 3. Structure the plan into logical phases.
 4. For each phase, describe the approach in detail.
-5. For each phase, include a list of small, specific, independently testable tasks ordered by dependency, each formatted as a markdown checkbox (`- [ ] Task description`).
+5. For each phase, include a list of small, specific, independently testable tasks ordered by dependency, each following this exact template:
+   - `- [ ] <Task title>`
+     - `Description: <what to implement>`
+     - `Dependencies: <task IDs or 'None'>`
+     - `Validation command: <exact command>`
+     - `Expected result: <pass condition>`
 6. Use a Test-Driven Development approach where appropriate, including unit tests, integration tests, and end-to-end tests where applicable to scope.
 7. Save the implementation plan to `implementation-plan.md` in that folder.
 
@@ -34,8 +39,12 @@ The implementation plan should:
 
 For each phase, include:
 - Objective
-- Tasks (small, dependency-ordered, each formatted as a markdown checkbox: `- [ ] Task description`)
-  - Each task should have: description, dependencies, validation command, expected result
+- Tasks (small, dependency-ordered; each task must follow this exact format)
+  - `- [ ] <Task title>`
+    - `Description: <what to implement>`
+    - `Dependencies: <task IDs or 'None'>`
+    - `Validation command: <exact command>`
+    - `Expected result: <pass condition>`
 - Validation
 - Exit Criteria ("Done when...")
 
