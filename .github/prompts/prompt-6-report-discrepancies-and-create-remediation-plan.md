@@ -22,14 +22,14 @@ After I provide those files:
     - the implementation plan.
 3. Detect and classify discrepancies.
 4. If no discrepancies are found:
-    - append a note to the implementation plan stating that no discrepancies were found,
+    - append a note to the implementation plan stating that no unresolved discrepancies were found,
     - explicitly state that there is no need to continue implementing plan/tasks,
     - and stop.
 5. If discrepancies are found:
     - create discrepancy reports for:
       - code vs. design,
       - code vs. implementation plan,
-    - append report contents (or clearly labeled report sections) to the implementation plan file,
+    - save discrepancy reports to files,
     - create a remediation plan with dependency-ordered checkbox tasks,
     - append remediation phases/tasks to the implementation plan file,
     - and direct the user to return to Prompt 5 to implement newly added remediation tasks.
@@ -43,8 +43,8 @@ If discrepancies are found, save these files:
 If either report already exists, update it in place and preserve prior history.
 
 Always update the implementation plan file by appending:
-- the no-discrepancy note, or
-- discrepancy report sections and remediation tasks.
+- the no-unresolved-discrepancy note, or
+- remediation tasks.
 
 ## Discrepancy and Remediation Expectations
 
