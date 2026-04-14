@@ -48,4 +48,4 @@ The implementation execution must be specific enough that Prompt 6 can evaluate 
 
 ---
 
-**Next step:** `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` — pass `design.md` and the same implementation plan to check discrepancies and, if needed, append remediation tasks.
+**Next step:** `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` — pass `design.md` and the same `implementation-plan.md` to check discrepancies and, if needed, append remediation tasks.
