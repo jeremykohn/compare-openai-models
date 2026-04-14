@@ -1,6 +1,6 @@
-# Create Remediation Plan from Discrepancy Report
+# Check Implementation, Report Discrepancies, and Append Remediation Plan
 
-Use this prompt with GitHub Copilot when you want Copilot to convert a discrepancy report into a concrete remediation plan that brings implemented code back into alignment with the technical design.
+Use this prompt with GitHub Copilot when you want Copilot to evaluate implemented code against the technical design and implementation plan, then produce discrepancy artifacts and remediation tasks when needed.
 
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
@@ -8,51 +8,81 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 
 Ask me for:
 - The path to the technical design document, for example: `.github/specs/001-new-feature/design.md`
-- The path to the discrepancy report, for example: `.github/specs/001-new-feature/discrepancy-reports/modifications-vs-design.md`
+- The path to the implementation plan, for example: `.github/specs/001-new-feature/implementation-plan.md`
 
 ## Input Contract
 - Source file path to `design.md`
-- Source file path to discrepancy report (for example, `discrepancy-reports/modifications-vs-design.md`)
+- Source file path to implementation plan (`implementation-plan.md`)
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
 After I provide those files:
-1. Read the discrepancy report. If there are no open discrepancies, inform me that no remediation plan is needed and stop.
-2. Read and analyze both documents carefully.
-3. Identify the discrepancies that still need to be resolved.
-4. Create a concrete remediation implementation plan for closing those discrepancies.
-5. Structure the plan into logical phases.
-6. For each phase, describe the approach in detail.
-7. For each phase, include a list of small, specific, independently testable tasks ordered by dependency, each formatted as a markdown checkbox: `- [ ] Task description`.
-8. Include testing strategy throughout the plan, including unit tests, integration tests, and end-to-end tests where applicable to scope.
-9. Check whether an `implementation-plan.md` or `implementation-plan-resolve-discrepancies.md` already exists in the destination folder.
-    - If `implementation-plan.md` exists, add the remediation tasks to it as a new phase rather than creating a separate file.
-    - If `implementation-plan-resolve-discrepancies.md` exists (and `implementation-plan.md` does not), append the new remediation tasks to it as a new phase.
-    - If neither file exists, confirm the output filename (`implementation-plan-resolve-discrepancies.md`) before saving and create that file.
-10. Save the plan to the determined file in that folder.
+1. Read and analyze both documents carefully.
+2. Review the implemented code from Prompt 5 and compare it against:
+    - the technical design, and
+    - the implementation plan.
+3. Detect and classify discrepancies.
+4. If no discrepancies are found:
+    - append a note to the implementation plan stating that no discrepancies were found,
+    - explicitly state that there is no need to continue implementing plan/tasks,
+    - and stop.
+5. If discrepancies are found:
+    - create discrepancy reports for:
+      - code vs. design,
+      - code vs. implementation plan,
+    - append report contents (or clearly labeled report sections) to the implementation plan file,
+    - create a remediation plan with dependency-ordered checkbox tasks,
+    - append remediation phases/tasks to the implementation plan file,
+    - and direct the user to return to Prompt 5 to implement newly added remediation tasks.
 
-## Remediation Plan Expectations
+## Required Output Files
 
-The remediation plan should:
-- Focus only on resolving the reported discrepancies.
-- Be detailed enough to guide implementation without writing code yet.
-- Prioritize discrepancies by importance and dependency where appropriate.
-- Break the work into clear phases with rationale.
-- Keep tasks small, specific, and independently verifiable.
-- Include validation and testing steps throughout the plan.
-- Note assumptions, risks, and constraints where helpful.
+If discrepancies are found, save these files:
+- `discrepancy-reports/modifications-vs-design.md`
+- `discrepancy-reports/modifications-vs-implementation-plan.md`
+
+If either report already exists, update it in place and preserve prior history.
+
+Always update the implementation plan file by appending:
+- the no-discrepancy note, or
+- discrepancy report sections and remediation tasks.
+
+## Discrepancy and Remediation Expectations
+
+Each discrepancy report should:
+- Contain these top-level sections in order:
+  1. `Current Run Summary`
+  2. `Open Discrepancies`
+  3. `Resolved Since Last Run`
+  4. `Historical Discrepancies` (optional archive)
+- Clearly identify each discrepancy.
+- For each discrepancy, add expected evidence (tests, file diffs, command output)
+- Explain what was expected and what was actually implemented.
 - If the discrepancy report conflicts with the design, the design is the source of truth unless the user says otherwise.
-- For each discrepancy, add expected evidence (tests, file diffs, command output).
+
+Each discrepancy should: 
+- Include a severity label: `critical`, `important`, or `minor`.
+- Note the likely impact or importance of the discrepancy.
+
+The remediation plan appended to the implementation plan should:
+- Focus only on resolving open discrepancies.
+- Be detailed enough to guide implementation without writing code yet.
+- Note assumptions, risks, and constraints where helpful.
+- Prioritize discrepancies by importance and dependency where appropriate.
+- Break remediation into clear phases with rationales.
+- Keep tasks small, specific, dependency-ordered, and independently verifiable.
+- For each task, include validation steps, testing steps, and expected outcomes.
 - Include a `Resolution Mapping` section: Discrepancy ID → Planned Tasks → Validation.
 
 ## Consistency Requirements
 
-- Ensure the remediation plan is consistent with the technical design.
-- Use the discrepancy report as the source of issues to resolve.
+- Ensure discrepancy analysis and remediation planning are consistent with the technical design and implementation plan.
 - If there are gaps, contradictions, ambiguities, or unresolved questions in either source file, pause and ask focused clarifying questions before continuing.
-- If helpful, include a short traceability section mapping remediation phases or tasks back to individual discrepancies.
+- If resolving a discrepancy would change requirements or design intent, pause and request approval before proceeding.
 
-The remediation plan must be specific enough that execution can proceed without introducing assumptions.
+The discrepancy outputs and remediation tasks must be specific enough that Prompt 5 can execute them without introducing assumptions.
 
 ---
 
-Next step: Use `.github/prompts/prompt-5-implement-from-plan-and-save-discrepancies.md` with `design.md` and the updated or newly created implementation plan to execute the remediation plan and produce updated discrepancy reports.
+Next step:
+- If no discrepancies were found, workflow is complete.
+- If discrepancies were found and remediation tasks were appended, use `.github/prompts/prompt-5-implement-from-plan-and-save-discrepancies.md` with `design.md` and the updated implementation plan to implement the new tasks.

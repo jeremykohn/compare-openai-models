@@ -11,10 +11,10 @@ Each prompt produces an artifact that feeds the next step.
 | 2 | `prompt-2-create-requirements-from-description.md` | `description.md` | `requirements.md` |
 | 3 | `prompt-3-create-technical-design-from-requirements.md` | `requirements.md` | `design.md` |
 | 4 | `prompt-4-create-implementation-plan-from-design.md` | `design.md` | `implementation-plan.md` (tasks formatted as checkboxes) |
-| 5 | `prompt-5-implement-from-plan-and-save-discrepancies.md` | `design.md` + `implementation-plan.md` | Code changes + discrepancy reports (created, updated, or initialized with no-discrepancy note) |
-| 6 | `prompt-6-create-remediation-plan-from-discrepancy-report.md` | `design.md` + discrepancy report | Remediation tasks appended to `implementation-plan.md` if it exists, otherwise new `implementation-plan-resolve-discrepancies.md` |
+| 5 | `prompt-5-implement-from-plan-and-save-discrepancies.md` | `design.md` + implementation plan (`implementation-plan.md` or `implementation-plan-resolve-discrepancies.md`) | Code changes + updated task checkboxes (`- [x]`) |
+| 6 | `prompt-6-create-remediation-plan-from-discrepancy-report.md` | `design.md` + implementation plan (`implementation-plan.md` or `implementation-plan-resolve-discrepancies.md`) | Discrepancy reports (if needed) + notes/remediation tasks appended to implementation plan |
 
-After step 6, re-run step 5 with the updated implementation plan to close remaining discrepancies. Each task in the implementation plan is formatted as a markdown checkbox (`- [ ]`); step 5 checks off each task as it is completed (`- [x]`). Step 5 will update the existing discrepancy reports in place — marking resolved issues and adding any new ones — rather than replacing them. Discrepancy reports should use a stable section layout: `Current Run Summary`, `Open Discrepancies`, `Resolved Since Last Run`, and optionally `Historical Discrepancies`. Step 6 is only needed when there are open discrepancies; if none exist, or all have been resolved, the workflow is complete.
+Step 5 is execution-only: it implements open plan tasks and marks completed checkboxes (`- [x]`), including tasks added by remediation. Step 6 is review/remediation: it compares implemented code against design + implementation plan, then either (a) appends a no-discrepancy note and ends the workflow, or (b) creates discrepancy reports, appends discrepancy/remediation sections to the implementation plan, and directs the user back to Step 5. Discrepancy reports should use a stable section layout: `Current Run Summary`, `Open Discrepancies`, `Resolved Since Last Run`, and optionally `Historical Discrepancies`.
 
 ## Shared Behavior Contract
 
