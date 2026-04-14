@@ -14,7 +14,7 @@ Each prompt produces an artifact that feeds the next step.
 | 5 | `prompt-5-implement-from-plan.md` | `design.md` + implementation plan (`implementation-plan.md`) | Code changes + updated task checkboxes (`- [x]`) |
 | 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + implementation plan (`implementation-plan.md`) | Discrepancy reports saved to files + remediation tasks (if needed) appended to implementation plan |
 
-Step 5 is execution-only: it implements open plan tasks and marks completed checkboxes (`- [x]`), including tasks added by remediation. Step 6 is review/remediation: it compares implemented code against design + implementation plan, then either (a) appends a no-discrepancy note and ends the workflow, or (b) creates discrepancy reports and saves them to files, appends remediation tasks to the implementation plan, and directs the user back to Step 5. Discrepancy reports should use a stable section layout: `Current Run Summary`, `Open Discrepancies`, `Resolved Since Last Run`, and optionally `Historical Discrepancies`.
+Step 5 is execution-only: it implements open plan tasks and marks completed checkboxes (`- [x]`), including tasks added by remediation. Step 6 is review/remediation: it compares implemented code against design + implementation plan, then either (a) appends a no-discrepancy note and ends the workflow without creating discrepancy report files, or (b) creates discrepancy reports and saves them to files, appends remediation tasks to the implementation plan, and directs the user back to Step 5. Discrepancy reports should use a stable section layout: `Current Run Summary`, `Open Discrepancies`, `Resolved Since Last Run`, and optionally `Historical Discrepancies`.
 
 ## Shared Behavior Contract
 
