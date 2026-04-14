@@ -46,19 +46,6 @@ For each phase, include:
 - Validation
 - Exit Criteria ("Done when...")
 
-At the end of each phase, add quality-gate tasks to do the following:
-
-- Check the newly modified files for problems.
-- Document scope-relevant findings and proposed fixes.
-- Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
-
-After all phases, add final quality-gate tasks to do the following:
-
-- Check all modified files for problems.
-- Document remaining scope-relevant findings and proposed fixes.
-- Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
-- Finally, run formatting on the modified code files.
-
 Optionally, flag design ambiguities before writing the full plan.
 
 ## Consistency Requirements
