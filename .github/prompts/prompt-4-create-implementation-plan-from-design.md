@@ -12,11 +12,7 @@ After I provide the design file:
 
 1. Read and analyze the technical design carefully.
 2. Create a concrete implementation plan for delivering the design.
-3. Structure the plan into logical phases.
-4. For each phase, describe the approach in detail.
-5. For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
-6. Use a Test-Driven Development (TDD) red-green-refactor approach. Include unit tests, integration tests, and end-to-end tests where applicable to scope.
-7. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
+3. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
 
 ## Input Contract
 
@@ -28,13 +24,14 @@ After I provide the design file:
 The implementation plan should:
 
 - Be detailed enough to guide execution without writing code yet.
+- Be specific enough that implementation can proceed without introducing assumptions.
 - Break work into clear phases with rationale.
 - Include testing strategy throughout the plan, not just at the end.
 - Make task order explicit when tasks depend on earlier work.
 - Keep tasks small enough to verify independently.
 - Identify risks, assumptions, dependencies, and validation steps where useful.
 
-For each phase, include:
+Each phase of the implementation plan should include these components:
 
 - Objective
 - Tasks (small, dependency-ordered; each task must follow this exact format)
@@ -46,15 +43,15 @@ For each phase, include:
 - Validation
 - Exit Criteria ("Done when...")
 
-Optionally, flag design ambiguities before writing the full plan.
+When writing the plan:
 
-## Consistency Requirements
-
-- Ensure the implementation plan is consistent with the provided technical design.
-- If there are gaps, contradictions, ambiguities, or missing implementation details in the design, pause and ask focused clarifying questions before continuing.
+- Structure the plan into logical phases.
+- For each phase, describe the approach in detail.
+- For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
+- Use a Test-Driven Development (TDD) red-green-refactor approach for each task.
+- Include unit tests, integration tests, and end-to-end tests where applicable to scope.
 - If helpful, include a short traceability section mapping phases or major tasks back to the design.
-
-The plan must be specific enough that implementation can proceed without introducing assumptions.
+- If there are gaps, contradictions, ambiguities, or missing implementation details in the design, pause and ask focused clarifying questions before continuing.
 
 ---
 
