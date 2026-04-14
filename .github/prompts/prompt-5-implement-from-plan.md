@@ -24,7 +24,15 @@ After I provide that file:
 5. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
 6. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 7. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
-8. End by directing the user to run `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` for discrepancy checking and remediation planning.
+8. After completing all tasks in a phase, run a per-phase quality gate:
+   - Check the newly modified files for problems.
+   - Document scope-relevant findings and proposed fixes.
+   - Apply the proposed fixes.
+9. After completing all phases, run a final quality gate:
+   - Check all modified files for problems.
+   - Document remaining scope-relevant findings and proposed fixes.
+   - Apply the proposed fixes.
+10. End by directing the user to run `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` for discrepancy checking and remediation planning.
 
 ## Execution Requirements
 
