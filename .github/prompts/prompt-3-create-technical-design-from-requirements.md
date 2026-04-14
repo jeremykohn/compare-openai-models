@@ -15,6 +15,7 @@ After I provide the requirements file:
 3. Save the technical design to `design.md` in that folder.
 
 ## Input Contract
+
 - Source file path to `requirements.md`
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
@@ -23,6 +24,7 @@ After I provide the requirements file:
 The design should be detailed enough to support implementation planning.
 
 Include, where applicable to scope:
+
 - Goals and scope
 - Architecture overview
 - Affected files, modules, components, routes, and services
@@ -37,6 +39,7 @@ Include, where applicable to scope:
 ## Output Structure
 
 Required sections (must be present in every `design.md`):
+
 - Overview
 - Architecture
 - Interfaces
@@ -46,6 +49,7 @@ Required sections (must be present in every `design.md`):
 - Testing
 
 Optional sections (include when applicable):
+
 - Open Questions
 - Blocked Questions (include and stop here if requirement ambiguities remain unresolved after clarification attempts)
 

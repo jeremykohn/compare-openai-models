@@ -18,12 +18,14 @@ After I provide the description file:
 4. Save the requirements to `requirements.md` in that folder.
 
 ## Input Contract
+
 - Source file path to `description.md`
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
 ## Output Expectations
 
 When generating `requirements.md`:
+
 - Organize the document with clear headings.
 - Use numbered requirement IDs for traceability:
   - Functional Requirements (`FR-001`, `FR-002`, ...)
@@ -35,7 +37,6 @@ When generating `requirements.md`:
 - Include concrete technical requirements covering architecture, APIs, data flow, validation, error handling, security, and testing where applicable to scope.
 - Prefer precise language over vague wording.
 - Make the requirements detailed enough to support later design and implementation planning without introducing assumptions.
-
 
 ---
 

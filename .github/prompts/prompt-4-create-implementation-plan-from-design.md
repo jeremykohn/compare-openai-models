@@ -19,12 +19,14 @@ After I provide the design file:
 7. Save the implementation plan to `implementation-plan.md` in that folder.
 
 ## Input Contract
+
 - Source file path to `design.md`
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
 ## Implementation Plan Expectations
 
 The implementation plan should:
+
 - Be detailed enough to guide execution without writing code yet.
 - Break work into clear phases with rationale.
 - Include testing strategy throughout the plan, not just at the end.
@@ -33,6 +35,7 @@ The implementation plan should:
 - Identify risks, assumptions, dependencies, and validation steps where useful.
 
 For each phase, include:
+
 - Objective
 - Tasks (small, dependency-ordered; each task must follow this exact format)
   - `- [ ] <Task title>`
@@ -44,15 +47,17 @@ For each phase, include:
 - Exit Criteria ("Done when...")
 
 At the end of each phase, add quality-gate tasks to do the following:
-   - Check the newly modified files for problems.
-   - Document scope-relevant findings and proposed fixes.
-   - Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
+
+- Check the newly modified files for problems.
+- Document scope-relevant findings and proposed fixes.
+- Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
 
 After all phases, add final quality-gate tasks to do the following:
-   - Check all modified files for problems.
-   - Document remaining scope-relevant findings and proposed fixes.
-   - Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
-   - Finally, run formatting on the modified code files.
+
+- Check all modified files for problems.
+- Document remaining scope-relevant findings and proposed fixes.
+- Pause and present findings to the user; only convert fixes the user confirms into explicit follow-up tasks in the plan.
+- Finally, run formatting on the modified code files.
 
 Optionally, flag design ambiguities before writing the full plan.
 

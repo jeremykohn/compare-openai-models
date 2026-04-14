@@ -7,53 +7,59 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 ## Prompt
 
 Ask me for:
+
 - The path to the technical design document, for example: `.github/specs/001-new-feature/design.md`
 - The path to the implementation plan, for example: `.github/specs/001-new-feature/implementation-plan.md`
 
 ## Input Contract
+
 - Source file path to `design.md`
 - Source file path to implementation plan (`implementation-plan.md`)
 - Optional constraints (timeline, platform, compatibility, rollout limitations)
 
 After I provide those files:
+
 1. Read and analyze both documents carefully.
 2. Establish the review boundary before analyzing discrepancies:
-    - Read the implementation plan and repo state to infer which code changes belong to the active implementation cycle for the provided implementation plan.
-    - Prefer changes made since the latest Prompt 5 execution for that plan, especially work associated with tasks recently marked complete (`- [x]`).
-    - If the review boundary is unclear from the plan or repo state, fall back to reviewing all branch changes as the review boundary.
-    - When the all-branch-changes fallback is used, explicitly label affected discrepancies as `fallback-scope` so users can triage potential out-of-cycle findings.
+   - Read the implementation plan and repo state to infer which code changes belong to the active implementation cycle for the provided implementation plan.
+   - Prefer changes made since the latest Prompt 5 execution for that plan, especially work associated with tasks recently marked complete (`- [x]`).
+   - If the review boundary is unclear from the plan or repo state, fall back to reviewing all branch changes as the review boundary.
+   - When the all-branch-changes fallback is used, explicitly label affected discrepancies as `fallback-scope` so users can triage potential out-of-cycle findings.
 3. Review the implemented code within that boundary and compare it against:
-    - the technical design, and
-    - the implementation plan.
+   - the technical design, and
+   - the implementation plan.
 4. Detect and classify discrepancies.
 5. If no discrepancies are found:
-    - append a note to the implementation plan stating that no unresolved discrepancies were found,
-    - explicitly state that there is no need to continue implementing plan/tasks,
-    - and stop.
+   - append a note to the implementation plan stating that no unresolved discrepancies were found,
+   - explicitly state that there is no need to continue implementing plan/tasks,
+   - and stop.
 6. If discrepancies are found:
-    - create discrepancy reports for:
-      - code vs. design,
-      - code vs. implementation plan,
-    - save discrepancy reports to files,
-    - create a remediation plan with dependency-ordered checkbox tasks,
-    - append remediation phases/tasks to the implementation plan file,
-    - and direct the user to return to Prompt 5 to implement newly added remediation tasks.
+   - create discrepancy reports for:
+     - code vs. design,
+     - code vs. implementation plan,
+   - save discrepancy reports to files,
+   - create a remediation plan with dependency-ordered checkbox tasks,
+   - append remediation phases/tasks to the implementation plan file,
+   - and direct the user to return to Prompt 5 to implement newly added remediation tasks.
 
 ## Required Output Files
 
 If discrepancies are found, save these files inside the same spec folder as the provided `design.md` (e.g., `.github/specs/001-new-feature/discrepancy-reports/`):
+
 - `discrepancy-reports/modifications-vs-design.md`
 - `discrepancy-reports/modifications-vs-implementation-plan.md`
 
 If either report already exists, update it in place and preserve prior history.
 
 Always update the implementation plan file by appending:
+
 - the no-unresolved-discrepancy note, or
 - remediation tasks.
 
 ## Discrepancy and Remediation Expectations
 
 Each discrepancy report should:
+
 - Contain these top-level sections in order:
   1. `Current Run Summary`
   2. `Open Discrepancies`
@@ -64,11 +70,13 @@ Each discrepancy report should:
 - Explain what was expected and what was actually implemented.
 - If the discrepancy report conflicts with the design, the design is the source of truth unless the user says otherwise.
 
-Each discrepancy should: 
+Each discrepancy should:
+
 - Include a severity label: `critical`, `important`, or `minor`.
 - Note the likely impact or importance of the discrepancy.
 
 The remediation plan appended to the implementation plan should:
+
 - Focus only on resolving open discrepancies.
 - Be detailed enough to guide implementation without writing code yet.
 - Note assumptions, risks, and constraints where helpful.
@@ -90,5 +98,6 @@ The discrepancy outputs and remediation tasks must be specific enough that Promp
 ---
 
 **Next step:**
+
 - If no discrepancies were found, workflow is complete.
 - If discrepancies were found and remediation tasks were appended, use `.github/prompts/prompt-5-implement-from-plan.md` — pass `design.md` and the updated implementation plan to implement the new tasks.
