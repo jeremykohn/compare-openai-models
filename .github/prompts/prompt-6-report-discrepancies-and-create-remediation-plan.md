@@ -17,15 +17,20 @@ Ask me for:
 
 After I provide those files:
 1. Read and analyze both documents carefully.
-2. Review the implemented code from Prompt 5 and compare it against:
+2. Establish the review boundary before analyzing discrepancies:
+  - Review only code changes that belong to the active implementation cycle for the provided implementation plan.
+  - Prefer changes made since the latest Prompt 5 execution for that plan, especially work associated with tasks recently marked complete (`- [x]`).
+  - Exclude unrelated branch changes that are outside the active plan unless the user explicitly asks to include them.
+  - If the review boundary is unclear from the plan or repo state, pause and ask the user to confirm which changes should be reviewed.
+3. Review the implemented code within that boundary and compare it against:
     - the technical design, and
     - the implementation plan.
-3. Detect and classify discrepancies.
-4. If no discrepancies are found:
+4. Detect and classify discrepancies.
+5. If no discrepancies are found:
     - append a note to the implementation plan stating that no unresolved discrepancies were found,
     - explicitly state that there is no need to continue implementing plan/tasks,
     - and stop.
-5. If discrepancies are found:
+6. If discrepancies are found:
     - create discrepancy reports for:
       - code vs. design,
       - code vs. implementation plan,
@@ -76,6 +81,7 @@ The remediation plan appended to the implementation plan should:
 ## Consistency Requirements
 
 - Ensure discrepancy analysis and remediation planning are consistent with the technical design and implementation plan.
+- Limit discrepancy analysis to the established review boundary for the active implementation cycle.
 - If there are gaps, contradictions, ambiguities, or unresolved questions in either source file, pause and ask focused clarifying questions before continuing.
 - If resolving a discrepancy would change requirements or design intent, pause and request approval before proceeding.
 
