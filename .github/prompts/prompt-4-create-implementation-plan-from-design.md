@@ -53,17 +53,11 @@ When writing the plan:
 - If helpful, include a short traceability section mapping phases or major tasks back to the design.
 - If there are gaps, contradictions, ambiguities, or missing implementation details in the design, pause and ask focused clarifying questions before continuing.
 
-After writing each phase of the plan:
+After writing the plan:
 
-- Review the plan tasks added in that phase for completeness.
-- Review the plan tasks added in that phase for consistency with the technical design.
-- Review the plan tasks added in that phase for correctness of task format.
-- Correct the plan tasks immediately if any issues are found.
-
-After writing the entire plan:
-
-- Review the entire plan to ensure it is consistent with the provided technical design.
-- If any inconsistencies are found, report the inconsistencies to the user and offer to make corrections.
+- Review each task for correctness of task format.
+- Review the entire plan to ensure it is complete, correct, and consistent with the provided technical design.
+- If any errors or inconsistencies are found, report them to the user and offer to make corrections.
 
 ---
 
