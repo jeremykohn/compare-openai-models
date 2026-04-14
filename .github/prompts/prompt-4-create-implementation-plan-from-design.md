@@ -43,15 +43,15 @@ For each phase, include:
 - Validation
 - Exit Criteria ("Done when...")
 
-At the end of each phase, add tasks to do the following:
+At the end of each phase, add quality-gate tasks to do the following:
    - Check the newly modified files for problems.
-   - Propose how to fix scope-relevant problems.
-   - Implement the fixes that are relevant to the work you just completed.
+   - Document scope-relevant findings and proposed fixes.
+   - Convert approved fixes into explicit follow-up tasks in the plan instead of applying them during the quality gate.
 
-After all phases, add more tasks to do the following:
+After all phases, add final quality-gate tasks to do the following:
    - Check all modified files for problems.
-   - Propose how to fix scope-relevant problems.
-   - Implement the fixes that are relevant to the requested work.
+   - Document remaining scope-relevant findings and proposed fixes.
+   - Convert approved fixes into explicit follow-up tasks in the plan.
    - Finally, run formatting on the modified code files.
 
 Optionally, flag design ambiguities before writing the full plan.
