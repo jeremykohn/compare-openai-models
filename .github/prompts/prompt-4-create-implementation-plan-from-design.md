@@ -43,6 +43,17 @@ For each phase, include:
 - Validation
 - Exit Criteria ("Done when...")
 
+At the end of each phase, add tasks to do the following:
+   - Check the newly modified files for problems.
+   - Propose how to fix scope-relevant problems.
+   - Implement the fixes that are relevant to the work you just completed.
+
+After all phases, add more tasks to do the following:
+   - Check all modified files for problems.
+   - Propose how to fix scope-relevant problems.
+   - Implement the fixes that are relevant to the requested work.
+   - Finally, run formatting on the modified code files.
+
 Optionally, flag design ambiguities before writing the full plan.
 
 ## Consistency Requirements

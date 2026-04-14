@@ -22,18 +22,9 @@ After I provide those files:
 3. Work phase-by-phase and task-by-task rather than trying to do everything at once.
 4. If anything is vague, unclear, inconsistent, or ambiguous in the design or plan, pause and ask focused clarifying questions before continuing.
 5. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
-6. After each phase is complete:
-   - Check the newly modified files for problems.
-   - Propose how to fix scope-relevant problems.
-   - Implement the fixes that are relevant to the work you just completed.
-7. After all phases are complete:
-   - Check all modified files for problems.
-   - Propose how to fix scope-relevant problems.
-   - Implement the fixes that are relevant to the requested work.
-8. Run formatting on the modified code files.
-9. Compare the completed modifications against the implementation plan.
-10. Compare the completed modifications against the technical design.
-11. Save, update, or create discrepancy reports for both comparisons.
+6. Compare the completed modifications against the implementation plan.
+7. Compare the completed modifications against the technical design.
+8. Save, update, or create discrepancy reports for both comparisons.
 
 ## Required Output Files
 
