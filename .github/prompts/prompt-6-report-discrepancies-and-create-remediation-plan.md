@@ -18,10 +18,9 @@ Ask me for:
 After I provide those files:
 1. Read and analyze both documents carefully.
 2. Establish the review boundary before analyzing discrepancies:
-  - Review only code changes that belong to the active implementation cycle for the provided implementation plan.
+  - Read the implementation plan and repo state to infer which  code changes belong to the active implementation cycle for the provided implementation plan. 
   - Prefer changes made since the latest Prompt 5 execution for that plan, especially work associated with tasks recently marked complete (`- [x]`).
-  - Exclude unrelated branch changes that are outside the active plan unless the user explicitly asks to include them.
-  - If the review boundary is unclear from the plan or repo state, pause and ask the user to confirm which changes should be reviewed.
+  - If the review boundary is unclear from the plan or repo state, fall back to reviewing all branch changes as the review boundary.
 3. Review the implemented code within that boundary and compare it against:
     - the technical design, and
     - the implementation plan.
