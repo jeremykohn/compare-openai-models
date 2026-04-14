@@ -8,7 +8,7 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 
 Ask me for:
 - The path to the technical design document, for example: `.github/specs/001-new-feature/design.md`
-- The path to the implementation plan document, for example: `.github/specs/001-new-feature/implementation-plan.md` (this may also be `implementation-plan-resolve-discrepancies.md` if one was created during a prior remediation cycle)
+- The path to the implementation plan document, for example: `.github/specs/001-new-feature/implementation-plan.md`
 
 ## Input Contract
 - Source file path to `design.md`
