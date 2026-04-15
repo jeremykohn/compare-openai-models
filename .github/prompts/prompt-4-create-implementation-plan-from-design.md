@@ -55,7 +55,7 @@ When writing the plan:
 
 After writing the plan:
 
-- Review the full plan and every task for completeness, consistency with the provided technical design, and correctness of task format.
+- Review the full plan and every task for completeness, consistency with the provided technical design, correctness of task format, and traceability (each phase or task should map to a design section or requirement).
 - If any issues are found, correct the plan before finishing.
 
 ---
