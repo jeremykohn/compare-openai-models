@@ -55,9 +55,8 @@ When writing the plan:
 
 After writing the plan:
 
-- Review each task for correctness of task format.
-- Review the entire plan to ensure it is complete, correct, and consistent with the provided technical design.
-- If any errors or inconsistencies are found, report them to the user and offer to make corrections.
+- Review the full plan and every task for completeness, consistency with the provided technical design, and correctness of task format.
+- If any issues are found, correct the plan before finishing.
 
 ---
 

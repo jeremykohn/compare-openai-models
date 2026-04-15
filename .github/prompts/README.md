@@ -10,7 +10,7 @@ Each prompt produces an artifact that feeds the next step.
 | 1 | `prompt-1-create-specific-descriptions-from-general-description.md` | General idea | `description.md` |
 | 2 | `prompt-2-create-requirements-from-description.md` | `description.md` | `requirements.md` |
 | 3 | `prompt-3-create-technical-design-from-requirements.md` | `requirements.md` | `design.md` |
-| 4 | `prompt-4-create-implementation-plan-from-design.md` | `design.md` | `implementation-plan.md` (tasks formatted as checkboxes) |
+| 4 | `prompt-4-create-implementation-plan-from-design.md` | `design.md` | `implementation-plan.md` (tasks formatted as checkboxes and double-checked for completeness, design consistency, and task format correctness) |
 | 5 | `prompt-5-implement-from-plan.md` | implementation plan file (`implementation-plan.md`) | Code changes + updated task checkboxes (`- [x]`) |
 | 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + implementation plan file (`implementation-plan.md`) | If discrepancies found: report files + remediation tasks appended to plan; otherwise: no-discrepancy note appended to plan |
 
