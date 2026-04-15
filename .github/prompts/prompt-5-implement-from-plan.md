@@ -13,7 +13,7 @@ Ask me for:
 ## Input Contract
 
 - Source file path to the implementation plan file (`implementation-plan.md`)
-- Optional constraints (timeline, platform, compatibility, rollout limitations)
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 After I provide that file:
 
@@ -28,9 +28,10 @@ After I provide that file:
 	1. Run `eslint --fix` on the modified files.
 	2. Ask Copilot to:
 		1. Review the modified files and check for problems.
-		2. Document scope-relevant findings and proposed fixes as notes appended to the relevant phase section of the implementation plan.
-		3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task to the implementation plan before applying it.
+		2. Document scope-relevant findings and proposed fixes under the `Quality Gate Notes` subsection in the relevant phase of the implementation plan file. If the section already exists, append entries in place; do not create duplicate `Quality Gate Notes` sections. Use the canonical quality-gate note entry schema defined in `.github/prompts/prompt-4-create-implementation-plan-from-design.md`.
+		3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task before applying it. Place new follow-up tasks in the same phase task list when phase-scoped (use `P{phase-number}-T{task-number}` IDs); otherwise append them under the `Quality Gate Follow-up Tasks` section at the end of the implementation plan file (use `QG-T{task-number}` IDs, assigning the next available `QG-T{n}` in ascending order).
 		4. Apply the proposed fixes.
+		5. If a new follow-up task was added in this quality gate and the fix is fully applied and validated in this same run, mark that follow-up task as complete (`- [x]`) before ending the quality gate, and keep the same task ID in both the task checkbox entry and its `Task link` note entry; otherwise leave it open (`- [ ]`) for subsequent execution.
 	3. Re-run tests to verify there are no regressions.
 	4. If regressions are detected, ask Copilot to fix the code so tests pass.
 	5. After all fixes are applied, re-run `eslint` (without `--fix`) and re-run tests to confirm no new issues were introduced by the fixes.
@@ -38,9 +39,10 @@ After I provide that file:
 	1. Run `eslint --fix` on the modified files.
 	2. Ask Copilot to:
 		1. Review the modified files and check for problems.
-		2. Document scope-relevant findings and proposed fixes as notes appended to the final phase section of the implementation plan.
-		3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task to the implementation plan before applying it.
+		2. Document scope-relevant findings and proposed fixes under the `Final Quality Gate Notes` section of the implementation plan file. If the section already exists, append entries in place; do not create duplicate `Final Quality Gate Notes` sections. Use the canonical quality-gate note entry schema defined in `.github/prompts/prompt-4-create-implementation-plan-from-design.md`.
+		3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task before applying it under the `Quality Gate Follow-up Tasks` section at the end of the implementation plan file (use `QG-T{task-number}` IDs, assigning the next available `QG-T{n}` in ascending order).
 		4. Apply the proposed fixes.
+		5. If a new follow-up task was added in this quality gate and the fix is fully applied and validated in this same run, mark that follow-up task as complete (`- [x]`) before ending the quality gate, and keep the same task ID in both the task checkbox entry and its `Task link` note entry; otherwise leave it open (`- [ ]`) for subsequent execution.
 	3. Re-run tests to verify there are no regressions.
 	4. If regressions are detected, ask Copilot to fix the code so tests pass.
 	5. After all fixes are applied, re-run `eslint` (without `--fix`) and re-run tests to confirm no new issues were introduced by the fixes.

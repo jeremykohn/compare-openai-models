@@ -20,7 +20,7 @@ After I provide the description file:
 ## Input Contract
 
 - Source file path to `description.md`
-- Optional constraints (timeline, platform, compatibility, rollout limitations)
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 ## Output Expectations
 

@@ -17,7 +17,7 @@ After I provide the requirements file:
 ## Input Contract
 
 - Source file path to `requirements.md`
-- Optional constraints (timeline, platform, compatibility, rollout limitations)
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 ## Technical Design Expectations
 

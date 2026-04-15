@@ -15,6 +15,7 @@ After I provide it:
 3. For each update:
    - Create a folder under `.github/specs/` named `{NNN}-{short-update-name}`.
      - `NNN` = next sequential number after the highest existing numbered folder (for example: `002`, `003`, `004`). If no numbered folder exists yet, use `001`.
+     - Before writing files, if the computed `{NNN}-{short-update-name}` folder already exists (for example due to a concurrent run), rescan and choose the next available `NNN`.
      - `short-update-name` = short kebab-case phrase describing the update.
      - Example: `.github/specs/002-compare-model-outputs/`
    - Create `description.md` in that folder.

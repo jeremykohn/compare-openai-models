@@ -15,7 +15,7 @@ Ask me for:
 
 - Source file path to `design.md`
 - Source file path to the implementation plan file (`implementation-plan.md`)
-- Optional constraints (timeline, platform, compatibility, rollout limitations)
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 After I provide those files:
 
@@ -61,7 +61,7 @@ Always update the implementation plan file by appending:
 Each discrepancy report should:
 
 - Contain these top-level sections in order:
-   1. `Current Run Summary` — must include: run date, branch name, implementation plan path, and review boundary mode (`inferred` or `fallback-scope`)
+   1. `Current Run Summary` — must include: run date, branch name, implementation plan path, and review boundary mode (`inferred` or `all-branch-changes`)
    2. `Open Discrepancies`
    3. `Resolved Since Last Run`
    4. `Historical Discrepancies` (optional archive)
@@ -97,7 +97,4 @@ The discrepancy outputs and remediation tasks must be specific enough that Promp
 
 ---
 
-**Next step:**
-
-- If no discrepancies were found, workflow is complete.
-- If discrepancies were found and remediation tasks were appended, use `.github/prompts/prompt-5-implement-from-plan.md` — pass the updated implementation plan to implement the new tasks.
+**Next step:** workflow complete if no discrepancies were found; otherwise use `.github/prompts/prompt-5-implement-from-plan.md` — pass the updated implementation plan to implement appended remediation tasks.
