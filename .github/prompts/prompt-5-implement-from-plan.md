@@ -24,7 +24,23 @@ After I provide that file:
 5. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
 6. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 7. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
-8. End by directing the user to run `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` for discrepancy checking and remediation planning.
+8. After completing each phase, run a per-phase quality gate for files modified in that phase:
+	1. Run `eslint --fix` on the modified files.
+	2. Ask Copilot to:
+		1. Review the modified files and check for problems.
+		2. Document scope-relevant findings and proposed fixes.
+		3. Apply the proposed fixes.
+	3. Re-run tests to verify there are no regressions.
+	4. If regressions are detected, ask Copilot to fix the code so tests pass.
+9. After all phases are complete, run a final quality gate (this may be a separate final phase) for files modified across the entire plan execution:
+	1. Run `eslint --fix` on the modified files.
+	2. Ask Copilot to:
+		1. Review the modified files and check for problems.
+		2. Document scope-relevant findings and proposed fixes.
+		3. Apply the proposed fixes.
+	3. Re-run tests to verify there are no regressions.
+	4. If regressions are detected, ask Copilot to fix the code so tests pass.
+10. End by directing the user to run `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` for discrepancy checking and remediation planning.
 
 ## Execution Requirements
 
@@ -33,6 +49,7 @@ After I provide that file:
 - Keep changes focused on the requested update.
 - Prefer small, reviewable changes.
 - Use targeted validation and testing throughout the work.
+- Run quality gates after each phase and after all phases are complete, and keep each gate scoped to the relevant modified files.
 - Do not fix unrelated issues unless I explicitly ask you to.
 - If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan (e.g., `Prompt 5 run [date]: no open tasks found — forwarding to Prompt 6`), state that implementation is already complete, and direct the user to Prompt 6.
 
