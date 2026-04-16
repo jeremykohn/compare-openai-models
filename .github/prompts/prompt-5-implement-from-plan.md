@@ -56,13 +56,11 @@ After I provide that file:
 
 - Follow the implementation plan as closely as practical.
 - Use checkbox state as the source of truth for task completion status.
-- Keep changes focused on the requested update.
 - Prefer small, reviewable changes.
 - Use a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
 - Use targeted validation and testing throughout the work.
 - Run quality gates after each phase and after all phases are complete, and keep each gate scoped to the relevant modified files.
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation — and the final quality gate passes.
-- Do not fix unrelated issues unless I explicitly ask you to.
 - If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan (e.g., `Prompt 5 run [date]: no open tasks found — forwarding to Prompt 6`), state that implementation is already complete, and direct the user to Prompt 6.
 
 The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions.
