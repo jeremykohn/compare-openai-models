@@ -126,7 +126,7 @@ clarification-first policy, path clarification before file writes, in-place work
 
 ## Re-running a Step
 
-Each step can be re-run independently. Re-running a step will overwrite its output artifact; downstream artifacts (implementation plan files, discrepancy reports) may become stale and should be regenerated.
+Each step can be re-run independently. Re-running a step may overwrite an output artifact or append/update an existing workflow artifact in place (depending on the step); downstream artifacts (implementation plan files, discrepancy reports) may become stale and should be reviewed and regenerated where needed.
 
 ## Spec Artifacts
 
