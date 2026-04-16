@@ -39,6 +39,7 @@ Each prompt produces an artifact that feeds the next step.
 
 - **Step 5 — Implement from Plan**:
   - Executes open tasks in `implementation-plan.md` and marks completed checkboxes (`- [x]`).
+  - Uses a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
   - Runs per-phase and final quality gates on modified files.
   - Appends quality-gate findings/fixes notes in-place using the canonical schema.
   - Adds follow-up tasks when needed (`P{phase-number}-T{task-number}` for phase-scoped tasks; `QG-T{task-number}` for end-of-file quality-gate follow-up tasks).

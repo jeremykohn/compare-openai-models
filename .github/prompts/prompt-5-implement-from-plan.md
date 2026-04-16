@@ -19,12 +19,16 @@ After I provide that file:
 
 1. Read and analyze the implementation plan carefully.
 2. Implement each incomplete task from the implementation plan.
-3. Work phase-by-phase and task-by-task rather than trying to do everything at once.
-4. If anything is vague, unclear, inconsistent, or ambiguous in the plan, pause and ask focused clarifying questions before continuing.
-5. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
-6. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
-7. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
-8. After completing each phase, run a per-phase quality gate for files modified in that phase:
+3. Use a Test-Driven Development (TDD) red-green-refactor loop while implementing each task:
+   1. Write or update a failing test that captures the intended behavior (`red`).
+   2. Implement the minimal code change needed to make the test pass (`green`).
+   3. Refactor while keeping tests passing (`refactor`).
+4. Work phase-by-phase and task-by-task rather than trying to do everything at once.
+5. If anything is vague, unclear, inconsistent, or ambiguous in the plan, pause and ask focused clarifying questions before continuing.
+6. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
+7. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
+8. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
+9. After completing each phase, run a per-phase quality gate for files modified in that phase:
    1. Run `eslint --fix` on the modified files.
    2. Ask Copilot to:
       1. Review the modified files and check for problems.
@@ -35,7 +39,7 @@ After I provide that file:
    3. Re-run tests to verify there are no regressions.
    4. If regressions are detected, ask Copilot to fix the code so tests pass.
    5. After all fixes are applied, re-run `eslint` (without `--fix`) and re-run tests to confirm no new issues were introduced by the fixes.
-9. After all phases are complete, run a final quality gate (this may be a separate final phase) for files modified across the entire plan execution:
+10. After all phases are complete, run a final quality gate (this may be a separate final phase) for files modified across the entire plan execution:
    1. Run `eslint --fix` on the modified files.
    2. Ask Copilot to:
       1. Review the modified files and check for problems.
@@ -46,7 +50,7 @@ After I provide that file:
    3. Re-run tests to verify there are no regressions.
    4. If regressions are detected, ask Copilot to fix the code so tests pass.
    5. After all fixes are applied, re-run `eslint` (without `--fix`) and re-run tests to confirm no new issues were introduced by the fixes.
-10. End by directing the user to the next step shown at the bottom of this prompt.
+11. End by directing the user to the next step shown at the bottom of this prompt.
 
 ## Execution Requirements
 
@@ -54,6 +58,7 @@ After I provide that file:
 - Use checkbox state as the source of truth for task completion status.
 - Keep changes focused on the requested update.
 - Prefer small, reviewable changes.
+- Use a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
 - Use targeted validation and testing throughout the work.
 - Run quality gates after each phase and after all phases are complete, and keep each gate scoped to the relevant modified files.
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation — and the final quality gate passes.

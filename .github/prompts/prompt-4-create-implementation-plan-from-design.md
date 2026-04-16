@@ -62,7 +62,6 @@ When writing the plan:
 - For each phase, describe the approach in detail.
 - For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
 - Use canonical task IDs in this format for every task: `P{phase-number}-T{task-number}`.
-- Use a Test-Driven Development (TDD) red-green-refactor approach for each task.
 - Include unit tests, integration tests, and end-to-end tests where applicable to scope.
 - Include a traceability section mapping phases or major tasks back to the design. Keep it brief; a short table is sufficient. This section is required.
 - If there are gaps, contradictions, ambiguities, or missing implementation details in the design, pause and ask focused clarifying questions before continuing.
