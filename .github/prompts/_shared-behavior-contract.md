@@ -11,4 +11,3 @@
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked. Applying quality-gate fixes is allowed when the active prompt requires it and fixes remain in-scope.
 - When possible, keep reports and outputs concise but specific.
-- Use a consistent footer format in prompt files: `---` followed by one line in this pattern: `**Next step:** <prompt file path or completion outcome> — <what to pass/do next>`.
