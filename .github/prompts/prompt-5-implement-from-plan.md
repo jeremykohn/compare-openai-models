@@ -24,7 +24,7 @@ After I provide that file:
    2. Implement the minimal code change needed to make the test pass (`green`).
    3. Refactor while keeping tests passing (`refactor`).
 4. Work phase-by-phase and task-by-task rather than trying to do everything at once.
-5. If anything is vague, unclear, inconsistent, or ambiguous in the plan, pause and ask focused clarifying questions before continuing.
+5. If anything in the plan is vague, unclear, or ambiguous, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 6. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
 7. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 8. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).

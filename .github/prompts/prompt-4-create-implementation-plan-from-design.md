@@ -53,7 +53,7 @@ When writing the plan:
 - Use the canonical phase task ID convention defined in `.github/prompts/_shared-behavior-contract.md` for every task.
 - Include unit tests, integration tests, and end-to-end tests where applicable to scope.
 - Include a traceability section mapping phases or major tasks back to the design. Keep it brief; a short table is sufficient. This section is required.
-- If there are gaps, contradictions, ambiguities, or missing implementation details in the design, pause and ask focused clarifying questions before continuing.
+- If there are gaps, contradictions, or missing implementation details in the design, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 
 After all phases are defined, include a `Final Quality Gate Notes` section (placeholder, same canonical quality-gate note entry schema) for Prompt 5 final-gate outputs.
 

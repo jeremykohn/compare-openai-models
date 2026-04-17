@@ -90,7 +90,7 @@ The remediation plan appended to the implementation plan should:
 
 - Ensure discrepancy analysis and remediation planning are consistent with the technical design and implementation plan across these dimensions: completeness, consistency, correctness, and traceability (each implemented change should map back to a design section or plan task).
 - Limit discrepancy analysis to the established review boundary for the active implementation cycle.
-- If there are gaps, contradictions, ambiguities, or unresolved questions in either source file, pause and ask focused clarifying questions before continuing.
+- If there are gaps, contradictions, or unresolved questions in either source file, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 - If resolving a discrepancy would change requirements or design intent, pause and request approval before proceeding.
 
 The discrepancy outputs and remediation tasks must be specific enough that Prompt 5 can execute them without introducing assumptions. (Shared contract rule applies.)
