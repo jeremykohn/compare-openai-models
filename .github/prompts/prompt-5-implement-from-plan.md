@@ -63,7 +63,7 @@ After I provide that file:
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation — and the final quality gate passes.
 - If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan (e.g., `Prompt 5 run [date]: no open tasks found — forwarding to Prompt 6`), state that implementation is already complete, and direct the user to Prompt 6.
 
-The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions.
+The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract rule applies.)
 
 ---
 

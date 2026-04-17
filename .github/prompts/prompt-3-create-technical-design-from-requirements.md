@@ -59,7 +59,7 @@ Optional sections (include when applicable):
 - If there are gaps, contradictions, unclear expectations, or ambiguous requirements, pause and ask focused clarifying questions before continuing.
 - Include a traceability section mapping requirement IDs to the design sections that address them. Keep it brief; a short table is sufficient. This section is required.
 
-The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions.
+The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract rule applies.)
 
 ---
 

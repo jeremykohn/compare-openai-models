@@ -93,7 +93,7 @@ The remediation plan appended to the implementation plan should:
 - If there are gaps, contradictions, ambiguities, or unresolved questions in either source file, pause and ask focused clarifying questions before continuing.
 - If resolving a discrepancy would change requirements or design intent, pause and request approval before proceeding.
 
-The discrepancy outputs and remediation tasks must be specific enough that Prompt 5 can execute them without introducing assumptions.
+The discrepancy outputs and remediation tasks must be specific enough that Prompt 5 can execute them without introducing assumptions. (Shared contract rule applies.)
 
 ---
 

@@ -44,9 +44,7 @@ Each `description.md` should include:
 3. **Non-Goals (Optional but Recommended)**
    - What this update will not cover.
 
-Keep the output specific enough to support requirements writing in the next step.
-
-The description must be specific enough that the next prompt can produce requirements without introducing assumptions.
+The output must be specific enough that the next prompt can produce requirements without introducing assumptions.
 
 ---
 
