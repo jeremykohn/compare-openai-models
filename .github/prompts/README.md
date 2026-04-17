@@ -24,6 +24,16 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 
 This is intentional prompt boilerplate, not accidental duplication.
 
+## Optional Constraints Convention
+
+Every prompt's `## Input Contract` section includes this standard cross-reference line for optional constraints:
+
+```markdown
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
+```
+
+This is intentional shared-contract boilerplate. The line is intentionally repeated in each prompt so each file remains usable on its own. The supported constraint types (timeline, platform, compatibility, rollout limitations) are defined once in `_shared-behavior-contract.md`.
+
 ## What Each Step Does
 
 - **Step 1 — Create Specific Description**:
