@@ -61,7 +61,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
   - Executes open tasks in `implementation-plan.md` and marks completed checkboxes (`- [x]`).
   - Uses a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
   - Runs per-phase and final quality gates on modified files.
-  - Appends quality-gate findings/fixes notes in-place using the canonical schema.
+  - Appends quality-gate findings/fixes notes in-place using the `Canonical Quality-Gate Note Entry Schema` in `_shared-behavior-contract.md`.
   - Adds follow-up tasks when needed (`P{phase-number}-T{task-number}` for phase-scoped tasks; `QG-T{task-number}` for end-of-file quality-gate follow-up tasks).
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
@@ -115,9 +115,7 @@ Example:
 
 ## Standardized Quality-Gate Format (Description + Example)
 
-Quality-gate note entries use the canonical schema defined by Prompt 4 and used in Prompt 5.
-
-`_shared-behavior-contract.md` is the canonical schema source; `prompt-4-create-implementation-plan-from-design.md` references it, and `prompt-5-implement-from-plan.md` appends entries using that schema.
+Quality-gate note entries use the `Canonical Quality-Gate Note Entry Schema` section in `.github/prompts/_shared-behavior-contract.md`.
 
 Example note entries:
 
