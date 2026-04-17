@@ -26,7 +26,7 @@ After I provide it:
 ## Input Contract
 
 - General description of the update
-- Optional constraints (timeline, platform, compatibility, rollout limitations)
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 ## Output Expectations
 
