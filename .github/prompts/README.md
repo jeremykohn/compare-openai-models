@@ -96,7 +96,7 @@ Example:
 
 Quality-gate note entries use the canonical schema defined by Prompt 4 and used in Prompt 5.
 
-`prompt-4-create-implementation-plan-from-design.md` is the canonical schema source; `prompt-5-implement-from-plan.md` appends entries using that schema.
+`_shared-behavior-contract.md` is the canonical schema source; `prompt-4-create-implementation-plan-from-design.md` references it, and `prompt-5-implement-from-plan.md` appends entries using that schema.
 
 Example note entries:
 

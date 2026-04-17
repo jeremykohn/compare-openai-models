@@ -43,18 +43,7 @@ Each phase of the implementation plan should include these components:
     - `Expected result: <pass condition>`
 - Validation
 - Exit Criteria ("Done when...")
-- Quality Gate Notes (placeholder section, to be populated during Prompt 5 quality gates using this format)
-  - `Finding: <what was detected>`
-  - `Proposed fix: <how to address it>`
-  - `Applied: <Yes/No + short outcome>`
-  - `Task link: <existing task ID or newly added follow-up task ID, using canonical task IDs from the plan>`
-
-Canonical quality-gate note entry schema for this workflow:
-
-- `Finding: <what was detected>`
-- `Proposed fix: <how to address it>`
-- `Applied: <Yes/No + short outcome>`
-- `Task link: <existing task ID or newly added follow-up task ID, using canonical task IDs from the plan>`
+- Quality Gate Notes (placeholder section, to be populated during Prompt 5 quality gates using the canonical quality-gate note entry schema defined in `.github/prompts/_shared-behavior-contract.md`)
 
 When writing the plan:
 

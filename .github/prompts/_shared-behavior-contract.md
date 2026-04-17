@@ -11,3 +11,12 @@
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked. Applying quality-gate fixes is allowed when the active prompt requires it and fixes remain in-scope.
 - When possible, keep reports and outputs concise but specific.
+
+## Canonical Quality-Gate Note Entry Schema
+
+Use this schema when populating `Quality Gate Notes` and `Final Quality Gate Notes` sections in `implementation-plan.md` during Prompt 5 quality gates:
+
+- `Finding: <what was detected>`
+- `Proposed fix: <how to address it>`
+- `Applied: <Yes/No + short outcome>`
+- `Task link: <existing task ID or newly added follow-up task ID, using canonical task IDs from the plan>`
