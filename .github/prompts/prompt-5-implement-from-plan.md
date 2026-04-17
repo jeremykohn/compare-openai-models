@@ -33,7 +33,7 @@ After I provide that file:
    2. Ask Copilot to:
       1. Review the modified files and check for problems.
       2. Document scope-relevant findings and proposed fixes under the `Quality Gate Notes` subsection in the relevant phase of the implementation plan file. If the section already exists, append entries in place; do not create duplicate `Quality Gate Notes` sections. Use the canonical quality-gate note entry schema defined in `.github/prompts/_shared-behavior-contract.md`.
-      3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task before applying it. Place new follow-up tasks in the same phase task list when phase-scoped (use `P{phase-number}-T{task-number}` IDs); otherwise append them under the `Quality Gate Follow-up Tasks` section at the end of the implementation plan file (use `QG-T{task-number}` IDs, assigning the next available `QG-T{n}` in ascending order).
+      3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task before applying it. Place new follow-up tasks in the same phase task list when phase-scoped (using the canonical phase task ID convention in `.github/prompts/_shared-behavior-contract.md`); otherwise append them under the `Quality Gate Follow-up Tasks` section at the end of the implementation plan file (using the canonical non-phase-scoped quality-gate follow-up task ID convention in `.github/prompts/_shared-behavior-contract.md`).
       4. Apply the proposed fixes.
       5. If a new follow-up task was added in this quality gate and the fix is fully applied and validated in this same run, mark that follow-up task as complete (`- [x]`) before ending the quality gate, and keep the same task ID in both the task checkbox entry and its `Task link` note entry; otherwise leave it open (`- [ ]`) for subsequent execution.
    3. Re-run tests to verify there are no regressions.
@@ -44,7 +44,7 @@ After I provide that file:
    2. Ask Copilot to:
       1. Review the modified files and check for problems.
       2. Document scope-relevant findings and proposed fixes under the `Final Quality Gate Notes` section of the implementation plan file. If the section already exists, append entries in place; do not create duplicate `Final Quality Gate Notes` sections. Use the canonical quality-gate note entry schema defined in `.github/prompts/_shared-behavior-contract.md`.
-      3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task before applying it under the `Quality Gate Follow-up Tasks` section at the end of the implementation plan file (use `QG-T{task-number}` IDs, assigning the next available `QG-T{n}` in ascending order).
+      3. For each fix to apply: either map it to an existing open task, or append it as a new follow-up task before applying it under the `Quality Gate Follow-up Tasks` section at the end of the implementation plan file (using the canonical non-phase-scoped quality-gate follow-up task ID convention in `.github/prompts/_shared-behavior-contract.md`).
       4. Apply the proposed fixes.
       5. If a new follow-up task was added in this quality gate and the fix is fully applied and validated in this same run, mark that follow-up task as complete (`- [x]`) before ending the quality gate, and keep the same task ID in both the task checkbox entry and its `Task link` note entry; otherwise leave it open (`- [ ]`) for subsequent execution.
    3. Re-run tests to verify there are no regressions.

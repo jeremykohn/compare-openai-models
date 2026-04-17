@@ -14,6 +14,16 @@ Each prompt produces an artifact that feeds the next step.
 | 5 | `prompt-5-implement-from-plan.md` | `implementation-plan.md` | Updated checkboxes + quality-gate notes, or no-open-tasks note |
 | 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + `implementation-plan.md` | Discrepancy reports + remediation tasks appended to implementation plan, or no-unresolved-discrepancies note |
 
+## Prompt Header Convention
+
+Executable workflow prompts in `.github/prompts/` use this standardized header near the top of the file:
+
+```markdown
+Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
+```
+
+This is intentional prompt boilerplate, not accidental duplication.
+
 ## What Each Step Does
 
 - **Step 1 — Create Specific Description**:
@@ -80,6 +90,7 @@ Example:
 ## Standardized Task Format (Description + Example)
 
 Plan tasks in `implementation-plan.md` use a standardized checkbox format with canonical task IDs.
+`_shared-behavior-contract.md` is the canonical source for workflow task ID conventions, including phase task IDs and non-phase-scoped quality-gate follow-up task IDs.
 
 Example:
 
@@ -108,6 +119,7 @@ Example note entries:
 ```
 
 If a quality gate adds non-phase-scoped follow-up tasks, append them under `Quality Gate Follow-up Tasks` with next-available ascending `QG-T{task-number}` IDs.
+Use the canonical workflow task ID conventions in `_shared-behavior-contract.md` when assigning these IDs.
 
 Example follow-up task:
 

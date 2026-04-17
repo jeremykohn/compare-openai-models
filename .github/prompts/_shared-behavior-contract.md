@@ -12,6 +12,20 @@
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked. Applying quality-gate fixes is allowed when the active prompt requires it and fixes remain in-scope.
 - When possible, keep reports and outputs concise but specific.
 
+## Standard Prompt Header
+
+Workflow prompts in `.github/prompts/` may include this standardized header near the top of the file to ensure Copilot reads and applies this shared contract before executing the prompt:
+
+`Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.`
+
+## Canonical Workflow Task ID Conventions
+
+Use these canonical task ID conventions throughout the workflow:
+
+- Phase task IDs use `P{phase-number}-T{task-number}`.
+- Non-phase-scoped quality-gate follow-up task IDs use `QG-T{task-number}`.
+- Assign `QG-T{task-number}` values using the next available ascending number.
+
 ## Canonical Quality-Gate Note Entry Schema
 
 Use this schema when populating `Quality Gate Notes` and `Final Quality Gate Notes` sections in `implementation-plan.md` during Prompt 5 quality gates:

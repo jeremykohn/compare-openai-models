@@ -36,7 +36,7 @@ Each phase of the implementation plan should include these components:
 - Objective
 - Tasks (small, dependency-ordered; each task must follow this exact format)
   - `- [ ] <Task title>`
-    - `Task ID: P{phase-number}-T{task-number}`
+    - `Task ID: <canonical phase task ID defined in .github/prompts/_shared-behavior-contract.md>`
     - `Description: <what to implement>`
     - `Dependencies: <task IDs or 'None'>`
     - `Validation command: <exact command>`
@@ -50,7 +50,7 @@ When writing the plan:
 - Structure the plan into logical phases.
 - For each phase, describe the approach in detail.
 - For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
-- Use canonical task IDs in this format for every task: `P{phase-number}-T{task-number}`.
+- Use the canonical phase task ID convention defined in `.github/prompts/_shared-behavior-contract.md` for every task.
 - Include unit tests, integration tests, and end-to-end tests where applicable to scope.
 - Include a traceability section mapping phases or major tasks back to the design. Keep it brief; a short table is sufficient. This section is required.
 - If there are gaps, contradictions, ambiguities, or missing implementation details in the design, pause and ask focused clarifying questions before continuing.
@@ -59,7 +59,7 @@ After all phases are defined, include a `Final Quality Gate Notes` section (plac
 
 Also include a `Quality Gate Follow-up Tasks` section (placeholder) at the end of the implementation plan file for Prompt 5 to append non-phase-scoped follow-up tasks generated during quality gates.
 
-If Prompt 5 appends tasks under `Quality Gate Follow-up Tasks`, use task IDs in this format: `QG-T{task-number}`, assigning the next available `QG-T{n}` in ascending order.
+If Prompt 5 appends tasks under `Quality Gate Follow-up Tasks`, use the canonical non-phase-scoped quality-gate follow-up task ID convention defined in `.github/prompts/_shared-behavior-contract.md`.
 
 After writing the plan:
 
