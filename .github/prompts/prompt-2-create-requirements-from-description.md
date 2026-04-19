@@ -36,7 +36,7 @@ When generating `requirements.md`:
 - Include assumptions and constraints.
 - Include concrete technical requirements covering architecture, APIs, data flow, validation, error handling, security, and testing where applicable to scope.
 - Prefer precise language over vague wording.
-- Make the requirements detailed enough to support later design and implementation planning. (See shared contract for the workflow-wide specificity rule.)
+- Make the requirements detailed enough to support later design and implementation planning. (See `.github/prompts/_shared-behavior-contract.md` for the workflow-wide specificity rule.)
 
 ---
 

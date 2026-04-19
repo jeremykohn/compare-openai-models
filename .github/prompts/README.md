@@ -61,7 +61,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
   - Executes open tasks in `implementation-plan.md` and marks completed checkboxes (`- [x]`).
   - Uses a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
   - Runs per-phase and final quality gates on modified files.
-  - Appends quality-gate findings/fixes notes in-place using the `Canonical Quality-Gate Note Entry Schema` in `_shared-behavior-contract.md`.
+  - Appends quality-gate findings/fixes notes in-place using the `Canonical Quality-Gate Note Entry Schema` in `.github/prompts/_shared-behavior-contract.md`.
   - Adds follow-up tasks when needed (`P{phase-number}-T{task-number}` for phase-scoped tasks; `QG-T{task-number}` for end-of-file quality-gate follow-up tasks).
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
@@ -99,7 +99,7 @@ Example:
 ## Standardized Task Format (Description + Example)
 
 Plan tasks in `implementation-plan.md` use a standardized checkbox format with canonical task IDs.
-`_shared-behavior-contract.md` is the canonical source for workflow task ID conventions, including phase task IDs and non-phase-scoped quality-gate follow-up task IDs.
+`.github/prompts/_shared-behavior-contract.md` is the canonical source for workflow task ID conventions, including phase task IDs and non-phase-scoped quality-gate follow-up task IDs.
 
 Example:
 
@@ -126,7 +126,7 @@ Example note entries:
 ```
 
 If a quality gate adds non-phase-scoped follow-up tasks, append them under `Quality Gate Follow-up Tasks` with next-available ascending `QG-T{task-number}` IDs.
-Use the canonical workflow task ID conventions in `_shared-behavior-contract.md` when assigning these IDs.
+Use the canonical workflow task ID conventions in `.github/prompts/_shared-behavior-contract.md` when assigning these IDs.
 
 Example follow-up task:
 
@@ -141,7 +141,7 @@ Example follow-up task:
 
 ## Shared Behavior Contract
 
-All prompts reference `_shared-behavior-contract.md`, which defines shared behavioral rules:
+All prompts reference `.github/prompts/_shared-behavior-contract.md`, which defines shared behavioral rules:
 clarification-first policy, path clarification before file writes, in-place workflow artifact updates (including looped Prompt 5 ↔ Prompt 6 cycles), and scope guardrails.
 
 ## Re-running a Step

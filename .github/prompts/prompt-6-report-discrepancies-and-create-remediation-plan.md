@@ -20,16 +20,17 @@ Ask me for:
 After I provide those files:
 
 1. Read and analyze both documents carefully.
-2. Establish the review boundary: all changes on the current git branch compared to the main branch.
-3. Review the implemented code within that boundary and compare it against:
+2. Determine the current branch name from repository state (for example, run `git branch --show-current`) and include it in `Current Run Summary`.
+3. Establish the review boundary: all changes on the current git branch compared to the main branch.
+4. Review the implemented code within that boundary and compare it against:
    - the technical design, and
    - the implementation plan.
-4. Detect and classify discrepancies.
-5. If no discrepancies are found:
+5. Detect and classify discrepancies.
+6. If no discrepancies are found:
    - append a note to the implementation plan stating that no unresolved discrepancies were found,
    - explicitly state that there is no need to continue implementing plan/tasks,
    - and stop.
-6. If discrepancies are found:
+7. If discrepancies are found:
    - create discrepancy reports for:
      - code vs. design,
      - code vs. implementation plan,

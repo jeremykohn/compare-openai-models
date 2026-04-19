@@ -50,7 +50,7 @@ After I provide that file:
    3. Re-run tests to verify there are no regressions.
    4. If regressions are detected, ask Copilot to fix the code so tests pass.
    5. After all fixes are applied, re-run `eslint` (without `--fix`) and re-run tests to confirm no new issues were introduced by the fixes.
-11. End by directing the user to the next step shown at the bottom of this prompt.
+11. Direct the user to `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` — pass the same `design.md` used for this implementation plan and the same `implementation-plan.md` to check discrepancies and, if needed, append remediation tasks.
 
 ## Execution Requirements
 

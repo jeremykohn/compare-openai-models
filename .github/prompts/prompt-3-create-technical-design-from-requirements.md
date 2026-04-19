@@ -48,8 +48,9 @@ Required sections (must be present in every `design.md`):
 - Security
 - Testing
 
-Optional sections (include when applicable):
+Optional sections (include only when applicable):
 
+- Performance (required when performance requirements exist in `requirements.md`, such as `PR-xxx` IDs)
 - Open Questions
 - Blocked Questions (include and stop here if requirement ambiguities remain unresolved after clarification attempts)
 
