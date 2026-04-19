@@ -11,7 +11,7 @@ Each prompt produces an artifact that feeds the next step.
 | 2 | `prompt-2-create-requirements-from-description.md` | `description.md` | `requirements.md` |
 | 3 | `prompt-3-create-technical-design-from-requirements.md` | `requirements.md` | `design.md` |
 | 4 | `prompt-4-create-implementation-plan-from-design.md` | `design.md` | `implementation-plan.md` |
-| 5 | `prompt-5-implement-from-plan.md` | `implementation-plan.md` | Updated checkboxes, or no-open-tasks note |
+| 5 | `prompt-5-implement-from-plan.md` | `implementation-plan.md` | Updated tasks/checkboxes (including post-phase follow-up tasks), or no-open-tasks note |
 | 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + `implementation-plan.md` | Discrepancy reports + remediation tasks appended to implementation plan, or no-unresolved-discrepancies note |
 
 ## Prompt Header Convention

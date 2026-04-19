@@ -26,3 +26,6 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 Use these canonical task ID conventions throughout the workflow:
 
 - Phase task IDs use `P{phase-number}-T{task-number}`.
+- When appending a new phase-scoped follow-up task, preserve all existing task IDs and assign the next highest available `T{n}` within that phase.
+- Do not reuse gaps left by removed, completed, or renumbered tasks.
+- If a proposed phase task ID collides with an existing ID, increment to the next available `T{n}` in that phase.
