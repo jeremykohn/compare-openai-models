@@ -21,17 +21,18 @@ After I provide those files:
 
 1. Read and analyze both documents carefully.
 2. Determine the current branch name from repository state (for example, run `git branch --show-current`) and include it in `Current Run Summary`.
-3. Establish the review boundary: run `git diff $(git merge-base HEAD main) HEAD --name-only` to enumerate all files changed since the common ancestor with `main`. Use this file list as the boundary for all discrepancy analysis.
-4. Review the implemented code within that boundary and compare it against:
+3. Determine the repository default branch from git remote metadata (for example, run `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`). If the default branch cannot be determined, pause and ask the user before continuing.
+4. Establish the review boundary: run `git diff $(git merge-base HEAD <default-branch>) HEAD --name-only` to enumerate all files changed since the common ancestor with the repository default branch. Use this file list as the boundary for all discrepancy analysis.
+5. Review the implemented code within that boundary and compare it against:
    - the technical design, and
    - the implementation plan.
-5. Detect and classify discrepancies.
-6. If no discrepancies are found:
-   - append a note to the implementation plan using this format:
+6. Detect and classify discrepancies.
+7. If no discrepancies are found:
+   - append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using this format:
      > **Prompt 6 run — [YYYY-MM-DD]:** No unresolved discrepancies found. Workflow complete.
    - explicitly state that there is no need to continue implementing plan/tasks,
    - and stop.
-7. If discrepancies are found:
+8. If discrepancies are found:
    - create discrepancy reports for:
      - code vs. design,
      - code vs. implementation plan,
@@ -59,14 +60,14 @@ Always update the implementation plan file by appending:
 Each discrepancy report should:
 
 - Contain these top-level sections in order:
-   1.  `Current Run Summary` — must include these labeled fields:
-         - `Run Date:` YYYY-MM-DD
-         - `Branch:` current branch name
-         - `Review Boundary:` git boundary expression used (e.g., `git merge-base HEAD main..HEAD`)
-         - `Implementation Plan:` path to the implementation plan file
-  2.  `Open Discrepancies`
-  3.  `Resolved Since Last Run`
-  4.  `Historical Discrepancies` (optional archive)
+  1. `Current Run Summary` — must include these labeled fields:
+     - `Run Date:` YYYY-MM-DD
+     - `Branch:` current branch name
+     - `Review Boundary:` git boundary command used (e.g., `git diff $(git merge-base HEAD <default-branch>) HEAD --name-only`)
+     - `Implementation Plan:` path to the implementation plan file
+  2. `Open Discrepancies`
+  3. `Resolved Since Last Run`
+  4. `Historical Discrepancies` (optional archive)
 - Clearly identify each discrepancy.
 - For each discrepancy, add expected evidence (tests, file diffs, command output)
 - Explain what was expected and what was actually implemented.

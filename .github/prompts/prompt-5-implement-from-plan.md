@@ -45,7 +45,7 @@ After completing a phase, run this cycle before moving to the next phase. A phas
   - Prefer file-scoped or test-scoped commands to reduce unrelated noise.
 3. **Issue review and fix planning**
   - Ask Copilot to review phase-modified files for phase-introduced, scope-relevant issues.
-  - For each proposed fix, map it to an existing open task when possible; otherwise append a new follow-up task under the current phase task list using the next available canonical phase task ID before applying the fix.
+  - For each proposed fix, map it to an existing open task when possible; otherwise append a new follow-up task under the current phase task list using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID before applying the fix.
 4. **Apply fixes**
   - Apply only in-scope fixes tied to the just-completed phase.
   - Do not fix unrelated issues.
@@ -67,7 +67,7 @@ After completing a phase, run this cycle before moving to the next phase. A phas
 - Limit issue detection/fixes to files modified in that phase and in-scope behavior.
 - Map each applied fix to an existing task or a newly appended follow-up task before applying.
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation.
-- If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan using this format:
+- If there are no open tasks (`- [ ]`) at the start, append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using this format:
   > **Prompt 5 run — [YYYY-MM-DD]:** No open tasks found. Forwarding to Prompt 6.
 
   State that implementation is already complete and direct the user to Prompt 6.

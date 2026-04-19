@@ -63,7 +63,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:
-  - Reviews all changes on the current git branch compared to the main branch for consistency with `design.md` and `implementation-plan.md`
+  - Reviews all changes on the current git branch compared to the repository default branch derived from git remote metadata for consistency with `design.md` and `implementation-plan.md`
   - If no discrepancies exist, appends a no-unresolved-discrepancies note and ends.
   - If discrepancies exist:
     - Updates discrepancy report files in `discrepancy-reports/` inside the same spec folder as `design.md`.
@@ -116,7 +116,16 @@ clarification-first policy, path clarification before file writes, in-place work
 
 ## Re-running a Step
 
-Each step can be re-run independently. Re-running a step may overwrite an output artifact or append/update an existing workflow artifact in place (depending on the step); downstream artifacts (implementation plan files, discrepancy reports) may become stale and should be reviewed and regenerated where needed.
+Each step can be re-run independently. Re-running a step may overwrite an output artifact or append/update an existing workflow artifact in place (depending on the step); downstream artifacts may become stale and should be reviewed and regenerated where needed.
+
+Staleness guide:
+
+- Re-running **Step 1** makes `requirements.md`, `design.md`, `implementation-plan.md`, and all discrepancy artifacts stale.
+- Re-running **Step 2** makes `design.md`, `implementation-plan.md`, and all discrepancy artifacts stale.
+- Re-running **Step 3** makes `implementation-plan.md` and all discrepancy artifacts stale.
+- Re-running **Step 4** makes Prompt 5 implementation progress and all discrepancy artifacts stale.
+- Re-running **Step 5** can make discrepancy reports and remediation tasks stale if implementation changes after the last Prompt 6 run.
+- Re-running **Step 6** updates discrepancy reports and remediation tasks in place; any older remediation assumptions should be re-validated against the current implementation plan.
 
 ## Spec Artifacts
 
