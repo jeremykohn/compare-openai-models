@@ -52,6 +52,7 @@ When writing the plan:
 - For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
 - Use the canonical phase task ID convention defined in `.github/prompts/_shared-behavior-contract.md` for every task.
 - Include unit tests, integration tests, and end-to-end tests where applicable to scope.
+- Keep phases and tasks structured and traceable enough to support post-phase issue detection, fix mapping, and validation during Prompt 5 execution.
 - Include a traceability section mapping phases or major tasks back to the design. Keep it brief; a short table is sufficient. This section is required.
 - If there are gaps, contradictions, or missing implementation details in the design, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 

@@ -59,6 +59,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
 - **Step 5 — Implement from Plan**:
   - Executes open tasks in `implementation-plan.md` and marks completed checkboxes (`- [x]`).
   - Uses a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
+  - After each phase, runs a post-phase find-and-fix cycle scoped to files modified in that phase.
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:

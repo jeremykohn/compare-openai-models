@@ -10,6 +10,7 @@
 - When the workflow loops (for example, `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`), continue updating the same plan and report artifacts in place unless the user requests a new artifact.
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked.
+- When an active prompt explicitly requires post-phase issue detection and fixing, applying those fixes is allowed when they remain in scope.
 - When possible, keep reports and outputs concise but specific.
 
 ## Standard Prompt Header
