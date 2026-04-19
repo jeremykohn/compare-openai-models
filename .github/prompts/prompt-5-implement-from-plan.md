@@ -9,6 +9,7 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 Ask me for:
 
 - The path to the implementation plan file, for example: `.github/specs/001-new-feature/implementation-plan.md`
+  - Verify that `design.md` exists in the same spec folder. If it is missing, pause and ask the user to provide its location before continuing.
 
 ## Input Contract
 

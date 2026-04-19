@@ -32,7 +32,7 @@ Include, where applicable to scope:
 - API contracts and request/response shapes
 - Validation and error-handling approach
 - Security considerations
-- Performance considerations (required when `PR-xxx` performance requirements are present in `requirements.md`; see Output Structure)
+- Performance considerations (required when performance requirements exist in `requirements.md`, such as `PR-xxx` IDs; see Output Structure)
 - Testing strategy
 - Assumptions, constraints, and open questions
 
