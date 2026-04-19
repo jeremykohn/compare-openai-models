@@ -58,7 +58,7 @@ Always update the implementation plan file by appending:
 Each discrepancy report should:
 
 - Contain these top-level sections in order:
-  1.  `Current Run Summary` — must include: run date, branch name, and implementation plan path
+  1.  `Current Run Summary` — must include: run date, branch name, review boundary, and implementation plan path
   2.  `Open Discrepancies`
   3.  `Resolved Since Last Run`
   4.  `Historical Discrepancies` (optional archive)

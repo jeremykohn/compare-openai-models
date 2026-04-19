@@ -30,12 +30,12 @@ After I provide that file:
 6. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.
 7. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 8. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
-9. After completing each phase — when all open tasks under the current phase are completed or explicitly deferred, and before starting tasks under the next phase heading — run the `Post-Phase Find-and-Fix Cycle` for that phase.
+9. When all open tasks under the current phase are completed, and before starting tasks under the next phase heading, run the `Post-Phase Find-and-Fix Cycle` for that phase.
 10. Direct the user to `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` — pass the same `design.md` used for this implementation plan and the same `implementation-plan.md` to check discrepancies and, if needed, append remediation tasks.
 
 ## Post-Phase Find-and-Fix Cycle
 
-After completing a phase, run this cycle before moving to the next phase. A phase is complete when all open tasks under the current phase are completed or explicitly deferred.
+After completing a phase, run this cycle before moving to the next phase. A phase is complete when all open tasks under the current phase are completed.
 
 1. **Scope capture**
   - Identify files modified during the just-completed phase.
@@ -54,7 +54,7 @@ After completing a phase, run this cycle before moving to the next phase. A phas
   - If regressions remain, iterate fix → re-check until checks pass or clarification is required.
 6. **Plan updates**
   - Mark follow-up tasks as complete (`- [x]`) when fully applied and validated in the same run.
-  - Keep unresolved follow-up tasks open (`- [ ]`) for subsequent work.
+  - Keep unresolved follow-up tasks open (`- [ ]`) until they are revisited and completed later in the same Prompt 5 run, before starting the next phase.
 
 ## Execution Requirements
 
