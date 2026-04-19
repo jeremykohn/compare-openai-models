@@ -13,6 +13,7 @@ Ask me for:
 ## Input Contract
 
 - Source file path to the implementation plan file (`implementation-plan.md`)
+  - Note: `design.md` is expected to be co-located in the same spec folder and will be passed to Prompt 6 at the end of this run.
 - Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 After I provide that file:

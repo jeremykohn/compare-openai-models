@@ -66,7 +66,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:
-  - Reviews changes on the current git branch for consistency with `design.md` and `implementation-plan.md`
+  - Reviews all changes on the current git branch compared to the main branch for consistency with `design.md` and `implementation-plan.md`
   - If no discrepancies exist, appends a no-unresolved-discrepancies note and ends.
   - If discrepancies exist:
     - Updates discrepancy report files in `discrepancy-reports/` inside the same spec folder as `design.md`.
