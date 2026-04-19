@@ -20,11 +20,7 @@ Ask me for:
 After I provide those files:
 
 1. Read and analyze both documents carefully.
-2. Establish the review boundary before analyzing discrepancies:
-   - Read the implementation plan and repo state to infer which code changes belong to the active implementation cycle for the provided implementation plan.
-   - Prefer changes made since the latest Prompt 5 execution for that plan, especially work associated with tasks recently marked complete (`- [x]`).
-   - If the review boundary is unclear from the plan or repo state, fall back to reviewing all branch changes as the review boundary.
-   - When the all-branch-changes fallback is used, explicitly label affected discrepancies as `fallback-scope` so users can triage potential out-of-cycle findings. Do not auto-include `fallback-scope` discrepancies in the remediation plan; present them separately and ask the user whether to include them before appending remediation tasks.
+2. Establish the review boundary: all changes on the current git branch compared to the main branch.
 3. Review the implemented code within that boundary and compare it against:
    - the technical design, and
    - the implementation plan.
@@ -61,7 +57,7 @@ Always update the implementation plan file by appending:
 Each discrepancy report should:
 
 - Contain these top-level sections in order:
-  1.  `Current Run Summary` — must include: run date, branch name, implementation plan path, and review boundary mode (`inferred` or `all-branch-changes`)
+  1.  `Current Run Summary` — must include: run date, branch name, and implementation plan path
   2.  `Open Discrepancies`
   3.  `Resolved Since Last Run`
   4.  `Historical Discrepancies` (optional archive)
@@ -89,7 +85,7 @@ The remediation plan appended to the implementation plan should:
 ## Consistency Requirements
 
 - Ensure discrepancy analysis and remediation planning are consistent with the technical design and implementation plan across these dimensions: completeness, consistency, correctness, and traceability (each implemented change should map back to a design section or plan task).
-- Limit discrepancy analysis to the established review boundary for the active implementation cycle.
+- Limit discrepancy analysis to the established review boundary.
 - If there are gaps, contradictions, or unresolved questions in either source file, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 - If resolving a discrepancy would change requirements or design intent, pause and request approval before proceeding.
 

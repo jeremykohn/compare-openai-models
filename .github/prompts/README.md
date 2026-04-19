@@ -66,13 +66,12 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:
-  - Compares implemented code against `design.md` and `implementation-plan.md` within the active review boundary.
+  - Reviews changes on the current git branch for consistency with `design.md` and `implementation-plan.md`
   - If no discrepancies exist, appends a no-unresolved-discrepancies note and ends.
   - If discrepancies exist:
     - Updates discrepancy report files in `discrepancy-reports/` inside the same spec folder as `design.md`.
     - Appends remediation tasks to `implementation-plan.md`.
     - Sends workflow back to Step 5.
-  - For fallback boundary reviews (`all-branch-changes`), labels out-of-cycle findings as `fallback-scope` and requires user confirmation before remediation inclusion.
 
 ## Folder Structure (Description + Example)
 
