@@ -1,5 +1,7 @@
 # Shared Behavior Contract
 
+**Workflow artifacts** are the files produced and consumed by the workflow prompts: `description.md`, `requirements.md`, `design.md`, `implementation-plan.md`, and `discrepancy-reports/*.md`. Source code files are not workflow artifacts.
+
 - If anything in any prompts, requirements, design, tasks, or other input is unclear, vague, conflicting, incomplete, or ambiguous, pause and ask focused clarifying questions before proceeding.
 - If any paths for source or destination files are uncertain or unspecified, pause and ask which path to use.
 - Common input metadata for prompts: optional constraints may include timeline, platform, compatibility, and rollout limitations.
@@ -7,7 +9,7 @@
 - Create only requested output files; do not create extra documentation or reports unless asked.
 - Keep output focused on the requested update.
 - Each workflow artifact must be specific enough for the next step to proceed without introducing assumptions.
-- When the workflow loops (for example, `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`), continue updating the same plan and report artifacts in place unless the user requests a new artifact.
+- When the workflow loops (for example, `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`), update the existing `implementation-plan.md` and `discrepancy-reports/*.md` files in place by appending new content (phases, tasks, run history). Do not create new artifact files for additional loop iterations unless the user requests a new artifact.
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked.
 - When an active prompt explicitly requires post-phase issue detection and fixing, applying those fixes is allowed when they remain in scope.
@@ -29,3 +31,11 @@ Use these canonical task ID conventions throughout the workflow:
 - When appending a new phase-scoped follow-up task, preserve all existing task IDs and assign the next highest available `T{n}` within that phase.
 - Do not reuse gaps left by removed, completed, or renumbered tasks.
 - If a proposed phase task ID collides with an existing ID, increment to the next available `T{n}` in that phase.
+
+## Spec Folder Naming Convention
+
+When creating a new spec folder under `.github/specs/`:
+
+- Name the folder `{NNN}-{short-update-name}`, where `NNN` is the next sequential number after the highest existing numbered folder (e.g., `002`, `003`). Use `001` if no numbered folder exists yet.
+- `short-update-name` is a short kebab-case phrase describing the update.
+- Before writing any files, verify the computed folder name does not already exist. If it does (for example, due to a concurrent run), re-scan and choose the next available `NNN`.

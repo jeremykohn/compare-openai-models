@@ -19,7 +19,7 @@ After I provide the description file:
 2. Separate the requirements into at least these sections:
    - Functional requirements
    - Technical requirements
-   - Performance requirements (include only when performance-related needs are present)
+  - Performance requirements (include only when the description or constraints mention latency, throughput, load, scalability, SLA, or response time targets)
 3. If there are gaps, missing details, conflicting expectations, or anything vague or ambiguous, pause and ask me focused clarifying questions before continuing.
 4. Save the requirements to `requirements.md` in that folder.
 

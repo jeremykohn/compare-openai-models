@@ -52,13 +52,16 @@ Optional sections (include only when applicable):
 
 - Performance (required when performance requirements exist in `requirements.md`, such as `PR-xxx` IDs)
 - Open Questions
-- Blocked Questions (include and stop here if requirement ambiguities remain unresolved after clarification attempts)
+- Blocked Questions (include and stop here if requirement ambiguities remain unresolved after clarification attempts; once unblocked, re-run this prompt with the resolved inputs to complete and replace the partial `design.md`)
 
 ## Consistency Requirements
 
 - Ensure the design is consistent with the provided requirements.
 - If there are gaps, contradictions, or ambiguous requirements, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
-- Include a traceability section mapping requirement IDs to the design sections that address them. Keep it brief; a short table is sufficient. This section is required.
+- Include a traceability section mapping requirement IDs to the design sections that address them. This section is required. Use this column format:
+
+	| Requirement ID | Design Section | Notes |
+	|---|---|---|
 
 The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract rule applies.)
 

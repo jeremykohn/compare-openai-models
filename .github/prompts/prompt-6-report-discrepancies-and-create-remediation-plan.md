@@ -21,13 +21,14 @@ After I provide those files:
 
 1. Read and analyze both documents carefully.
 2. Determine the current branch name from repository state (for example, run `git branch --show-current`) and include it in `Current Run Summary`.
-3. Establish the review boundary: all changes on the current git branch compared to the main branch.
+3. Establish the review boundary: run `git diff $(git merge-base HEAD main) HEAD --name-only` to enumerate all files changed since the common ancestor with `main`. Use this file list as the boundary for all discrepancy analysis.
 4. Review the implemented code within that boundary and compare it against:
    - the technical design, and
    - the implementation plan.
 5. Detect and classify discrepancies.
 6. If no discrepancies are found:
-   - append a note to the implementation plan stating that no unresolved discrepancies were found,
+   - append a note to the implementation plan using this format:
+     > **Prompt 6 run — [YYYY-MM-DD]:** No unresolved discrepancies found. Workflow complete.
    - explicitly state that there is no need to continue implementing plan/tasks,
    - and stop.
 7. If discrepancies are found:
@@ -58,7 +59,11 @@ Always update the implementation plan file by appending:
 Each discrepancy report should:
 
 - Contain these top-level sections in order:
-  1.  `Current Run Summary` — must include: run date, branch name, review boundary, and implementation plan path
+   1.  `Current Run Summary` — must include these labeled fields:
+         - `Run Date:` YYYY-MM-DD
+         - `Branch:` current branch name
+         - `Review Boundary:` git boundary expression used (e.g., `git merge-base HEAD main..HEAD`)
+         - `Implementation Plan:` path to the implementation plan file
   2.  `Open Discrepancies`
   3.  `Resolved Since Last Run`
   4.  `Historical Discrepancies` (optional archive)
@@ -81,6 +86,7 @@ The remediation plan appended to the implementation plan should:
 - Break remediation into clear phases with rationales.
 - Keep tasks small, specific, dependency-ordered, and independently verifiable.
 - For each task, include validation steps, testing steps, and expected outcomes.
+- Remediation tasks must use the canonical task format defined in `.github/prompts/_shared-behavior-contract.md` (task ID, description, dependencies, validation command, expected result).
 - Include a `Resolution Mapping` section: Discrepancy ID → Planned Tasks → Validation.
 
 ## Consistency Requirements

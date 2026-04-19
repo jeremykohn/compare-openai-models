@@ -31,7 +31,7 @@ After I provide that file:
 7. Continue with tasks still open (`- [ ]`), including tasks added during remediation cycles.
 8. After completing each task, update the implementation plan file to mark that task's checkbox as checked (`- [x]`).
 9. When all open tasks under the current phase are completed, and before starting tasks under the next phase heading, run the `Post-Phase Find-and-Fix Cycle` for that phase.
-10. Direct the user to `.github/prompts/prompt-6-report-discrepancies-and-create-remediation-plan.md` — pass the same `design.md` used for this implementation plan and the same `implementation-plan.md` to check discrepancies and, if needed, append remediation tasks.
+10. When all tasks are complete, proceed to the next step (see footer below).
 
 ## Post-Phase Find-and-Fix Cycle
 
@@ -61,13 +61,16 @@ After completing a phase, run this cycle before moving to the next phase. A phas
 - Follow the implementation plan as closely as practical.
 - Use checkbox state as the source of truth for task completion status.
 - Prefer small, reviewable changes.
-- Use a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
+- Follow the TDD red-green-refactor loop as defined in step 3 above.
 - Use targeted validation and testing throughout the work.
 - Run the post-phase find-and-fix cycle after each phase.
 - Limit issue detection/fixes to files modified in that phase and in-scope behavior.
 - Map each applied fix to an existing task or a newly appended follow-up task before applying.
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation.
-- If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan (e.g., `Prompt 5 run [date]: no open tasks found — forwarding to Prompt 6`), state that implementation is already complete, and direct the user to Prompt 6.
+- If there are no open tasks (`- [ ]`) at the start, append a note to the implementation plan using this format:
+  > **Prompt 5 run — [YYYY-MM-DD]:** No open tasks found. Forwarding to Prompt 6.
+
+  State that implementation is already complete and direct the user to Prompt 6.
 
 The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract rule applies.)
 
