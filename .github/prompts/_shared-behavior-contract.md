@@ -16,7 +16,9 @@
 
 Workflow prompts in `.github/prompts/` may include this standardized header near the top of the file to ensure Copilot reads and applies this shared contract before executing the prompt:
 
-`Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.`
+```
+Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
+```
 
 ## Canonical Workflow Task ID Conventions
 
