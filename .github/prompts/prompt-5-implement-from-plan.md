@@ -4,18 +4,18 @@ Use this prompt with GitHub Copilot when you want Copilot to execute implementat
 
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
+## Input Contract
+
+- Source file path to the implementation plan file (`implementation-plan.md`)
+  - Note: `design.md` is expected to be co-located in the same spec folder and will be passed to Prompt 6 at the end of this run.
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
+
 ## Prompt
 
 Ask me for:
 
 - The path to the implementation plan file, for example: `.github/specs/001-new-feature/implementation-plan.md`
   - Verify that `design.md` exists in the same spec folder. If it is missing, pause and ask the user to provide its location before continuing.
-
-## Input Contract
-
-- Source file path to the implementation plan file (`implementation-plan.md`)
-  - Note: `design.md` is expected to be co-located in the same spec folder and will be passed to Prompt 6 at the end of this run.
-- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 After I provide that file:
 

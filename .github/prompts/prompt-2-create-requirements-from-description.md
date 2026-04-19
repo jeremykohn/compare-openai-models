@@ -4,6 +4,11 @@ Use this prompt with GitHub Copilot when you want Copilot to convert a saved upd
 
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
+## Input Contract
+
+- Source file path to `description.md`
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
+
 ## Prompt
 
 Ask me for the path to the description document that should be used as the source, for example: `.github/specs/001-new-feature/description.md`.
@@ -17,11 +22,6 @@ After I provide the description file:
    - Performance requirements (include only when performance-related needs are present)
 3. If there are gaps, missing details, conflicting expectations, or anything vague or ambiguous, pause and ask me focused clarifying questions before continuing.
 4. Save the requirements to `requirements.md` in that folder.
-
-## Input Contract
-
-- Source file path to `description.md`
-- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 ## Output Expectations
 

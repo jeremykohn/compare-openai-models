@@ -4,6 +4,11 @@ Use this prompt with GitHub Copilot when you want Copilot to convert a technical
 
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
+## Input Contract
+
+- Source file path to `design.md`
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
+
 ## Prompt
 
 Ask me for the path to the technical design document that should be used as the source, for example: `.github/specs/001-new-feature/design.md`.
@@ -14,10 +19,6 @@ After I provide the design file:
 2. Create a concrete implementation plan for delivering the design.
 3. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
 
-## Input Contract
-
-- Source file path to `design.md`
-- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 ## Implementation Plan Expectations
 

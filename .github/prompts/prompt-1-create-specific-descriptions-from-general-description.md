@@ -4,6 +4,11 @@ Use this prompt with GitHub Copilot to convert a high-level software update idea
 
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
+## Input Contract
+
+- General description of the update
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
+
 ## Prompt
 
 Ask me for a general description of the feature, bugfix, enhancement, refactor, or other software update I want to make.
@@ -22,11 +27,6 @@ After I provide it:
    - Save:
      - the original high-level description (preserving meaning; only normalize formatting/grammar), and
      - a specific, detailed description of the update.
-
-## Input Contract
-
-- General description of the update
-- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 ## Output Expectations
 

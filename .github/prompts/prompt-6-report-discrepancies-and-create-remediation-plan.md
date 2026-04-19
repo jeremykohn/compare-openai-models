@@ -4,18 +4,18 @@ Use this prompt with GitHub Copilot when you want Copilot to evaluate implemente
 
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
 
+## Input Contract
+
+- Source file path to `design.md`
+- Source file path to the implementation plan file (`implementation-plan.md`)
+- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
+
 ## Prompt
 
 Ask me for:
 
 - The path to the technical design document, for example: `.github/specs/001-new-feature/design.md`
 - The path to the implementation plan file, for example: `.github/specs/001-new-feature/implementation-plan.md`
-
-## Input Contract
-
-- Source file path to `design.md`
-- Source file path to the implementation plan file (`implementation-plan.md`)
-- Optional constraints (use common input metadata defined in `.github/prompts/_shared-behavior-contract.md`)
 
 After I provide those files:
 
