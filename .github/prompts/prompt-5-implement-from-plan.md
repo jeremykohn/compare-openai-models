@@ -22,9 +22,9 @@ After I provide that file:
 1. Read and analyze the implementation plan carefully.
 2. Implement each incomplete task from the implementation plan.
 3. Use a Test-Driven Development (TDD) red-green-refactor loop while implementing each task:
-   1. Write or update a failing test that captures the intended behavior (`red`).
-   2. Implement the minimal code change needed to make the test pass (`green`).
-   3. Refactor while keeping tests passing (`refactor`).
+  - **Red:** Write or update a failing test that captures the intended behavior.
+  - **Green:** Implement the minimal code change needed to make the test pass.
+  - **Refactor:** Refactor while keeping tests passing.
 4. Work phase-by-phase and task-by-task rather than trying to do everything at once.
 5. If anything in the plan is vague, unclear, or ambiguous, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 6. Detect all tasks already marked complete (`- [x]`) and skip re-implementing them.

@@ -21,7 +21,8 @@ After I provide the description file:
    - Technical requirements
    - Performance requirements (include only when the description or constraints mention latency, throughput, load, scalability, SLA, or response time targets)
 3. If there are gaps, missing details, conflicting expectations, or anything vague or ambiguous, pause and ask me focused clarifying questions before continuing.
-4. Save the requirements to `requirements.md` in that folder.
+4. Before saving, check whether `requirements.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing.
+5. Save the requirements to `requirements.md` in that folder.
 
 ## Output Expectations
 

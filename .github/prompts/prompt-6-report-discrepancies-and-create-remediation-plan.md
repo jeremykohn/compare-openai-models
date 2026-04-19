@@ -29,9 +29,9 @@ After I provide those files:
    - the implementation plan.
 6. Detect and classify discrepancies.
 7. If no discrepancies are found:
-   - If discrepancy report files already exist and contain open items, move those items to the `Resolved Since Last Run` section before appending the run-history note.
-   - Append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using the canonical Prompt 6 no-discrepancies note format defined in `.github/prompts/_shared-behavior-contract.md`.
-   - Explicitly state that there is no need to continue implementing plan/tasks,
+   - if discrepancy report files already exist and contain open items, move those items to the `Resolved Since Last Run` section before appending the run-history note.
+   - append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using the canonical Prompt 6 no-discrepancies note format defined in `.github/prompts/_shared-behavior-contract.md`.
+   - explicitly state that there is no need to continue implementing plan/tasks,
    - and stop.
 8. If discrepancies are found:
    - create discrepancy reports for:
@@ -51,10 +51,7 @@ If discrepancies are found, save these files inside the same spec folder as the 
 
 If either report already exists, update it in place and preserve prior history.
 
-Always update the implementation plan file by appending:
-
-- the no-unresolved-discrepancy note, or
-- remediation tasks.
+At the end of each run, update the implementation plan file by appending either the no-discrepancy note (step 7) or remediation tasks (step 8).
 
 ## Discrepancy and Remediation Expectations
 

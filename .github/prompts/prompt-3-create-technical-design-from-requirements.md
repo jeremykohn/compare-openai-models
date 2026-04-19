@@ -62,6 +62,7 @@ Optional sections (include only when applicable):
 
 	| Requirement ID | Design Section | Notes |
 	|---|---|---|
+	This traceability column format is prompt-specific for Prompt 3 and intentionally differs from Prompt 4.
 
 The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract specificity rule applies.)
 

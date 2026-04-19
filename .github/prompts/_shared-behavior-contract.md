@@ -9,9 +9,10 @@
 - Create only requested output files; do not create extra documentation or reports unless asked.
 - Keep output focused on the requested update.
 - Each workflow artifact must be specific enough for the next step to proceed without introducing assumptions.
-- When the workflow loops, update the existing `implementation-plan.md` and `discrepancy-reports/*.md` files in place by appending new content including phases, tasks, and run history. (Example of loop: `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`). 
-- Updates to `discrepancy-reports/*.md` follow the structured section model defined in Prompt 6: update `Current Run Summary`, move newly resolved items to `Resolved Since Last Run`, and append any new open discrepancies.
-- Do not create new artifact files for additional loop iterations unless the user requests a new artifact.
+- When the workflow loops (for example, `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`):
+	- Update the existing `implementation-plan.md` and `discrepancy-reports/*.md` files in place by appending new content (phases, tasks, run history).
+	- Updates to `discrepancy-reports/*.md` follow the structured section model defined in Prompt 6: update `Current Run Summary`, move newly resolved items to `Resolved Since Last Run`, and append any new open discrepancies.
+	- Do not create new artifact files for additional loop iterations unless the user requests a new artifact.
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked.
 - When an active prompt explicitly requires post-phase issue detection and fixing, applying those fixes is allowed when they remain in scope.
@@ -50,6 +51,7 @@ When Prompt 5 or Prompt 6 appends run-history notes to `implementation-plan.md`:
 - If the section does not exist yet, create it before appending the new note.
 - Append new notes in chronological order.
 - Use the canonical note formats below. Prompts 5 and 6 must not redefine these formats inline.
+- In the formats below, replace `[YYYY-MM-DD]` with the actual run date in ISO 8601 format (e.g., `2026-04-19`). Use an em-dash (`—`) not a hyphen (`-`).
 
 Canonical Prompt 5 no-open-tasks note:
 ```
