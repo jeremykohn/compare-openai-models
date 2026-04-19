@@ -11,7 +11,7 @@ Each prompt produces an artifact that feeds the next step.
 | 2 | `prompt-2-create-requirements-from-description.md` | `description.md` | `requirements.md` |
 | 3 | `prompt-3-create-technical-design-from-requirements.md` | `requirements.md` | `design.md` |
 | 4 | `prompt-4-create-implementation-plan-from-design.md` | `design.md` | `implementation-plan.md` |
-| 5 | `prompt-5-implement-from-plan.md` | `implementation-plan.md` | Updated checkboxes + quality-gate notes, or no-open-tasks note |
+| 5 | `prompt-5-implement-from-plan.md` | `implementation-plan.md` | Updated checkboxes, or no-open-tasks note |
 | 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + `implementation-plan.md` | Discrepancy reports + remediation tasks appended to implementation plan, or no-unresolved-discrepancies note |
 
 ## Prompt Header Convention
@@ -54,15 +54,11 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
 - **Step 4 — Create Implementation Plan**:
   - Converts `design.md` into a phased implementation plan.
   - Uses standardized checkbox tasks with canonical task IDs.
-  - Includes placeholders for quality-gate notes and follow-up tasks.
   - Writes `implementation-plan.md`.
 
 - **Step 5 — Implement from Plan**:
   - Executes open tasks in `implementation-plan.md` and marks completed checkboxes (`- [x]`).
   - Uses a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
-  - Runs per-phase and final quality gates on modified files.
-  - Appends quality-gate findings/fixes notes in-place using the `Canonical Quality-Gate Note Entry Schema` in `.github/prompts/_shared-behavior-contract.md`.
-  - Adds follow-up tasks when needed (`P{phase-number}-T{task-number}` for phase-scoped tasks; `QG-T{task-number}` for end-of-file quality-gate follow-up tasks).
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:
@@ -99,7 +95,7 @@ Example:
 ## Standardized Task Format (Description + Example)
 
 Plan tasks in `implementation-plan.md` use a standardized checkbox format with canonical task IDs.
-`.github/prompts/_shared-behavior-contract.md` is the canonical source for workflow task ID conventions, including phase task IDs and non-phase-scoped quality-gate follow-up task IDs.
+`.github/prompts/_shared-behavior-contract.md` is the canonical source for workflow task ID conventions.
 
 Example:
 
@@ -110,33 +106,6 @@ Example:
   - Dependencies: P2-T1, P2-T2
   - Validation command: npm test -- server/api/compare.test.ts
   - Expected result: Comparison route returns valid JSON payload for both success and error paths.
-```
-
-## Standardized Quality-Gate Format (Description + Example)
-
-Quality-gate note entries use the `Canonical Quality-Gate Note Entry Schema` section in `.github/prompts/_shared-behavior-contract.md`.
-
-Example note entries:
-
-```markdown
-- Finding: Response schema omitted required `model` field.
-- Proposed fix: Add `model` to response mapper and update related tests.
-- Applied: Yes — mapper and tests updated.
-- Task link: P2-T3
-```
-
-If a quality gate adds non-phase-scoped follow-up tasks, append them under `Quality Gate Follow-up Tasks` with next-available ascending `QG-T{task-number}` IDs.
-Use the canonical workflow task ID conventions in `.github/prompts/_shared-behavior-contract.md` when assigning these IDs.
-
-Example follow-up task:
-
-```markdown
-- [ ] Add missing error-state assertion for response mapper
-  - Task ID: QG-T4
-  - Description: Add regression test for malformed response payload handling.
-  - Dependencies: None
-  - Validation command: npm test -- server/utils/mapper.test.ts
-  - Expected result: Mapper test suite passes and covers malformed payload branch.
 ```
 
 ## Shared Behavior Contract

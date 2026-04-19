@@ -44,7 +44,6 @@ Each phase of the implementation plan should include these components:
     - `Expected result: <pass condition>`
 - Validation
 - Exit Criteria ("Done when...")
-- Quality Gate Notes (placeholder section, to be populated during Prompt 5 quality gates using the `Canonical Quality-Gate Note Entry Schema` section in `.github/prompts/_shared-behavior-contract.md`)
 
 When writing the plan:
 
@@ -55,12 +54,6 @@ When writing the plan:
 - Include unit tests, integration tests, and end-to-end tests where applicable to scope.
 - Include a traceability section mapping phases or major tasks back to the design. Keep it brief; a short table is sufficient. This section is required.
 - If there are gaps, contradictions, or missing implementation details in the design, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
-
-After all phases are defined, include a `Final Quality Gate Notes` section (placeholder, using the `Canonical Quality-Gate Note Entry Schema` section in `.github/prompts/_shared-behavior-contract.md`) for Prompt 5 final-gate outputs.
-
-Also include a `Quality Gate Follow-up Tasks` section (placeholder) at the end of the implementation plan file for Prompt 5 to append non-phase-scoped follow-up tasks generated during quality gates.
-
-If Prompt 5 appends tasks under `Quality Gate Follow-up Tasks`, use the canonical non-phase-scoped quality-gate follow-up task ID convention defined in `.github/prompts/_shared-behavior-contract.md`.
 
 After writing the plan:
 
