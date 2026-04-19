@@ -23,14 +23,15 @@ After I provide those files:
 2. Determine the current branch name from repository state (for example, run `git branch --show-current`) and include it in `Current Run Summary`.
 3. Determine the repository default branch from git remote metadata (for example, run `git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'`). If the default branch cannot be determined, pause and ask the user before continuing.
 4. Establish the review boundary: run `git diff $(git merge-base HEAD <default-branch>) HEAD --name-only` to enumerate all files changed since the common ancestor with the repository default branch. Use this file list as the boundary for all discrepancy analysis.
+   - Note: `--name-only` produces only filenames. Step 5 analysis must review actual file content. For each in-boundary file, use `git diff $(git merge-base HEAD <default-branch>) HEAD -- <file>` or read the current file contents directly to examine changes.
 5. Review the implemented code within that boundary and compare it against:
    - the technical design, and
    - the implementation plan.
 6. Detect and classify discrepancies.
 7. If no discrepancies are found:
-   - append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using this format:
-     > **Prompt 6 run — [YYYY-MM-DD]:** No unresolved discrepancies found. Workflow complete.
-   - explicitly state that there is no need to continue implementing plan/tasks,
+   - If discrepancy report files already exist and contain open items, move those items to the `Resolved Since Last Run` section before appending the run-history note.
+   - Append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using the canonical Prompt 6 no-discrepancies note format defined in `.github/prompts/_shared-behavior-contract.md`.
+   - Explicitly state that there is no need to continue implementing plan/tasks,
    - and stop.
 8. If discrepancies are found:
    - create discrepancy reports for:
@@ -97,7 +98,7 @@ The remediation plan appended to the implementation plan should:
 - If there are gaps, contradictions, or unresolved questions in either source file, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 - If resolving a discrepancy would change requirements or design intent, pause and request approval before proceeding.
 
-The discrepancy outputs and remediation tasks must be specific enough that Prompt 5 can execute them without introducing assumptions. (Shared contract rule applies.)
+The discrepancy outputs and remediation tasks must be specific enough that Prompt 5 can execute them without introducing assumptions. (Shared contract specificity rule applies.)
 
 ---
 

@@ -9,7 +9,9 @@
 - Create only requested output files; do not create extra documentation or reports unless asked.
 - Keep output focused on the requested update.
 - Each workflow artifact must be specific enough for the next step to proceed without introducing assumptions.
-- When the workflow loops (for example, `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`), update the existing `implementation-plan.md` and `discrepancy-reports/*.md` files in place by appending new content (phases, tasks, run history). Do not create new artifact files for additional loop iterations unless the user requests a new artifact.
+- When the workflow loops, update the existing `implementation-plan.md` and `discrepancy-reports/*.md` files in place by appending new content including phases, tasks, and run history. (Example of loop: `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`). 
+- Updates to `discrepancy-reports/*.md` follow the structured section model defined in Prompt 6: update `Current Run Summary`, move newly resolved items to `Resolved Since Last Run`, and append any new open discrepancies.
+- Do not create new artifact files for additional loop iterations unless the user requests a new artifact.
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked.
 - When an active prompt explicitly requires post-phase issue detection and fixing, applying those fixes is allowed when they remain in scope.
@@ -17,7 +19,7 @@
 
 ## Standard Prompt Header
 
-Workflow prompts in `.github/prompts/` may include this standardized header near the top of the file to ensure Copilot reads and applies this shared contract before executing the prompt:
+Workflow prompts in `.github/prompts/` use this standardized header near the top of the file to ensure Copilot reads and applies this shared contract before executing the prompt:
 
 ```
 Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` before proceeding.
@@ -39,3 +41,22 @@ When creating a new spec folder under `.github/specs/`:
 - Name the folder `{NNN}-{short-update-name}`, where `NNN` is the next sequential number after the highest existing numbered folder (e.g., `002`, `003`). Use `001` if no numbered folder exists yet.
 - `short-update-name` is a short kebab-case phrase describing the update.
 - Before writing any files, verify the computed folder name does not already exist. If it does (for example, due to a concurrent run), re-scan and choose the next available `NNN`.
+
+## Implementation Plan Run History Notes
+
+When Prompt 5 or Prompt 6 appends run-history notes to `implementation-plan.md`:
+
+- Append notes under a dedicated `## Run History` section at the end of the file.
+- If the section does not exist yet, create it before appending the new note.
+- Append new notes in chronological order.
+- Use the canonical note formats below. Prompts 5 and 6 must not redefine these formats inline.
+
+Canonical Prompt 5 no-open-tasks note:
+```
+> **Prompt 5 run — [YYYY-MM-DD]:** No open tasks found. Forwarding to Prompt 6.
+```
+
+Canonical Prompt 6 no-discrepancies note:
+```
+> **Prompt 6 run — [YYYY-MM-DD]:** No unresolved discrepancies found. Workflow complete.
+```

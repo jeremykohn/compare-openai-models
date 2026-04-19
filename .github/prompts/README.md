@@ -123,7 +123,7 @@ Staleness guide:
 - Re-running **Step 1** makes `requirements.md`, `design.md`, `implementation-plan.md`, and all discrepancy artifacts stale.
 - Re-running **Step 2** makes `design.md`, `implementation-plan.md`, and all discrepancy artifacts stale.
 - Re-running **Step 3** makes `implementation-plan.md` and all discrepancy artifacts stale.
-- Re-running **Step 4** makes Prompt 5 implementation progress and all discrepancy artifacts stale.
+- Re-running **Step 4** makes task checkbox state in `implementation-plan.md`, any code implemented against the old plan, and all discrepancy artifacts stale.
 - Re-running **Step 5** can make discrepancy reports and remediation tasks stale if implementation changes after the last Prompt 6 run.
 - Re-running **Step 6** updates discrepancy reports and remediation tasks in place; any older remediation assumptions should be re-validated against the current implementation plan.
 

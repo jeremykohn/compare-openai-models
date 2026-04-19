@@ -63,7 +63,7 @@ Optional sections (include only when applicable):
 	| Requirement ID | Design Section | Notes |
 	|---|---|---|
 
-The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract rule applies.)
+The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract specificity rule applies.)
 
 ---
 

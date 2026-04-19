@@ -61,7 +61,7 @@ When writing the plan:
 
 After writing the plan:
 
-- Review the full plan and every task for completeness, consistency with the provided technical design, correctness of task format, and traceability (each phase or task should map to a design section or requirement).
+- Review the full plan and every task for completeness, consistency with the provided technical design, correctness of task format, uniqueness of task IDs, and traceability (each phase or task should map to a design section or requirement).
 - If any issues are found, correct the plan before finishing.
 - If any issue cannot be self-corrected, pause and ask the user before finishing. (Shared contract clarification-first rule applies.)
 

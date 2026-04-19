@@ -67,12 +67,11 @@ After completing a phase, run this cycle before moving to the next phase. A phas
 - Limit issue detection/fixes to files modified in that phase and in-scope behavior.
 - Map each applied fix to an existing task or a newly appended follow-up task before applying.
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation.
-- If there are no open tasks (`- [ ]`) at the start, append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using this format:
-  > **Prompt 5 run — [YYYY-MM-DD]:** No open tasks found. Forwarding to Prompt 6.
+- If there are no open tasks (`- [ ]`) at the start, append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using the canonical Prompt 5 no-open-tasks note format defined in `.github/prompts/_shared-behavior-contract.md`.
 
   State that implementation is already complete and direct the user to Prompt 6.
 
-The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract rule applies.)
+The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract specificity rule applies.)
 
 ---
 
