@@ -54,7 +54,7 @@ After completing a phase, run this cycle before moving to the next phase. A phas
   - If regressions remain, iterate fix → re-check until checks pass or clarification is required.
 6. **Plan updates**
   - Mark follow-up tasks as complete (`- [x]`) when fully applied and validated in the same run.
-  - Keep unresolved follow-up tasks open (`- [ ]`) until they are revisited and completed later in the same Prompt 5 run, before starting the next phase.
+  - Keep unresolved follow-up tasks open (`- [ ]`) until they are revisited and completed later in the same Prompt 5 run, before starting the next phase or ending the Prompt 5 run (for the final phase).
 
 ## Execution Requirements
 
