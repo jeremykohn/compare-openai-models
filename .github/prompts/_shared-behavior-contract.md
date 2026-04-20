@@ -35,6 +35,16 @@ Use these canonical task ID conventions throughout the workflow:
 - Do not reuse gaps left by removed, completed, or renumbered tasks.
 - If a proposed phase task ID collides with an existing ID, increment to the next available `T{n}` in that phase.
 
+## Canonical Discrepancy ID Convention
+
+Individual discrepancies within a spec folder are identified using `DISC-NNN` IDs:
+
+- Assign IDs sequentially within a spec folder, starting from `DISC-001`.
+- Scan all existing discrepancy report files in the spec folder before assigning a new ID, and use the next available number after the highest existing ID.
+- Once assigned, a discrepancy ID must not be reused or reassigned, even after the discrepancy is resolved.
+- Include the assigned `DISC-NNN` ID at the start of each discrepancy entry in the report and in the `Resolution Mapping`.
+- Do not reuse gaps left by resolved or removed discrepancies.
+
 ## Spec Folder Naming Convention
 
 When creating a new spec folder under `.github/specs/`:
