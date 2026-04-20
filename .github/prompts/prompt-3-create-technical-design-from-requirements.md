@@ -58,7 +58,7 @@ Optional sections (include only when applicable):
 
 - Ensure the design is consistent with the provided requirements.
 - If there are gaps, contradictions, or ambiguous requirements, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
-- Include a traceability section mapping requirement IDs to the design sections that address them. This section is required. Use this column format:
+- Include a traceability section mapping requirement IDs (`FR-xxx`, `TR-xxx`, `SR-xxx`, and `PR-xxx` when present) to the design sections that address them. This section is required. Use this column format:
 
 	| Requirement ID | Design Section | Notes |
 	|---|---|---|
