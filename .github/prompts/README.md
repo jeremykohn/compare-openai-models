@@ -43,7 +43,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
 
 - **Step 2 — Create Requirements**:
   - Converts `description.md` into a requirements document.
-  - Produces functional, technical, security, and performance requirement IDs where applicable.
+  - Produces functional, technical, security, accessibility, and performance requirement IDs where applicable.
   - Writes `requirements.md`.
 
 - **Step 3 — Create Technical Design**:
