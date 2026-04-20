@@ -65,8 +65,8 @@ Each discrepancy report should:
      - `Implementation Plan:` path to the implementation plan file
   2. `Open Discrepancies`
   3. `Resolved Since Last Run`
-  4. `Historical Discrepancies` (optional archive)
-- Clearly identify each discrepancy.
+  4. `Historical Discrepancies` (archive) — at the start of each new run, move all items from `Resolved Since Last Run` that were already present in the prior run into this section before populating `Resolved Since Last Run` with newly resolved items from the current run.
+- Assign each discrepancy a `DISC-NNN` ID using the convention defined in `.github/prompts/_shared-behavior-contract.md`. Include the ID at the start of each discrepancy entry.
 - For each discrepancy, add expected evidence (tests, file diffs, command output)
 - Explain what was expected and what was actually implemented.
 - If the discrepancy report conflicts with the design, the design is the source of truth unless the user says otherwise.
