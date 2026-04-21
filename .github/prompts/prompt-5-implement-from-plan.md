@@ -40,6 +40,15 @@ Repeat this cycle for the current phase until no open tasks remain in that phase
 
 **Round tracking:** Maintain a per-phase round counter starting at 1. Increment by 1 each time this cycle runs for the same phase. Reset to 1 when starting a new phase. Use the current round number when naming subsections (see step 3).
 
+**Permission gate:** Rounds 1 through 3 for each phase run without additional permission. After completing round 3, stop and ask the user before running round 4. For every additional round beyond 3 in the same phase (round 4, 5, 6, ...), ask again before each round. Deterministic behavior at the gate:
+
+- If the user says yes (or equivalent), run exactly one additional round, then ask again before the next.
+- If the user says no, pause until the user says to resume.
+- If the user says to skip to the next phase, stop find-and-fix for the current phase and proceed to the next phase immediately, even when unresolved fixes remain. Unresolved issues may remain open in the current phase when the user directs a skip; this is allowed. Preserve any existing open tasks — do not force additional rounds to close them.
+- If the user does not respond, or if the response is unclear, vague, or ambiguous, pause and ask the user to clarify.
+
+The 3-round threshold applies independently to each phase. The per-phase round counter resets to 1 at the start of each new phase.
+
 1. **Scope capture**
   - Identify files modified during the just-completed phase.
   - Restrict detection and fixes to those files and in-scope phase behavior.
