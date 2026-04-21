@@ -21,13 +21,13 @@ After I provide the description file:
     - Technical requirements
 3. Include these additional sections when applicable to scope:
     - Security requirements
-    - Include when the update affects authentication, authorization, data handling, input validation, secrets, external integrations, or other security-relevant behavior
-    - Include OWASP Top 10-aligned controls relevant to scope, plus additional security requirements derived from the description and optional constraints
+      - Include when the update affects authentication, authorization, data handling, input validation, secrets, external integrations, or other security-relevant behavior
+      - Include OWASP Top 10-aligned controls relevant to scope, plus additional security requirements derived from the description and optional constraints
     - Accessibility requirements
-    - Include when user-facing interfaces, content, forms, workflows, documents, or assistive-technology interaction are in scope
-    - Include WCAG-aligned controls relevant to scope, plus additional accessibility requirements derived from the description and optional constraints
+      - Include when user-facing interfaces, content, forms, workflows, documents, or assistive-technology interaction are in scope
+      - Include WCAG-aligned controls relevant to scope, plus additional accessibility requirements derived from the description and optional constraints
     - Performance requirements
-    - Include when the description or constraints mention latency, throughput, load, scalability, SLA, or response time targets
+      - Include when the description or constraints mention latency, throughput, load, scalability, SLA, or response time targets
 4. If there are gaps, missing details, conflicting expectations, or anything vague or ambiguous, pause and ask me focused clarifying questions before continuing.
 5. Before saving, check whether `requirements.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing.
 6. Save the requirements to `requirements.md` in that folder.
