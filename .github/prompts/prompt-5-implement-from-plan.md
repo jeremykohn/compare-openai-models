@@ -38,6 +38,8 @@ After I provide that file:
 After completing a phase, run this cycle before moving to the next phase. A phase is complete when all open tasks under the current phase are completed.
 Repeat this cycle for the current phase until no open tasks remain in that phase after follow-up task insertions.
 
+**Round tracking:** Maintain a per-phase round counter starting at 1. Increment by 1 each time this cycle runs for the same phase. Reset to 1 when starting a new phase. Use the current round number when naming subsections (see step 3).
+
 1. **Scope capture**
   - Identify files modified during the just-completed phase.
   - Restrict detection and fixes to those files and in-scope phase behavior.
@@ -46,7 +48,11 @@ Repeat this cycle for the current phase until no open tasks remain in that phase
   - Prefer file-scoped or test-scoped commands to reduce unrelated noise.
 3. **Issue review and fix planning**
   - Ask Copilot to review phase-modified files for phase-introduced, scope-relevant issues.
-  - For each proposed fix, map it to an existing open task when possible; otherwise append a new follow-up task under the current phase task list using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID before applying the fix.
+  - For each issue found, propose a fix.
+  - For each proposed fix, map it to an existing open task when possible; otherwise create a new follow-up task in a dedicated subsection for this round under the current phase task list:
+    - If no subsection for this round exists yet, create it with the heading `#### Find-and-Fix Round {n}` (where `{n}` is the current phase round counter) immediately before appending the first task.
+    - Append the new follow-up task inside this round's subsection using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID.
+    - Place the subsection under the same phase section where the fix was detected; do not create global or cross-phase subsections.
 4. **Apply fixes**
   - Apply only in-scope fixes tied to the just-completed phase.
   - Do not fix unrelated issues.
