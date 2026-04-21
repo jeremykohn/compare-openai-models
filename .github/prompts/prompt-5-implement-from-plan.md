@@ -36,6 +36,7 @@ After I provide that file:
 ## Post-Phase Find-and-Fix Cycle
 
 After completing a phase, run this cycle before moving to the next phase. A phase is complete when all open tasks under the current phase are completed.
+Repeat this cycle for the current phase until no open tasks remain in that phase after follow-up task insertions.
 
 1. **Scope capture**
   - Identify files modified during the just-completed phase.
@@ -59,6 +60,7 @@ After completing a phase, run this cycle before moving to the next phase. A phas
 ## Execution Requirements
 
 - Follow the implementation plan as closely as practical.
+- Preserve in-scope requirement-category coverage represented in the implementation plan, including security, accessibility, and performance concerns when present.
 - Use checkbox state as the source of truth for task completion status.
 - Prefer small, reviewable changes.
 - Follow the TDD red-green-refactor loop as defined in step 3 above.

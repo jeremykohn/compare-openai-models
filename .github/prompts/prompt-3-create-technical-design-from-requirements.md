@@ -17,7 +17,8 @@ After I provide the requirements file:
 
 1. Read and analyze the requirements carefully.
 2. Create a clear, detailed technical design for implementing the requested update.
-3. Save the technical design to `design.md` in that folder.
+3. Before saving, check whether `design.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing.
+4. Save the technical design to `design.md` in that folder.
 
 ## Technical Design Expectations
 
@@ -32,7 +33,12 @@ Include, where applicable to scope:
 - API contracts and request/response shapes
 - Validation and error-handling approach
 - Security considerations
-- Performance considerations (required when performance requirements exist in `requirements.md`, such as `PR-xxx` IDs; see Output Structure)
+- Accessibility considerations
+    - Required when accessibility requirements exist in `requirements.md`, such as `AR-{n}` IDs
+    - Use the dedicated `Accessibility` section for consolidated AR-specific design decisions, while also reflecting those decisions in relevant sections such as `Interfaces`, `Validation/Error Handling`, and `Testing`
+- Performance considerations
+    - Required when performance requirements exist in `requirements.md`, such as `PR-{n}` IDs
+    - Use the dedicated `Performance` section for consolidated PR-specific design decisions, while also reflecting those decisions in relevant sections such as `Architecture` and `Data`
 - Testing strategy
 - Assumptions, constraints, and open questions
 
@@ -48,9 +54,13 @@ Required sections (must be present in every `design.md`):
 - Security
 - Testing
 
-Optional sections (include only when applicable):
+Conditional design sections (include when trigger conditions apply):
 
-- Performance (required when performance requirements exist in `requirements.md`, such as `PR-xxx` IDs)
+- Accessibility (required when accessibility requirements exist in `requirements.md`, such as `AR-{n}` IDs)
+- Performance (required when performance requirements exist in `requirements.md`, such as `PR-{n}` IDs)
+
+Clarification sections (include when questions or blockers exist):
+
 - Open Questions
 - Blocked Questions (include and stop here if requirement ambiguities remain unresolved after clarification attempts; once unblocked, re-run this prompt with the resolved inputs to complete and replace the partial `design.md`)
 
@@ -58,11 +68,11 @@ Optional sections (include only when applicable):
 
 - Ensure the design is consistent with the provided requirements.
 - If there are gaps, contradictions, or ambiguous requirements, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
-- Include a traceability section mapping requirement IDs (`FR-xxx`, `TR-xxx`, `SR-xxx`, `AR-xxx`, and `PR-xxx` when present) to the design sections that address them. This section is required. Use this column format:
+- Include a traceability section mapping requirement IDs (`FR-{n}`, `TR-{n}`, `SR-{n}`, `AR-{n}`, and `PR-{n}` when present) to the design sections that address them. This section is required. Use this column format:
 
-	| Requirement ID | Design Section | Notes |
-	|---|---|---|
-	This traceability column format is prompt-specific for Prompt 3 and intentionally differs from Prompt 4.
+    | Requirement ID | Design Section | Notes |
+    |---|---|---|
+    This traceability column format is prompt-specific for Prompt 3 and intentionally differs from Prompt 4.
 
 The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract specificity rule applies.)
 
