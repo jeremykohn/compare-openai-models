@@ -62,6 +62,7 @@ The 3-round threshold applies independently to each phase. The per-phase round c
     - If no subsection for this round exists yet, create it with the heading `#### Find-and-Fix Round {n}` (where `{n}` is the current phase round counter) immediately before appending the first task.
     - Append new follow-up tasks inside this round's subsection using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID.
     - Include a `Severity` field on each follow-up task using only: `critical`, `important`, or `minor`.
+    - `Severity` is an additional required field for find-and-fix-created follow-up tasks and does not replace or redefine the shared canonical task format.
     - When appending one or more follow-up tasks for the round, append in deterministic severity order: all `critical` tasks first, then all `important` tasks, then all `minor` tasks.
     - For tasks with the same severity, preserve discovery order within that severity bucket.
     - Place the subsection under the same phase section where the fix was detected; do not create global or cross-phase subsections.
