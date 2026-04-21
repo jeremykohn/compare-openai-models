@@ -59,7 +59,7 @@ When writing the plan:
   | Phase / Task ID | Design Section | Notes |
   | --------------- | -------------- | ----- |
 
-- This traceability column format is prompt-specific for Prompt 4 and intentionally differs from Prompt 3.
+- This traceability column format is prompt-specific for Prompt 4 (maps plan tasks to design sections) and intentionally differs from Prompt 3 (which maps requirement IDs to design sections).
 - If there are gaps, contradictions, or missing implementation details in the design, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 
 After writing the plan:

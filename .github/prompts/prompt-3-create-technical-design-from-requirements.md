@@ -72,7 +72,7 @@ Clarification sections (include when questions or blockers exist):
 
     | Requirement ID | Design Section | Notes |
     |---|---|---|
-    This traceability column format is prompt-specific for Prompt 3 and intentionally differs from Prompt 4.
+    This traceability column format is prompt-specific for Prompt 3 (maps requirement IDs to design sections) and intentionally differs from Prompt 4 (which maps plan tasks to design sections).
 
 The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract specificity rule applies.)
 

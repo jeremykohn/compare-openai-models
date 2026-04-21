@@ -45,6 +45,7 @@ When generating `requirements.md`:
     - Performance Requirements (`PR-1`, ...)
 - Each functional requirement must be testable and unambiguous.
 - Each technical requirement must be specific, testable, and implementation-relevant.
+  - Technical requirements should address areas such as architecture, APIs, data flow, validation, error handling, and testing where applicable to scope.
 - Each security requirement must be specific, testable, and scoped to the requested update.
 - Security requirements should include OWASP Top 10-aligned controls relevant to scope and additional security requirements indicated by the source `description.md` and/or optional constraints.
 - Each accessibility requirement must be specific, testable, and scoped to the requested update.
@@ -53,7 +54,6 @@ When generating `requirements.md`:
 - For all requirement categories, include clear acceptance criteria where applicable.
 - Include an "Out of Scope / Non-Goals" section.
 - Include assumptions and constraints.
-- Include concrete technical requirements covering architecture, APIs, data flow, validation, error handling, security, accessibility, and testing where applicable to scope.
 - Prefer precise language over vague wording.
 - Make the requirements detailed enough to support later design and implementation planning. (See `.github/prompts/_shared-behavior-contract.md` for the workflow-wide specificity rule.)
 
