@@ -92,7 +92,7 @@ The 3-round threshold applies independently to each phase. The per-phase round c
 
   State that implementation is already complete and direct the user to Prompt 6.
 
-The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract specificity rule applies.)
+The implemented changes must be documented specifically enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract specificity rule applies.)
 
 ---
 

@@ -33,6 +33,8 @@ Include, where applicable to scope:
 - API contracts and request/response shapes
 - Validation and error-handling approach
 - Security considerations
+    - Required in every `design.md`; also required when security requirements exist in `requirements.md`, such as `SR-{n}` IDs
+    - Use the dedicated `Security` section for consolidated SR-specific design decisions, while also reflecting those decisions in relevant sections such as `Interfaces`, `Validation/Error Handling`, and `Testing`
 - Accessibility considerations
     - Required when accessibility requirements exist in `requirements.md`, such as `AR-{n}` IDs
     - Use the dedicated `Accessibility` section for consolidated AR-specific design decisions, while also reflecting those decisions in relevant sections such as `Interfaces`, `Validation/Error Handling`, and `Testing`
@@ -72,7 +74,8 @@ Clarification sections (include when questions or blockers exist):
 
     | Requirement ID | Design Section | Notes |
     |---|---|---|
-    This traceability column format is prompt-specific for Prompt 3 (maps requirement IDs to design sections) and intentionally differs from Prompt 4 (which maps plan tasks to design sections).
+
+- This traceability column format is prompt-specific for Prompt 3 (maps requirement IDs to design sections) and intentionally differs from Prompt 4 (which maps plan tasks to design sections).
 
 The design must be specific enough that the implementation-plan prompt can proceed without introducing assumptions. (Shared contract specificity rule applies.)
 
