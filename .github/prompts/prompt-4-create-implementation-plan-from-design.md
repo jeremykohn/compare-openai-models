@@ -20,7 +20,6 @@ After I provide the design file:
 3. Before saving, check whether `implementation-plan.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing.
 4. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
 
-
 ## Implementation Plan Expectations
 
 The implementation plan should:
@@ -58,7 +57,8 @@ When writing the plan:
 - Include a traceability section mapping phases or major tasks back to the design. This section is required. Use this column format:
 
   | Phase / Task ID | Design Section | Notes |
-  |---|---|---|
+  | --------------- | -------------- | ----- |
+
 - This traceability column format is prompt-specific for Prompt 4 and intentionally differs from Prompt 3.
 - If there are gaps, contradictions, or missing implementation details in the design, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 

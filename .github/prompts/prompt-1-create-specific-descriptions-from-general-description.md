@@ -21,8 +21,8 @@ After I provide it:
 3. If the input is vague, conflicting, unclear, or ambiguous, pause and ask focused clarifying questions before continuing. (Shared contract clarification-first rule applies.)
 4. For each update:
    - Create a folder under `.github/specs/` named `{NNN}-{short-update-name}`.
-        - Follow the spec folder naming convention defined in `.github/prompts/_shared-behavior-contract.md`.
-        - Example: `.github/specs/002-compare-model-outputs/`
+     - Follow the spec folder naming convention defined in `.github/prompts/_shared-behavior-contract.md`.
+     - Example: `.github/specs/002-compare-model-outputs/`
    - Check whether `description.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing. Otherwise, create `description.md` in that folder.
    - Save:
      - the original high-level description (preserving meaning; only normalize formatting/grammar), and
