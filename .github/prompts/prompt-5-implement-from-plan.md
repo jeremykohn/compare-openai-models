@@ -60,7 +60,10 @@ The 3-round threshold applies independently to each phase. The per-phase round c
   - For each issue found, propose a fix.
   - For each proposed fix, map it to an existing open task when possible; otherwise create a new follow-up task in a dedicated subsection for this round under the current phase task list:
     - If no subsection for this round exists yet, create it with the heading `#### Find-and-Fix Round {n}` (where `{n}` is the current phase round counter) immediately before appending the first task.
-    - Append the new follow-up task inside this round's subsection using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID.
+    - Append new follow-up tasks inside this round's subsection using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID.
+    - Include a `Severity` field on each follow-up task using only: `critical`, `important`, or `minor`.
+    - When appending one or more follow-up tasks for the round, append in deterministic severity order: all `critical` tasks first, then all `important` tasks, then all `minor` tasks.
+    - For tasks with the same severity, preserve discovery order within that severity bucket.
     - Place the subsection under the same phase section where the fix was detected; do not create global or cross-phase subsections.
 4. **Apply fixes**
   - Apply only in-scope fixes tied to the just-completed phase.
