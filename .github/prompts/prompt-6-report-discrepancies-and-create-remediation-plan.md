@@ -77,7 +77,7 @@ Each discrepancy report should:
 - Assign each discrepancy a `DISC-{n}` ID using the convention defined in `.github/prompts/_shared-behavior-contract.md`. Include the ID at the start of each discrepancy entry.
 - For each discrepancy, add expected evidence (tests, file diffs, command output)
 - Explain what was expected and what was actually implemented.
-- If the discrepancy report conflicts with the design, the design is the source of truth unless the I say otherwise.
+- If the discrepancy report conflicts with the design, the design is the source of truth unless I say otherwise.
 
 Each discrepancy should:
 
