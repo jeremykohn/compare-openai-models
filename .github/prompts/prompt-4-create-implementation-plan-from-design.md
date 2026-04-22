@@ -17,8 +17,8 @@ After I provide the design file:
 
 1. Read and analyze the technical design carefully.
 2. Create a concrete implementation plan for delivering the design.
-3. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
-
+3. Before saving, check whether `implementation-plan.md` already exists in that folder. If it does, pause and ask me whether to overwrite, append, or abort before continuing.
+4. Save the implementation plan to `implementation-plan.md` in the same folder as the technical design document.
 
 ## Implementation Plan Expectations
 
@@ -37,7 +37,7 @@ Each phase of the implementation plan should include these components:
 - Objective
 - Tasks (small, dependency-ordered; each task must follow this exact format)
   - `- [ ] <Task title>`
-    - `Task ID: <canonical phase task ID defined in .github/prompts/_shared-behavior-contract.md>`
+    - ``Task ID: <canonical phase task ID defined in `.github/prompts/_shared-behavior-contract.md`>``
     - `Description: <what to implement>`
     - `Dependencies: <task IDs or 'None'>`
     - `Validation command: <exact command>`
@@ -52,19 +52,21 @@ When writing the plan:
 - For each phase, include a list of small, specific, independently testable tasks ordered by dependency.
 - Use the canonical phase task ID convention defined in `.github/prompts/_shared-behavior-contract.md` for every task.
 - Include unit tests, integration tests, and end-to-end tests where applicable to scope.
+- Ensure phases and tasks preserve coverage of requirement categories represented in the design, including security, accessibility, and performance concerns when present.
 - Keep phases and tasks structured and traceable enough to support post-phase issue detection, fix mapping, and validation during Prompt 5 execution.
 - Include a traceability section mapping phases or major tasks back to the design. This section is required. Use this column format:
 
   | Phase / Task ID | Design Section | Notes |
-  |---|---|---|
-- This traceability column format is prompt-specific for Prompt 4 and intentionally differs from Prompt 3.
+  | --------------- | -------------- | ----- |
+
+- This traceability column format is prompt-specific for Prompt 4 (maps plan tasks to design sections) and intentionally differs from Prompt 3 (which maps requirement IDs to design sections).
 - If there are gaps, contradictions, or missing implementation details in the design, pause and clarify before continuing. (Shared contract clarification-first rule applies.)
 
 After writing the plan:
 
-- Review the full plan and every task for completeness, consistency with the provided technical design, correctness of task format, uniqueness of task IDs, and traceability (each phase or task should map to a design section or requirement).
+- Review the full plan and every task for completeness, consistency with the provided technical design, correctness of task format, uniqueness of task IDs, and traceability (each phase or task should map to a design section; include requirement references in `Notes` when needed).
 - If any issues are found, correct the plan before finishing.
-- If any issue cannot be self-corrected, pause and ask the user before finishing. (Shared contract clarification-first rule applies.)
+- If any issue cannot be self-corrected, pause and ask me before finishing. (Shared contract clarification-first rule applies.)
 
 ---
 

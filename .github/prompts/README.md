@@ -12,7 +12,7 @@ Each prompt produces an artifact that feeds the next step.
 | 3 | `prompt-3-create-technical-design-from-requirements.md` | `requirements.md` | `design.md` |
 | 4 | `prompt-4-create-implementation-plan-from-design.md` | `design.md` | `implementation-plan.md` |
 | 5 | `prompt-5-implement-from-plan.md` | `implementation-plan.md` | Implemented code changes + updated task checkboxes (including post-phase follow-up tasks); or no-open-tasks note if no open tasks at start |
-| 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + `implementation-plan.md` | Discrepancy reports + remediation tasks appended to implementation plan, or no-unresolved-discrepancies note |
+| 6 | `prompt-6-report-discrepancies-and-create-remediation-plan.md` | `design.md` + `implementation-plan.md` | Discrepancy report files + remediation tasks appended to `implementation-plan.md`, or no-unresolved-discrepancies note |
 
 ## Prompt Header Convention
 
@@ -43,30 +43,38 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
 
 - **Step 2 — Create Requirements**:
   - Converts `description.md` into a requirements document.
-  - Produces functional, technical, and performance requirement IDs where applicable.
+  - Produces functional, technical, security, accessibility, and performance requirement IDs where applicable.
   - Writes `requirements.md`.
 
 - **Step 3 — Create Technical Design**:
   - Converts `requirements.md` into implementation-ready technical design details.
+  - Ensures the design addresses all requirement categories in scope (including security, accessibility, and performance requirements when present).
   - Requires traceability from requirement IDs to design sections.
   - Writes `design.md`.
 
 - **Step 4 — Create Implementation Plan**:
   - Converts `design.md` into a phased implementation plan.
   - Uses standardized checkbox tasks with canonical task IDs.
+  - Preserves in-scope design concerns such as security, accessibility, and performance when present.
   - Writes `implementation-plan.md`.
 
 - **Step 5 — Implement from Plan**:
   - Executes open tasks in `implementation-plan.md` and marks completed checkboxes (`- [x]`).
+  - Preserves in-scope requirement-category coverage represented in the plan, including security, accessibility, and performance concerns when present.
   - Uses a Test-Driven Development (TDD) red-green-refactor loop while executing tasks.
   - After each phase, runs a post-phase find-and-fix cycle scoped to files modified in that phase.
+  - Tracks a per-phase round counter; each round appends follow-up tasks under a numbered `#### Find-and-Fix Round {n}` subsection within the current phase.
+  - Requires each find-and-fix follow-up task appended during Prompt 5 rounds to include `Severity` with one of: `critical`, `important`, or `minor`; appends those follow-up tasks by severity order (`critical` → `important` → `minor`) while preserving discovery order within the same severity.
+  - Rounds 1–3 run without additional permission; beginning with round 4, stops and asks the user for permission before each additional round. If, instead of giving permission, the user directs a skip to the next phase, unresolved fixes may remain open.
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:
   - Reviews all changes on the current git branch compared to the repository default branch derived from git remote metadata for consistency with `design.md` and `implementation-plan.md`
+  - Checks whether implementation evidence covers requirement categories represented in the design and plan, including security, accessibility, and performance when present.
   - If no discrepancies exist, appends a no-unresolved-discrepancies note and ends.
+  - Existing discrepancy reports may still be updated on no-discrepancy runs to maintain structured history rollover/closure tracking.
   - If discrepancies exist:
-    - Updates discrepancy report files in `discrepancy-reports/` inside the same spec folder as `design.md`.
+    - Updates discrepancy report files in `discrepancy-reports/` inside the same spec folder as `design.md`, maintaining structured discrepancy history (Open Discrepancies, Resolved Since Last Run, Historical Discrepancies) across runs rather than treating each run as an isolated report.
     - Appends remediation tasks to `implementation-plan.md`.
     - Sends workflow back to Step 5.
 
@@ -112,7 +120,7 @@ Example:
 ## Shared Behavior Contract
 
 All prompts reference `.github/prompts/_shared-behavior-contract.md`, which defines shared behavioral rules:
-clarification-first policy, path clarification before file writes, in-place workflow artifact updates (including looped Prompt 5 ↔ Prompt 6 cycles), scope guardrails, canonical task ID conventions, spec folder naming, and run-history note formats.
+clarification-first policy, path clarification before file writes, in-place workflow artifact updates (including looped Prompt 5 ↔ Prompt 6 cycles), scope guardrails, canonical task ID conventions, canonical requirement ID conventions, canonical discrepancy ID conventions, discrepancy archive rollover rules, spec folder naming, and run-history note formats.
 
 ## Re-running a Step
 

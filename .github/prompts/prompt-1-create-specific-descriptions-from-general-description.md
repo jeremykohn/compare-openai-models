@@ -17,11 +17,13 @@ After I provide it:
 
 1. Analyze the input and expand it into a clear, specific update description.
 2. If the input includes multiple unrelated updates, ask whether to split them into separate updates before continuing.
-3. For each update:
+   - If splitting is confirmed, preserve the order of updates provided by the description when assigning successive `{NNN}-{short-update-name}` folders.
+3. If the input is vague, conflicting, unclear, or ambiguous, pause and ask focused clarifying questions before continuing. (Shared contract clarification-first rule applies.)
+4. For each update:
    - Create a folder under `.github/specs/` named `{NNN}-{short-update-name}`.
-        - Follow the spec folder naming convention defined in `.github/prompts/_shared-behavior-contract.md`.
-        - Example: `.github/specs/002-compare-model-outputs/`
-   - Check whether `description.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing. Otherwise, create `description.md` in that folder.
+     - Follow the spec folder naming convention defined in `.github/prompts/_shared-behavior-contract.md`.
+     - Example: `.github/specs/002-compare-model-outputs/`
+   - Check whether `description.md` already exists in that folder. If it does, pause and ask me whether to overwrite, append, or abort before continuing. Otherwise, create `description.md` in that folder.
    - Save:
      - the original high-level description (preserving meaning; only normalize formatting/grammar), and
      - a specific, detailed description of the update.
@@ -42,7 +44,7 @@ Each `description.md` should include:
 3. **Non-Goals (Optional but Recommended)**
    - What this update will not cover.
 
-The output must be specific enough that the next prompt can produce requirements without introducing assumptions.
+The output must be specific enough that the requirements prompt can proceed without introducing assumptions. (See `.github/prompts/_shared-behavior-contract.md` for the workflow-wide specificity rule.)
 
 ---
 

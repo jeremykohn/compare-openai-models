@@ -15,7 +15,7 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 Ask me for:
 
 - The path to the implementation plan file, for example: `.github/specs/001-new-feature/implementation-plan.md`
-  - Verify that `design.md` exists in the same spec folder. If it is missing, pause and ask the user to provide its location before continuing.
+  - Verify that `design.md` exists in the same spec folder. If it is missing, pause and ask me to provide its location before continuing.
 
 After I provide that file:
 
@@ -35,7 +35,20 @@ After I provide that file:
 
 ## Post-Phase Find-and-Fix Cycle
 
-After completing a phase, run this cycle before moving to the next phase. A phase is complete when all open tasks under the current phase are completed.
+Run one or more rounds of this cycle to automatically find and fix issues.
+
+**Round tracking:** Maintain a per-phase round counter starting at 1. Increment by 1 each time this cycle runs for the same phase. Reset to 1 when starting a new phase. Use the current round number when naming subsections (see step 3).
+
+**Permission gate:** Rounds 1 through 3 for each phase run without additional permission. After completing round 3, stop and ask me before running round 4. For every additional round beyond 3 in the same phase (round 4, 5, 6, ...), ask again before each round. Deterministic behavior at the gate:
+
+- If I say yes (or equivalent), run exactly one additional round, then ask again before the next.
+- If I say no, pause until I say to resume.
+- If I say to skip to the next phase, stop find-and-fix for the current phase and proceed to the next phase immediately, even when unresolved fixes remain. Unresolved issues may remain open in the current phase when I direct a skip; this is allowed. Preserve any existing open tasks — do not force additional rounds to close them.
+- If I do not respond, or if my response is unclear, vague, or ambiguous, pause and ask me to clarify.
+
+The 3-round threshold applies independently to each phase. The per-phase round counter resets to 1 at the start of each new phase.
+
+These are the steps of each round of the find-and-fix cycle:
 
 1. **Scope capture**
   - Identify files modified during the just-completed phase.
@@ -45,7 +58,15 @@ After completing a phase, run this cycle before moving to the next phase. A phas
   - Prefer file-scoped or test-scoped commands to reduce unrelated noise.
 3. **Issue review and fix planning**
   - Ask Copilot to review phase-modified files for phase-introduced, scope-relevant issues.
-  - For each proposed fix, map it to an existing open task when possible; otherwise append a new follow-up task under the current phase task list using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID before applying the fix.
+  - For each issue found, propose a fix.
+  - For each proposed fix, map it to an existing open task when possible; otherwise create a new follow-up task in a dedicated subsection for this round under the current phase task list:
+    - If no subsection for this round exists yet, create it with the heading `#### Find-and-Fix Round {n}` (where `{n}` is the current phase round counter) immediately before appending the first task.
+    - Append new follow-up tasks inside this round's subsection using the same full canonical task format as the implementation plan (checkbox line, `Task ID`, `Description`, `Dependencies`, `Validation command`, and `Expected result`) and the next available canonical phase task ID.
+    - Include a `Severity` field on each follow-up task using only: `critical`, `important`, or `minor`.
+    - `Severity` is an additional required field for find-and-fix-created follow-up tasks and does not replace or redefine the shared canonical task format.
+    - When appending one or more follow-up tasks for the round, append in deterministic severity order: all `critical` tasks first, then all `important` tasks, then all `minor` tasks.
+    - For tasks with the same severity, preserve discovery order within that severity bucket.
+    - Place the subsection under the same phase section where the fix was detected; do not create global or cross-phase subsections.
 4. **Apply fixes**
   - Apply only in-scope fixes tied to the just-completed phase.
   - Do not fix unrelated issues.
@@ -59,6 +80,7 @@ After completing a phase, run this cycle before moving to the next phase. A phas
 ## Execution Requirements
 
 - Follow the implementation plan as closely as practical.
+- Preserve in-scope requirement-category coverage represented in the implementation plan, including security, accessibility, and performance concerns when present.
 - Use checkbox state as the source of truth for task completion status.
 - Prefer small, reviewable changes.
 - Follow the TDD red-green-refactor loop as defined in step 3 above.
@@ -69,9 +91,9 @@ After completing a phase, run this cycle before moving to the next phase. A phas
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation.
 - If there are no open tasks (`- [ ]`) at the start, append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using the canonical Prompt 5 no-open-tasks note format defined in `.github/prompts/_shared-behavior-contract.md`.
 
-  State that implementation is already complete and direct the user to Prompt 6.
+  State that implementation is already complete and direct me to Prompt 6.
 
-The implementation execution must be specific enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract specificity rule applies.)
+The implemented changes must be documented specifically enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract specificity rule applies.)
 
 ---
 
