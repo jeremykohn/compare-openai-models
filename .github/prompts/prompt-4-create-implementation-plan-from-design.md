@@ -37,7 +37,7 @@ Each phase of the implementation plan should include these components:
 - Objective
 - Tasks (small, dependency-ordered; each task must follow this exact format)
   - `- [ ] <Task title>`
-    - `Task ID: <canonical phase task ID defined in .github/prompts/_shared-behavior-contract.md>`
+    - ``Task ID: <canonical phase task ID defined in `.github/prompts/_shared-behavior-contract.md`>``
     - `Description: <what to implement>`
     - `Dependencies: <task IDs or 'None'>`
     - `Validation command: <exact command>`
