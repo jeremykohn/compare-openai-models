@@ -9,6 +9,7 @@ export type UiErrorCategory = "network" | "api" | "unknown";
 
 export type NormalizedUiError = {
   category: UiErrorCategory;
+  statusCode?: number;
   message: string;
   details?: string;
 };
@@ -50,6 +51,21 @@ function coerceApiDetails(error: unknown): string | undefined {
   return undefined;
 }
 
+function coerceStatusCode(error: unknown): number | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const candidate = error as Record<string, unknown>;
+  const code = candidate.statusCode ?? candidate.status;
+  if (
+    typeof code === "number" &&
+    Number.isFinite(code) &&
+    code >= 100 &&
+    code <= 599
+  ) {
+    return code;
+  }
+  return undefined;
+}
+
 export function normalizeUiError(error: unknown): NormalizedUiError {
   if (isNetworkFetchError(error)) {
     return {
@@ -60,10 +76,12 @@ export function normalizeUiError(error: unknown): NormalizedUiError {
 
   const apiMessage = coerceApiMessage(error);
   const apiDetails = coerceApiDetails(error);
+  const statusCode = coerceStatusCode(error);
 
   if (apiMessage) {
     return {
       category: "api",
+      statusCode,
       message: sanitizeErrorText(apiMessage),
       details: sanitizeOptionalErrorText(apiDetails),
     };
@@ -87,16 +105,9 @@ export function normalizeApiErrorResponse(
   status: number,
   body: ApiErrorResponse,
 ): NormalizedUiError {
-  if (status >= 500) {
-    return {
-      category: "api",
-      message: sanitizeErrorText(body.message),
-      details: sanitizeOptionalErrorText(body.details),
-    };
-  }
-
   return {
     category: "api",
+    statusCode: status >= 100 && status <= 599 ? status : undefined,
     message: sanitizeErrorText(body.message),
     details: sanitizeOptionalErrorText(body.details),
   };

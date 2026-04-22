@@ -5,6 +5,7 @@ import type {
   OpenAIModel,
 } from "~~/types/api";
 import { normalizeUiError } from "../utils/error-normalization";
+import type { NormalizedUiError } from "../utils/error-normalization";
 import { logNormalizedUiError } from "../utils/log-normalized-ui-error";
 
 type ModelsState = {
@@ -12,8 +13,7 @@ type ModelsState = {
   data: ReadonlyArray<OpenAIModel> | null;
   usedConfigFilter: boolean;
   showFallbackNote: boolean;
-  error: string | null;
-  errorDetails: string | null;
+  error: NormalizedUiError | null;
 };
 
 export function useModelsState() {
@@ -23,7 +23,6 @@ export function useModelsState() {
     usedConfigFilter: false,
     showFallbackNote: false,
     error: null,
-    errorDetails: null,
   });
 
   let latestRequestId = 0;
@@ -41,7 +40,6 @@ export function useModelsState() {
 
     state.status = "loading";
     state.error = null;
-    state.errorDetails = null;
 
     try {
       const response = await fetch("/api/models", {
@@ -81,7 +79,6 @@ export function useModelsState() {
       state.usedConfigFilter = data.usedConfigFilter;
       state.showFallbackNote = data.showFallbackNote;
       state.error = null;
-      state.errorDetails = null;
     } catch (error) {
       if (currentRequestId !== latestRequestId) {
         return;
@@ -90,8 +87,7 @@ export function useModelsState() {
       const normalized = normalizeUiError(error);
       logNormalizedUiError("useModelsState", normalized);
       state.status = "error";
-      state.error = normalized.message;
-      state.errorDetails = normalized.details ?? null;
+      state.error = normalized;
       state.data = null;
     }
   }

@@ -23,4 +23,23 @@ describe("normalizeUiError", () => {
     const normalized = normalizeUiError(123);
     expect(normalized.category).toBe("unknown");
   });
+
+  it("includes statusCode from API error object", () => {
+    const normalized = normalizeUiError({
+      message: "Bad request",
+      statusCode: 400,
+    });
+    expect(normalized.statusCode).toBe(400);
+  });
+
+  it("omits statusCode for network errors", () => {
+    const error = new Error("Failed to fetch");
+    const normalized = normalizeUiError(error);
+    expect(normalized.statusCode).toBeUndefined();
+  });
+
+  it("omits statusCode when value is out of range", () => {
+    const normalized = normalizeUiError({ message: "err", statusCode: 99 });
+    expect(normalized.statusCode).toBeUndefined();
+  });
 });

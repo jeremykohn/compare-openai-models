@@ -1,21 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import type { NormalizedUiError } from "../utils/error-normalization";
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
-    message: string;
-    title?: string;
-    details?: string;
-    enableDetailsToggle?: boolean;
+    error: NormalizedUiError;
     showRetry?: boolean;
     retryLabel?: string;
     detailsToggleTestId?: string;
     retryButtonTestId?: string;
   }>(),
   {
-    title: "Something went wrong",
-    details: undefined,
-    enableDetailsToggle: true,
     showRetry: false,
     retryLabel: "Try again",
     detailsToggleTestId: "error-details-toggle",
@@ -27,18 +21,6 @@ const emit = defineEmits<{
   retry: [];
 }>();
 
-const showDetails = ref(false);
-const hasDetails = computed(() =>
-  Boolean(props.details && props.details.trim().length > 0),
-);
-const canToggleDetails = computed(
-  () => props.enableDetailsToggle && hasDetails.value,
-);
-
-function onToggleDetails(): void {
-  showDetails.value = !showDetails.value;
-}
-
 function onRetry(): void {
   emit("retry");
 }
@@ -49,23 +31,34 @@ function onRetry(): void {
     role="alert"
     class="grid gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800"
   >
-    <p class="text-sm font-semibold">{{ title }}</p>
-    <p class="text-sm text-red-700">{{ message }}</p>
+    <p class="text-sm font-semibold">Something went wrong</p>
+    <p class="text-sm text-red-700">{{ error.message }}</p>
 
-    <button
-      v-if="canToggleDetails"
-      :data-testid="detailsToggleTestId"
-      type="button"
-      class="w-fit text-sm font-medium underline"
-      :aria-expanded="showDetails"
-      @click="onToggleDetails"
-    >
-      {{ showDetails ? "Hide details" : "Show details" }}
-    </button>
+    <details :data-testid="detailsToggleTestId" class="text-xs text-red-700">
+      <summary class="w-fit cursor-pointer text-sm font-medium underline">
+        Error Details
+      </summary>
 
-    <p v-if="canToggleDetails && showDetails" class="text-xs text-red-700">
-      <span class="font-semibold">Details:</span> {{ details }}
-    </p>
+      <dl class="mt-2 grid gap-1">
+        <div class="grid grid-cols-[auto,1fr] gap-x-2">
+          <dt class="font-semibold">Type</dt>
+          <dd>{{ error.category }}</dd>
+        </div>
+
+        <div
+          v-if="typeof error.statusCode === 'number'"
+          class="grid grid-cols-[auto,1fr] gap-x-2"
+        >
+          <dt class="font-semibold">Status Code</dt>
+          <dd>{{ error.statusCode }}</dd>
+        </div>
+
+        <div v-if="error.details" class="grid grid-cols-[auto,1fr] gap-x-2">
+          <dt class="font-semibold">Details</dt>
+          <dd>{{ error.details }}</dd>
+        </div>
+      </dl>
+    </details>
 
     <button
       v-if="showRetry"

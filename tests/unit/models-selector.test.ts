@@ -64,8 +64,11 @@ describe("ModelsSelector", () => {
         selectedModelId: "",
         status: "error",
         models: null,
-        error: "Could not load models",
-        errorDetails: "Request failed",
+        error: {
+          category: "api",
+          message: "Could not load models",
+          details: "Request failed",
+        },
         showFallbackNote: false,
       },
     });

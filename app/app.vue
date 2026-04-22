@@ -58,7 +58,7 @@ async function handleSubmit(): Promise<void> {
     if (!response.ok) {
       const normalized = normalizeUiError(payload);
       logNormalizedUiError("app.handleSubmit", normalized);
-      fail(normalized.message, normalized.details);
+      fail(normalized);
       return;
     }
 
@@ -67,7 +67,7 @@ async function handleSubmit(): Promise<void> {
   } catch (error) {
     const normalized = normalizeUiError(error);
     logNormalizedUiError("app.handleSubmit", normalized);
-    fail(normalized.message, normalized.details);
+    fail(normalized);
   }
 }
 </script>
@@ -99,7 +99,6 @@ async function handleSubmit(): Promise<void> {
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
-          :error-details="modelsState.errorDetails"
           :show-fallback-note="modelsState.showFallbackNote"
           :disabled="isLoading"
           @update:selected-model-id="selectedModelId = $event"
@@ -168,9 +167,7 @@ async function handleSubmit(): Promise<void> {
 
         <UiErrorAlert
           v-else-if="state.status === 'error' && state.error"
-          :title="'Something went wrong'"
-          :message="state.error"
-          :details="state.errorDetails ?? undefined"
+          :error="state.error"
           :show-retry="false"
         />
       </section>

@@ -132,10 +132,10 @@ describe("app ui", () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain("Something went wrong");
-    expect(wrapper.text()).toContain("Show details");
-
-    const toggle = wrapper.get('[data-testid="error-details-toggle"]');
-    await toggle.trigger("click");
-    expect(wrapper.text()).toContain("Hide details");
+    expect(wrapper.text()).toContain("Error Details");
+    expect(wrapper.find('[data-testid="error-details-toggle"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.text()).toContain("Type");
   });
 });
