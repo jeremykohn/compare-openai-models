@@ -47,9 +47,9 @@ When generating `requirements.md`:
 - Each technical requirement must be specific, testable, and implementation-relevant.
   - Technical requirements should address areas such as architecture, APIs, data flow, validation, error handling, and testing where applicable to scope.
 - Each security requirement must be specific, testable, and scoped to the requested update.
-- Security requirements should include OWASP Top 10-aligned controls relevant to scope and additional security requirements indicated by the source `description.md` and/or optional constraints.
+  - Security requirements should include OWASP Top 10-aligned controls relevant to scope and additional security requirements indicated by the source `description.md` and/or optional constraints.
 - Each accessibility requirement must be specific, testable, and scoped to the requested update.
-- Accessibility requirements should include WCAG-aligned controls relevant to scope and additional accessibility requirements indicated by the source `description.md` and/or optional constraints.
+  - Accessibility requirements should include WCAG-aligned controls relevant to scope and additional accessibility requirements indicated by the source `description.md` and/or optional constraints.
 - Each performance requirement must be measurable and tied to observable thresholds where applicable.
 - For all requirement categories, include clear acceptance criteria where applicable.
 - Include an "Out of Scope / Non-Goals" section.
