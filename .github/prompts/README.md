@@ -120,7 +120,7 @@ Example:
 ## Shared Behavior Contract
 
 All prompts reference `.github/prompts/_shared-behavior-contract.md`, which defines shared behavioral rules:
-clarification-first policy, path clarification before file writes, in-place workflow artifact updates (including looped Prompt 5 ↔ Prompt 6 cycles), scope guardrails, canonical task ID conventions, canonical requirement ID conventions, canonical discrepancy ID conventions, spec folder naming, and run-history note formats.
+clarification-first policy, path clarification before file writes, in-place workflow artifact updates (including looped Prompt 5 ↔ Prompt 6 cycles), scope guardrails, canonical task ID conventions, canonical requirement ID conventions, canonical discrepancy ID conventions, discrepancy archive rollover rules, spec folder naming, and run-history note formats.
 
 ## Re-running a Step
 
