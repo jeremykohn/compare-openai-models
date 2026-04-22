@@ -114,10 +114,11 @@ describe("app ui", () => {
     expect(responseParagraph.text()).toContain("Hello");
   });
 
-  it("shows response error with details toggle labels", async () => {
+  it("shows response error with expandable safe diagnostic details", async () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
     fetchMock.mockResolvedValueOnce({
       ok: false,
+      status: 503,
       json: async () => ({
         message: "Request to OpenAI failed.",
         details: "Authorization: Bearer abc",
@@ -132,10 +133,15 @@ describe("app ui", () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain("Something went wrong");
-    expect(wrapper.text()).toContain("Show details");
+    expect(wrapper.text()).toContain("Show error details");
 
-    const toggle = wrapper.get('[data-testid="error-details-toggle"]');
-    await toggle.trigger("click");
-    expect(wrapper.text()).toContain("Hide details");
+    const disclosure = wrapper.get('[data-testid="error-details-toggle"]');
+    expect(disclosure.element.tagName).toBe("DETAILS");
+
+    (disclosure.element as HTMLDetailsElement).open = true;
+    await disclosure.trigger("toggle");
+    expect(wrapper.text()).toContain("Error type: API error");
+    expect(wrapper.text()).toContain("Status code: 503");
+    expect(wrapper.text()).toContain("Authorization: [REDACTED]");
   });
 });

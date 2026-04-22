@@ -70,6 +70,7 @@ export function useModelsState() {
             payload && "message" in payload
               ? payload.message
               : "Request failed",
+          statusCode: response.status,
           details:
             payload && "details" in payload ? payload.details : undefined,
         };

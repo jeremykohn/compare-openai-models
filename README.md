@@ -10,6 +10,7 @@
 - Default model fallback to `gpt-4.1-mini`
 - Error normalization (`network`, `api`, `unknown`)
 - Sanitized error details (redacts keys/tokens/authorization headers)
+- Expandable error diagnostics in UI (`<details>` with safe type/status context)
 - 24-hour models response cache with stale-while-revalidate behavior
 - 5-minute model-validation cache
 

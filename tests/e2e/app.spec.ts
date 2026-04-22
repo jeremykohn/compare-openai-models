@@ -10,8 +10,10 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
-  await expect(page.getByLabel("Model *")).toBeVisible();
-  await expect(page.getByLabel("Model *")).toContainText("gpt-4.1-mini");
+  const modelSelect = page.getByLabel("Model *");
+  await expect(modelSelect).toBeVisible();
+  await expect(page.locator("#models-select option")).toHaveCount(3);
+  await expect(modelSelect).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 
   await page.getByLabel("Prompt *").fill("Write a greeting");
