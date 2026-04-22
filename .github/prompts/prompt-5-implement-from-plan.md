@@ -35,8 +35,7 @@ After I provide that file:
 
 ## Post-Phase Find-and-Fix Cycle
 
-After completing a phase, run this cycle before moving to the next phase. A phase is complete when all open tasks under the current phase are completed.
-Repeat this cycle for the current phase until no open tasks remain in that phase after follow-up task insertions.
+Run one or more rounds of this cycle to automatically find and fix issues.
 
 **Round tracking:** Maintain a per-phase round counter starting at 1. Increment by 1 each time this cycle runs for the same phase. Reset to 1 when starting a new phase. Use the current round number when naming subsections (see step 3).
 
@@ -48,6 +47,8 @@ Repeat this cycle for the current phase until no open tasks remain in that phase
 - If I do not respond, or if my response is unclear, vague, or ambiguous, pause and ask me to clarify.
 
 The 3-round threshold applies independently to each phase. The per-phase round counter resets to 1 at the start of each new phase.
+
+These are the steps of each round of the find-and-fix cycle:
 
 1. **Scope capture**
   - Identify files modified during the just-completed phase.
