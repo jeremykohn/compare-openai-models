@@ -73,7 +73,7 @@ Clarification sections (include when questions or blockers exist):
 - Include a traceability section mapping requirement IDs (`FR-{n}`, `TR-{n}`, `SR-{n}`, `AR-{n}`, and `PR-{n}` when present) to the design sections that address them. This section is required. Use this column format:
 
     | Requirement ID | Design Section | Notes |
-    |---|---|---|
+    |----------------|----------------|-------|
 
 - This traceability column format is prompt-specific for Prompt 3 (maps requirement IDs to design sections) and intentionally differs from Prompt 4 (which maps plan tasks to design sections).
 
