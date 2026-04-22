@@ -33,7 +33,7 @@ Include, where applicable to scope:
 - API contracts and request/response shapes
 - Validation and error-handling approach
 - Security considerations
-    - Required in every `design.md`; also required when security requirements exist in `requirements.md`, such as `SR-{n}` IDs
+    - Required when security requirements exist in `requirements.md`, such as `SR-{n}` IDs
     - Use the dedicated `Security` section for consolidated SR-specific design decisions, while also reflecting those decisions in relevant sections such as `Interfaces`, `Validation/Error Handling`, and `Testing`
 - Accessibility considerations
     - Required when accessibility requirements exist in `requirements.md`, such as `AR-{n}` IDs
