@@ -12,10 +12,12 @@ describe("UiErrorAlert", () => {
     });
 
     expect(wrapper.text()).toContain("Oops");
-    expect(wrapper.text()).toContain("Show details");
+    expect(wrapper.text()).toContain("Show error details");
+    expect(wrapper.find("details").exists()).toBe(true);
 
-    await wrapper.get("button").trigger("click");
-    expect(wrapper.text()).toContain("Hide details");
+    const details = wrapper.get("details");
+    (details.element as HTMLDetailsElement).open = true;
+    await details.trigger("toggle");
     expect(wrapper.text()).toContain("Technical details");
   });
 });

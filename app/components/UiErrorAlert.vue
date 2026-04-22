@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 
 const props = withDefaults(
   defineProps<{
@@ -27,17 +27,12 @@ const emit = defineEmits<{
   retry: [];
 }>();
 
-const showDetails = ref(false);
 const hasDetails = computed(() =>
   Boolean(props.details && props.details.trim().length > 0),
 );
 const canToggleDetails = computed(
   () => props.enableDetailsToggle && hasDetails.value,
 );
-
-function onToggleDetails(): void {
-  showDetails.value = !showDetails.value;
-}
 
 function onRetry(): void {
   emit("retry");
@@ -52,20 +47,19 @@ function onRetry(): void {
     <p class="text-sm font-semibold">{{ title }}</p>
     <p class="text-sm text-red-700">{{ message }}</p>
 
-    <button
+    <details
       v-if="canToggleDetails"
       :data-testid="detailsToggleTestId"
-      type="button"
-      class="w-fit text-sm font-medium underline"
-      :aria-expanded="showDetails"
-      @click="onToggleDetails"
+      class="group mt-1 w-fit text-sm"
     >
-      {{ showDetails ? "Hide details" : "Show details" }}
-    </button>
-
-    <p v-if="canToggleDetails && showDetails" class="text-xs text-red-700">
-      <span class="font-semibold">Details:</span> {{ details }}
-    </p>
+      <summary class="cursor-pointer font-medium underline">
+        Show error details
+      </summary>
+      <p class="mt-2 whitespace-pre-wrap text-xs text-red-700">
+        <span class="font-semibold">Details:</span>
+        {{ details }}
+      </p>
+    </details>
 
     <button
       v-if="showRetry"

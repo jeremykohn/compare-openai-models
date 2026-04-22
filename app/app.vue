@@ -51,12 +51,24 @@ async function handleSubmit(): Promise<void> {
       body: JSON.stringify(body),
     });
 
-    const payload = (await response.json()) as
+    let payload:
       | { response: string; model: string }
-      | { message: string; details?: string };
+      | { message: string; details?: string }
+      | undefined;
+
+    try {
+      payload = (await response.json()) as
+        | { response: string; model: string }
+        | { message: string; details?: string };
+    } catch {
+      payload = undefined;
+    }
 
     if (!response.ok) {
-      const normalized = normalizeUiError(payload);
+      const normalized = normalizeUiError({
+        ...(payload ?? {}),
+        statusCode: response.status,
+      });
       logNormalizedUiError("app.handleSubmit", normalized);
       fail(normalized.message, normalized.details);
       return;
