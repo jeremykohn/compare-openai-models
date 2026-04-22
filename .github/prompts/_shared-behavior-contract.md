@@ -12,7 +12,7 @@
 - When the workflow loops (for example, `prompt-5-implement-from-plan.md` → `prompt-6-report-discrepancies-and-create-remediation-plan.md` → `prompt-5-implement-from-plan.md`):
     - Update the existing `implementation-plan.md` and `discrepancy-reports/*.md` files in place by appending new content (phases, tasks, run history).
     - Updates to `discrepancy-reports/*.md` follow the structured section model defined in Prompt 6: update `Current Run Summary`, move newly resolved items to `Resolved Since Last Run`, and append any new open discrepancies.
-    - Do not create new artifact files for additional loop iterations unless the user requests a new artifact.
+    - Do not create new artifact files for additional loop iterations unless a new artifact is requested.
 - Do not write or implement any code unless the active prompt explicitly authorizes it. `prompt-5-implement-from-plan.md` overrides this default.
 - When writing or implementing code based on an implementation prompt, do not fix unrelated issues unless explicitly asked.
 - When an active prompt explicitly requires post-phase issue detection and fixing, applying those fixes is allowed when they remain in scope.
