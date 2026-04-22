@@ -65,7 +65,7 @@ This is intentional shared-contract boilerplate. The line is intentionally repea
   - After each phase, runs a post-phase find-and-fix cycle scoped to files modified in that phase.
   - Tracks a per-phase round counter; each round appends follow-up tasks under a numbered `#### Find-and-Fix Round {n}` subsection within the current phase.
   - Requires each find-and-fix follow-up task appended during Prompt 5 rounds to include `Severity` with one of: `critical`, `important`, or `minor`; appends those follow-up tasks by severity order (`critical` → `important` → `minor`) while preserving discovery order within the same severity.
-  - Rounds 1–3 run without additional permission; beginning with round 4, stops and asks the user before each additional round. If the user directs a skip to the next phase, unresolved fixes may remain open.
+  - Rounds 1–3 run without additional permission; beginning with round 4, stops and asks the user for permission before each additional round. If, instead of giving permission, the user directs a skip to the next phase, unresolved fixes may remain open.
   - If no open tasks exist at start, appends a no-open-tasks note and forwards to Step 6.
 
 - **Step 6 — Review Discrepancies and Plan Remediation**:
