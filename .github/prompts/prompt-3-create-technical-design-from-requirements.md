@@ -17,7 +17,7 @@ After I provide the requirements file:
 
 1. Read and analyze the requirements carefully.
 2. Create a clear, detailed technical design for implementing the requested update.
-3. Before saving, check whether `design.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing.
+3. Before saving, check whether `design.md` already exists in that folder. If it does, pause and ask me whether to overwrite, append, or abort before continuing.
 4. Save the technical design to `design.md` in that folder.
 
 ## Technical Design Expectations

@@ -15,7 +15,7 @@ Read and apply the rules in `.github/prompts/_shared-behavior-contract.md` befor
 Ask me for:
 
 - The path to the implementation plan file, for example: `.github/specs/001-new-feature/implementation-plan.md`
-  - Verify that `design.md` exists in the same spec folder. If it is missing, pause and ask the user to provide its location before continuing.
+  - Verify that `design.md` exists in the same spec folder. If it is missing, pause and ask me to provide its location before continuing.
 
 After I provide that file:
 
@@ -40,12 +40,12 @@ Repeat this cycle for the current phase until no open tasks remain in that phase
 
 **Round tracking:** Maintain a per-phase round counter starting at 1. Increment by 1 each time this cycle runs for the same phase. Reset to 1 when starting a new phase. Use the current round number when naming subsections (see step 3).
 
-**Permission gate:** Rounds 1 through 3 for each phase run without additional permission. After completing round 3, stop and ask the user before running round 4. For every additional round beyond 3 in the same phase (round 4, 5, 6, ...), ask again before each round. Deterministic behavior at the gate:
+**Permission gate:** Rounds 1 through 3 for each phase run without additional permission. After completing round 3, stop and ask me before running round 4. For every additional round beyond 3 in the same phase (round 4, 5, 6, ...), ask again before each round. Deterministic behavior at the gate:
 
-- If the user says yes (or equivalent), run exactly one additional round, then ask again before the next.
-- If the user says no, pause until the user says to resume.
-- If the user says to skip to the next phase, stop find-and-fix for the current phase and proceed to the next phase immediately, even when unresolved fixes remain. Unresolved issues may remain open in the current phase when the user directs a skip; this is allowed. Preserve any existing open tasks — do not force additional rounds to close them.
-- If the user does not respond, or if the response is unclear, vague, or ambiguous, pause and ask the user to clarify.
+- If I say yes (or equivalent), run exactly one additional round, then ask again before the next.
+- If I say no, pause until I say to resume.
+- If I say to skip to the next phase, stop find-and-fix for the current phase and proceed to the next phase immediately, even when unresolved fixes remain. Unresolved issues may remain open in the current phase when I direct a skip; this is allowed. Preserve any existing open tasks — do not force additional rounds to close them.
+- If I do not respond, or if my response is unclear, vague, or ambiguous, pause and ask me to clarify.
 
 The 3-round threshold applies independently to each phase. The per-phase round counter resets to 1 at the start of each new phase.
 
@@ -90,7 +90,7 @@ The 3-round threshold applies independently to each phase. The per-phase round c
 - The implementation run is complete only when no open tasks (`- [ ]`) remain — including any tasks added during remediation.
 - If there are no open tasks (`- [ ]`) at the start, append a note under the `## Run History` section at the end of the implementation plan (create the section if it does not exist) using the canonical Prompt 5 no-open-tasks note format defined in `.github/prompts/_shared-behavior-contract.md`.
 
-  State that implementation is already complete and direct the user to Prompt 6.
+  State that implementation is already complete and direct me to Prompt 6.
 
 The implemented changes must be documented specifically enough that Prompt 6 can evaluate discrepancies without introducing assumptions. (Shared contract specificity rule applies.)
 

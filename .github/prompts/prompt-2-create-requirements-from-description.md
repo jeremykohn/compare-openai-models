@@ -29,7 +29,7 @@ After I provide the description file:
     - Performance requirements
       - Include when the description or constraints mention latency, throughput, load, scalability, SLA, or response time targets
 4. If there are gaps, missing details, conflicting expectations, or anything vague or ambiguous, pause and ask me focused clarifying questions before continuing.
-5. Before saving, check whether `requirements.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing.
+5. Before saving, check whether `requirements.md` already exists in that folder. If it does, pause and ask me whether to overwrite, append, or abort before continuing.
 6. Save the requirements to `requirements.md` in that folder.
 
 ## Output Expectations

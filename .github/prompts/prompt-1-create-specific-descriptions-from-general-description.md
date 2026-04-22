@@ -23,7 +23,7 @@ After I provide it:
    - Create a folder under `.github/specs/` named `{NNN}-{short-update-name}`.
      - Follow the spec folder naming convention defined in `.github/prompts/_shared-behavior-contract.md`.
      - Example: `.github/specs/002-compare-model-outputs/`
-   - Check whether `description.md` already exists in that folder. If it does, pause and ask the user whether to overwrite, append, or abort before continuing. Otherwise, create `description.md` in that folder.
+   - Check whether `description.md` already exists in that folder. If it does, pause and ask me whether to overwrite, append, or abort before continuing. Otherwise, create `description.md` in that folder.
    - Save:
      - the original high-level description (preserving meaning; only normalize formatting/grammar), and
      - a specific, detailed description of the update.
