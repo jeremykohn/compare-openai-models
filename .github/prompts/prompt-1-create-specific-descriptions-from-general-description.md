@@ -17,7 +17,7 @@ After I provide it:
 
 1. Analyze the input and expand it into a clear, specific update description.
 2. If the input includes multiple unrelated updates, ask whether to split them into separate updates before continuing.
-   - If splitting is confirmed, preserve the user-provided update order when assigning successive `{NNN}-{short-update-name}` folders.
+   - If splitting is confirmed, preserve the order of updates provided by the description when assigning successive `{NNN}-{short-update-name}` folders.
 3. If the input is vague, conflicting, unclear, or ambiguous, pause and ask focused clarifying questions before continuing. (Shared contract clarification-first rule applies.)
 4. For each update:
    - Create a folder under `.github/specs/` named `{NNN}-{short-update-name}`.
