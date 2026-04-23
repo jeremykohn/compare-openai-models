@@ -18,6 +18,12 @@ const { state: modelsState, fetchModels } = useModelsState();
 
 const isLoading = computed(() => state.status === "loading");
 
+function isRespondSuccessPayload(
+  payload: Record<string, unknown>,
+): payload is { response: string } {
+  return typeof payload.response === "string";
+}
+
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
     return;
@@ -51,19 +57,45 @@ async function handleSubmit(): Promise<void> {
       body: JSON.stringify(body),
     });
 
-    const payload = (await response.json()) as
-      | { response: string; model: string }
-      | { message: string; details?: string };
+    let payload: unknown;
+
+    try {
+      payload = (await response.json()) as
+        | { response: string; model: string }
+        | { message: string; details?: string };
+    } catch {
+      payload = {
+        statusCode: response.status,
+        statusText: response.statusText,
+      };
+    }
+
+    const payloadObject =
+      payload && typeof payload === "object"
+        ? (payload as Record<string, unknown>)
+        : {};
+
+    const normalizedInput = {
+      ...payloadObject,
+      statusCode: response.status,
+      statusText: response.statusText,
+    };
 
     if (!response.ok) {
-      const normalized = normalizeUiError(payload);
+      const normalized = normalizeUiError(normalizedInput);
       logNormalizedUiError("app.handleSubmit", normalized);
       fail(normalized);
       return;
     }
 
-    const successPayload = payload as { response: string; model: string };
-    succeed(successPayload.response);
+    if (!isRespondSuccessPayload(normalizedInput)) {
+      const normalized = normalizeUiError(normalizedInput);
+      logNormalizedUiError("app.handleSubmit", normalized);
+      fail(normalized);
+      return;
+    }
+
+    succeed(normalizedInput.response);
   } catch (error) {
     const normalized = normalizeUiError(error);
     logNormalizedUiError("app.handleSubmit", normalized);

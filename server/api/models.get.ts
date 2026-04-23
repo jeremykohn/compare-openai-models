@@ -3,11 +3,14 @@ import { createError, defineEventHandler } from "h3";
 import { useRuntimeConfig } from "#imports";
 import { MODELS_ROUTE_ERROR_MESSAGE } from "~~/shared/constants/models";
 import type { ModelsApiResponse, OpenAIModel } from "~~/types/api";
-import { sanitizeOptionalErrorText } from "~~/app/utils/error-sanitization";
 import {
   buildExclusionSet,
   loadOpenAIModelsConfig,
 } from "../utils/openai-models-config-loader";
+import {
+  mapOpenAIErrorResponse,
+  toSafeStatusText,
+} from "../utils/openai-error-mapper";
 import {
   clearModelsResponseCache,
   getCachedModelsResponse,
@@ -47,12 +50,17 @@ async function fetchUpstreamModels(
   });
 
   if (!response.ok) {
-    const details = sanitizeOptionalErrorText(await response.text());
+    const mappedError = await mapOpenAIErrorResponse(response);
+
     throw createError({
-      statusCode: 500,
+      statusCode: response.status,
       data: {
         message: MODELS_ROUTE_ERROR_MESSAGE,
-        details,
+        statusText: toSafeStatusText(response.statusText),
+        code: mappedError.code,
+        type: mappedError.type,
+        param: mappedError.param,
+        details: mappedError.details,
       },
     });
   }

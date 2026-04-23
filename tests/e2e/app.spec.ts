@@ -70,6 +70,48 @@ test("shows error details toggle when submission fails", async ({ page }) => {
 
   await details.locator("summary").click();
   await expect(details).toHaveAttribute("open", "");
+  await expect(details.getByText("Status Code")).toBeVisible();
+  await expect(details.getByText("503")).toBeVisible();
+  await expect(details.getByText("Type")).toHaveCount(0);
+});
+
+test("renders typed error metadata when API provides type/code/param", async ({
+  page,
+}) => {
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }]);
+  await page.route("**/api/respond", async (route) => {
+    await route.fulfill({
+      status: 400,
+      contentType: "application/json",
+      body: JSON.stringify({
+        message: "Request to OpenAI failed.",
+        type: "invalid_request_error",
+        code: "model_not_found",
+        param: "model",
+      }),
+    });
+  });
+
+  await page.goto("/");
+  await expect(page.locator("#models-select option")).toHaveCount(2);
+  await page.locator("#prompt-input").fill("Write a greeting");
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/respond") &&
+        response.request().method() === "POST",
+    ),
+    page.getByRole("button", { name: "Send" }).click(),
+  ]);
+
+  const details = page.locator('[data-testid="error-details-toggle"]');
+  await details.locator("summary").click();
+
   await expect(details.getByText("Type")).toBeVisible();
-  await expect(details.getByText(/api|unknown|network/)).toBeVisible();
+  await expect(details.getByText("invalid_request_error")).toBeVisible();
+  await expect(details.getByText("Error Code")).toBeVisible();
+  await expect(details.getByText("model_not_found")).toBeVisible();
+  await expect(details.getByText("Param")).toBeVisible();
+  await expect(details.getByText("model", { exact: true })).toBeVisible();
 });

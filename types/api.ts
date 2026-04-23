@@ -17,6 +17,10 @@ export type ModelsApiResponse = {
 export type ApiErrorResponse = {
   message: string;
   details?: string;
+  code?: string;
+  type?: string;
+  param?: string;
+  statusText?: string;
 };
 
 export type RespondRequest = {

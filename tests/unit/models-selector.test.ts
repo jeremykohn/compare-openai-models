@@ -86,4 +86,26 @@ describe("ModelsSelector", () => {
     await retryButton.trigger("click");
     expect(wrapper.emitted("retry")).toHaveLength(1);
   });
+
+  it("surfaces malformed success payload normalization as error state", () => {
+    const wrapper = mount(ModelsSelector, {
+      props: {
+        selectedModelId: "",
+        status: "error",
+        models: null,
+        error: {
+          category: "unknown",
+          message: "An unexpected error occurred. Please try again or contact support.",
+          details:
+            '{"object":"list","data":[{"id":"gpt-4.1-mini"}],"usedConfigFilter":true}',
+        },
+        showFallbackNote: false,
+      },
+    });
+
+    expect(wrapper.find('[role="alert"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.text()).toContain("Error Details");
+    expect(wrapper.text()).toContain('"usedConfigFilter":true');
+  });
 });

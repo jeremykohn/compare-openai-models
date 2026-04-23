@@ -16,6 +16,39 @@ type ModelsState = {
   error: NormalizedUiError | null;
 };
 
+function isOpenAIModelPayload(value: unknown): value is OpenAIModel {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  return (
+    typeof candidate.id === "string" &&
+    typeof candidate.object === "string" &&
+    typeof candidate.created === "number" &&
+    typeof candidate.owned_by === "string"
+  );
+}
+
+function isModelsApiResponsePayload(
+  value: unknown,
+): value is ModelsApiResponse {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  return (
+    candidate.object === "list" &&
+    Array.isArray(candidate.data) &&
+    candidate.data.every(isOpenAIModelPayload) &&
+    typeof candidate.usedConfigFilter === "boolean" &&
+    typeof candidate.showFallbackNote === "boolean"
+  );
+}
+
 export function useModelsState() {
   const state = reactive<ModelsState>({
     status: typeof window === "undefined" ? "idle" : "loading",
@@ -48,14 +81,21 @@ export function useModelsState() {
 
       let payload:
         | ModelsApiResponse
-        | { message: string; details?: string }
+        | { message: string; details?: string; code?: string; type?: string }
         | undefined;
       try {
         payload = (await response.json()) as
           | ModelsApiResponse
-          | { message: string; details?: string };
+          | {
+              message: string;
+              details?: string;
+              code?: string;
+              type?: string;
+            };
       } catch {
-        payload = undefined;
+        payload = {
+          message: "Request failed",
+        };
       }
 
       if (currentRequestId !== latestRequestId) {
@@ -63,21 +103,44 @@ export function useModelsState() {
       }
 
       if (!response.ok) {
-        throw {
-          message:
-            payload && "message" in payload
-              ? payload.message
-              : "Request failed",
-          details:
-            payload && "details" in payload ? payload.details : undefined,
-        };
+        const payloadObject =
+          payload && typeof payload === "object"
+            ? (payload as Record<string, unknown>)
+            : {};
+
+        const normalized = normalizeUiError({
+          ...payloadObject,
+          statusCode: response.status,
+          statusText: response.statusText,
+        });
+
+        logNormalizedUiError("useModelsState", normalized);
+        state.status = "error";
+        state.error = normalized;
+        state.data = null;
+        return;
       }
 
-      const data = payload as ModelsApiResponse;
+      if (!isModelsApiResponsePayload(payload)) {
+        const normalized = normalizeUiError({
+          ...(payload && typeof payload === "object"
+            ? (payload as Record<string, unknown>)
+            : {}),
+          statusCode: response.status,
+          statusText: response.statusText,
+        });
+
+        logNormalizedUiError("useModelsState", normalized);
+        state.status = "error";
+        state.error = normalized;
+        state.data = null;
+        return;
+      }
+
       state.status = "success";
-      state.data = data.data;
-      state.usedConfigFilter = data.usedConfigFilter;
-      state.showFallbackNote = data.showFallbackNote;
+      state.data = payload.data;
+      state.usedConfigFilter = payload.usedConfigFilter;
+      state.showFallbackNote = payload.showFallbackNote;
       state.error = null;
     } catch (error) {
       if (currentRequestId !== latestRequestId) {

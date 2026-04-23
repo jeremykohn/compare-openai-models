@@ -121,6 +121,8 @@ describe("/api/models route integration", () => {
     mockFetchImplementation(
       vi.fn(async () => ({
         ok: false,
+        status: 429,
+        statusText: "Too Many Requests",
         text: async () => "Authorization: Bearer sk-secret-12345678",
       })) as unknown as typeof fetch,
     );
@@ -128,10 +130,42 @@ describe("/api/models route integration", () => {
     const handler = await loadModelsHandler(buildRuntimeConfig());
 
     await expect(handler()).rejects.toMatchObject({
-      statusCode: 500,
+      statusCode: 429,
       data: {
         message: "Error: Failed API call, could not get list of OpenAI models",
+        statusText: "Too Many Requests",
         details: expect.stringContaining("[REDACTED]"),
+      },
+    });
+  });
+
+  it("extracts typed fields from structured upstream errors", async () => {
+    mockFetchImplementation(
+      vi.fn(async () => ({
+        ok: false,
+        status: 400,
+        statusText: "Bad Request",
+        text: async () =>
+          JSON.stringify({
+            error: {
+              type: "invalid_request_error",
+              code: "model_not_found",
+              param: "model",
+            },
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    const handler = await loadModelsHandler(buildRuntimeConfig());
+
+    await expect(handler()).rejects.toMatchObject({
+      statusCode: 400,
+      data: {
+        message: "Error: Failed API call, could not get list of OpenAI models",
+        statusText: "Bad Request",
+        type: "invalid_request_error",
+        code: "model_not_found",
+        param: "model",
       },
     });
   });

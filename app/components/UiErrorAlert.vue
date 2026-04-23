@@ -40,9 +40,9 @@ function onRetry(): void {
       </summary>
 
       <dl class="mt-2 grid gap-1">
-        <div class="grid grid-cols-[auto,1fr] gap-x-2">
+        <div v-if="error.type" class="grid grid-cols-[auto,1fr] gap-x-2">
           <dt class="font-semibold">Type</dt>
-          <dd>{{ error.category }}</dd>
+          <dd>{{ error.type }}</dd>
         </div>
 
         <div
@@ -51,6 +51,16 @@ function onRetry(): void {
         >
           <dt class="font-semibold">Status Code</dt>
           <dd>{{ error.statusCode }}</dd>
+        </div>
+
+        <div v-if="error.code" class="grid grid-cols-[auto,1fr] gap-x-2">
+          <dt class="font-semibold">Error Code</dt>
+          <dd>{{ error.code }}</dd>
+        </div>
+
+        <div v-if="error.param" class="grid grid-cols-[auto,1fr] gap-x-2">
+          <dt class="font-semibold">Param</dt>
+          <dd>{{ error.param }}</dd>
         </div>
 
         <div v-if="error.details" class="grid grid-cols-[auto,1fr] gap-x-2">
