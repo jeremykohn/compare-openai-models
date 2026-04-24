@@ -182,19 +182,43 @@ async function handleSubmit(): Promise<void> {
           <span>Waiting for response from ChatGPT...</span>
         </div>
 
-        <article
+        <div
           v-else-if="state.status === 'success' && state.data"
-          class="grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900 shadow-sm"
+          class="grid gap-4 md:grid-cols-2"
         >
-          <h2 class="text-base font-semibold">Response</h2>
-          <p class="whitespace-pre-wrap text-sm">{{ state.data }}</p>
-        </article>
+          <article
+            class="grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900 shadow-sm"
+          >
+            <h2 class="text-base font-semibold">Output 1</h2>
+            <p class="whitespace-pre-wrap text-sm">{{ state.data }}</p>
+          </article>
 
-        <UiErrorAlert
+          <article
+            class="grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900 shadow-sm"
+          >
+            <h2 class="text-base font-semibold">Output 2</h2>
+            <p class="whitespace-pre-wrap text-sm">{{ state.data }}</p>
+          </article>
+        </div>
+
+        <div
           v-else-if="state.status === 'error' && state.error"
-          :error="state.error"
-          :show-retry="false"
-        />
+          class="grid gap-4 md:grid-cols-2"
+        >
+          <article
+            class="grid gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm"
+          >
+            <h2 class="text-base font-semibold text-red-900">Output 1</h2>
+            <UiErrorAlert :error="state.error" :show-retry="false" />
+          </article>
+
+          <article
+            class="grid gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm"
+          >
+            <h2 class="text-base font-semibold text-red-900">Output 2</h2>
+            <UiErrorAlert :error="state.error" :show-retry="false" />
+          </article>
+        </div>
       </section>
     </main>
 

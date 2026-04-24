@@ -115,7 +115,7 @@ describe("app ui", () => {
     await flushPromises();
   });
 
-  it("shows success response card with heading and pre-wrap text class", async () => {
+  it("shows mirrored success output panels with identical response text", async () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
     fetchMock.mockResolvedValueOnce({
       ok: true,
@@ -129,13 +129,16 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Response");
-    const responseParagraph = wrapper.find("article p.whitespace-pre-wrap");
-    expect(responseParagraph.exists()).toBe(true);
-    expect(responseParagraph.text()).toContain("Hello");
+    expect(wrapper.text()).toContain("Output 1");
+    expect(wrapper.text()).toContain("Output 2");
+
+    const responseParagraphs = wrapper.findAll("article p.whitespace-pre-wrap");
+    expect(responseParagraphs).toHaveLength(2);
+    expect(responseParagraphs[0]?.text()).toBe("Hello\nWorld");
+    expect(responseParagraphs[1]?.text()).toBe("Hello\nWorld");
   });
 
-  it("shows response error with details toggle labels", async () => {
+  it("shows mirrored response error panels with details toggle labels", async () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
     fetchMock.mockResolvedValueOnce({
       ok: false,
@@ -159,9 +162,10 @@ describe("app ui", () => {
 
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("Error Details");
-    expect(wrapper.find('[data-testid="error-details-toggle"]').exists()).toBe(
-      true,
+    const errorToggles = wrapper.findAll(
+      '[data-testid="error-details-toggle"]',
     );
+    expect(errorToggles).toHaveLength(2);
     expect(wrapper.text()).toContain("Type");
     expect(wrapper.text()).toContain("invalid_request_error");
     expect(wrapper.text()).toContain("Status Code");
@@ -188,8 +192,8 @@ describe("app ui", () => {
 
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).not.toContain("Response");
-    expect(wrapper.find('[data-testid="error-details-toggle"]').exists()).toBe(
-      true,
-    );
+    expect(
+      wrapper.findAll('[data-testid="error-details-toggle"]'),
+    ).toHaveLength(2);
   });
 });

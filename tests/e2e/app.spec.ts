@@ -30,10 +30,10 @@ test("runs happy path from load to rendered response", async ({ page }) => {
     page.getByRole("button", { name: "Send" }).click(),
   ]);
 
-  await expect(page.getByRole("heading", { name: "Response" })).toBeVisible();
-  await expect(page.getByText("Hello from ChatGPT")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Output 1" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Output 2" })).toBeVisible();
+  await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
 });
-
 test("shows error details toggle when submission fails", async ({ page }) => {
   await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }]);
   await mockRespondError(
@@ -61,18 +61,19 @@ test("shows error details toggle when submission fails", async ({ page }) => {
     page.getByRole("button", { name: "Send" }).click(),
   ]);
 
-  await expect(page.getByText("Something went wrong")).toBeVisible();
+  await expect(page.getByText("Something went wrong")).toHaveCount(2);
 
   const details = page.locator('[data-testid="error-details-toggle"]');
-  await expect(details).toBeVisible();
-  await expect(details).not.toHaveAttribute("open", "");
-  await expect(details.getByText("Error Details")).toBeVisible();
+  await expect(details).toHaveCount(2);
+  await expect(details.nth(0)).not.toHaveAttribute("open", "");
+  await expect(details.nth(1)).not.toHaveAttribute("open", "");
+  await expect(details.first().getByText("Error Details")).toBeVisible();
 
-  await details.locator("summary").click();
-  await expect(details).toHaveAttribute("open", "");
-  await expect(details.getByText("Status Code")).toBeVisible();
-  await expect(details.getByText("503")).toBeVisible();
-  await expect(details.getByText("Type")).toHaveCount(0);
+  await details.first().locator("summary").click();
+  await expect(details.first()).toHaveAttribute("open", "");
+  await expect(details.first().getByText("Status Code")).toBeVisible();
+  await expect(details.first().getByText("503")).toBeVisible();
+  await expect(details.first().getByText("Type")).toHaveCount(0);
 });
 
 test("renders typed error metadata when API provides type/code/param", async ({
@@ -106,12 +107,17 @@ test("renders typed error metadata when API provides type/code/param", async ({
   ]);
 
   const details = page.locator('[data-testid="error-details-toggle"]');
-  await details.locator("summary").click();
+  await expect(details).toHaveCount(2);
+  await details.first().locator("summary").click();
 
-  await expect(details.getByText("Type")).toBeVisible();
-  await expect(details.getByText("invalid_request_error")).toBeVisible();
-  await expect(details.getByText("Error Code")).toBeVisible();
-  await expect(details.getByText("model_not_found")).toBeVisible();
-  await expect(details.getByText("Param")).toBeVisible();
-  await expect(details.getByText("model", { exact: true })).toBeVisible();
+  await expect(details.first().getByText("Type")).toBeVisible();
+  await expect(
+    details.first().getByText("invalid_request_error"),
+  ).toBeVisible();
+  await expect(details.first().getByText("Error Code")).toBeVisible();
+  await expect(details.first().getByText("model_not_found")).toBeVisible();
+  await expect(details.first().getByText("Param")).toBeVisible();
+  await expect(
+    details.first().getByText("model", { exact: true }),
+  ).toBeVisible();
 });

@@ -96,12 +96,12 @@ test("has no critical accessibility violations on success response state", async
     ),
     page.getByRole("button", { name: "Send" }).click(),
   ]);
-  await expect(page.getByRole("heading", { name: "Response" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Output 1" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Output 2" })).toBeVisible();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);
 });
-
 test("has no critical accessibility violations on error states", async ({
   page,
 }) => {
@@ -133,7 +133,7 @@ test("has no critical accessibility violations on error states", async ({
 
   await page.getByLabel("Prompt *").fill("hello");
   await page.getByRole("button", { name: "Send" }).click();
-  await expect(page.getByText("Something went wrong")).toBeVisible({
+  await expect(page.getByText("Something went wrong").first()).toBeVisible({
     timeout: 10_000,
   });
 
