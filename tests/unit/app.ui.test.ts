@@ -36,6 +36,23 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Send");
   });
 
+  it("shows left model selector active and right selector disabled", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    const leftSelect = wrapper.get("#models-select");
+    const rightSelect = wrapper.get("#models-select-right");
+
+    expect(leftSelect.attributes("disabled")).toBeUndefined();
+    expect(rightSelect.attributes("disabled")).toBeDefined();
+  });
+
   it("handles malformed successful models payload as error state", async () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
@@ -113,6 +130,44 @@ describe("app ui", () => {
       json: async () => ({ response: "ok", model: "gpt-4.1-mini" }),
     });
     await flushPromises();
+  });
+
+  it("submits prompt with left selected model only", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "ok", model: "gpt-4o" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#prompt-input").setValue(" hello ");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "/api/respond",
+      expect.objectContaining({ method: "POST" }),
+    );
+
+    const requestInit = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    const parsedBody = JSON.parse(String(requestInit.body)) as {
+      prompt: string;
+      model?: string;
+      rightModel?: string;
+    };
+
+    expect(parsedBody.prompt).toBe("hello");
+    expect(parsedBody.model).toBe("gpt-4o");
+    expect(parsedBody.rightModel).toBeUndefined();
   });
 
   it("shows mirrored success output panels with identical response text", async () => {

@@ -15,8 +15,13 @@ test("runs happy path from load to rendered response", async ({ page }) => {
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
   const modelSelect = page.getByLabel("Model *");
+  const rightModelSelect = page.getByLabel("Model (inactive)");
   await expect(modelSelect).toBeVisible();
+  await expect(rightModelSelect).toBeVisible();
+  await expect(modelSelect).toBeEnabled();
+  await expect(rightModelSelect).toBeDisabled();
   await expect(page.locator("#models-select option")).toHaveCount(3);
+  await expect(page.locator("#models-select-right option")).toHaveCount(3);
   await expect(modelSelect).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 

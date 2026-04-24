@@ -62,4 +62,41 @@ describe("app accessibility", () => {
     const responseRegion = wrapper.get("section[aria-live='polite']");
     expect(responseRegion.attributes("aria-atomic")).toBe("true");
   });
+
+  it("renders labeled model selectors with right selector disabled", async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        object: "list",
+        data: [
+          {
+            id: "gpt-4.1-mini",
+            object: "model",
+            created: 0,
+            owned_by: "openai",
+          },
+        ],
+        usedConfigFilter: true,
+        showFallbackNote: false,
+      }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    const leftSelect = wrapper.get("#models-select");
+    const rightSelect = wrapper.get("#models-select-right");
+
+    expect(wrapper.get('label[for="models-select"]').text()).toContain("Model");
+    expect(wrapper.get('label[for="models-select-right"]').text()).toContain(
+      "Model (inactive)",
+    );
+    expect(leftSelect.attributes("aria-describedby")).toContain(
+      "models-select-help",
+    );
+    expect(rightSelect.attributes("aria-describedby")).toContain(
+      "models-select-right-note",
+    );
+    expect(rightSelect.attributes("disabled")).toBeDefined();
+  });
 });

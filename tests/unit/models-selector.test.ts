@@ -37,10 +37,23 @@ describe("ModelsSelector", () => {
     );
     expect(wrapper.text()).toContain("Note: List of OpenAI models");
 
-    const select = wrapper.get("#models-select");
-    expect(select.attributes("aria-required")).toBe("true");
-    expect(select.attributes("aria-invalid")).toBe("false");
-    expect(select.attributes("aria-describedby")).toBe("models-select-help");
+    const leftSelect = wrapper.get("#models-select");
+    expect(leftSelect.attributes("aria-required")).toBe("true");
+    expect(leftSelect.attributes("aria-invalid")).toBe("false");
+    expect(leftSelect.attributes("aria-describedby")).toBe(
+      "models-select-help",
+    );
+
+    const rightSelect = wrapper.get("#models-select-right");
+    expect(rightSelect.attributes("disabled")).toBeDefined();
+
+    const leftOptions = leftSelect
+      .findAll("option")
+      .map((option) => option.text());
+    const rightOptions = rightSelect
+      .findAll("option")
+      .map((option) => option.text());
+    expect(rightOptions).toEqual(leftOptions);
   });
 
   it("shows disabled no-model state when success has no models", () => {
@@ -53,8 +66,10 @@ describe("ModelsSelector", () => {
       },
     });
 
-    const select = wrapper.get("#models-select");
-    expect(select.attributes("disabled")).toBeDefined();
+    const leftSelect = wrapper.get("#models-select");
+    const rightSelect = wrapper.get("#models-select-right");
+    expect(leftSelect.attributes("disabled")).toBeDefined();
+    expect(rightSelect.attributes("disabled")).toBeDefined();
     expect(wrapper.text()).toContain("No models available");
   });
 
@@ -73,10 +88,12 @@ describe("ModelsSelector", () => {
       },
     });
 
-    const select = wrapper.get("#models-select");
-    expect(select.attributes("disabled")).toBeDefined();
-    expect(select.attributes("aria-invalid")).toBe("true");
-    expect(select.attributes("aria-describedby")).toContain(
+    const leftSelect = wrapper.get("#models-select");
+    const rightSelect = wrapper.get("#models-select-right");
+    expect(leftSelect.attributes("disabled")).toBeDefined();
+    expect(rightSelect.attributes("disabled")).toBeDefined();
+    expect(leftSelect.attributes("aria-invalid")).toBe("true");
+    expect(leftSelect.attributes("aria-describedby")).toContain(
       "models-select-error",
     );
     expect(wrapper.text()).toContain("Could not load models");
@@ -85,6 +102,22 @@ describe("ModelsSelector", () => {
     const retryButton = wrapper.get('[data-testid="error-retry-button"]');
     await retryButton.trigger("click");
     expect(wrapper.emitted("retry")).toHaveLength(1);
+  });
+
+  it("does not emit model updates from disabled right dropdown", async () => {
+    const wrapper = mount(ModelsSelector, {
+      props: {
+        selectedModelId: "",
+        status: "success",
+        models: [makeModel("gpt-4.1-mini")],
+        showFallbackNote: false,
+      },
+    });
+
+    const rightSelect = wrapper.get("#models-select-right");
+    await rightSelect.setValue("gpt-4.1-mini");
+
+    expect(wrapper.emitted("update:selectedModelId")).toBeUndefined();
   });
 
   it("surfaces malformed success payload normalization as error state", () => {
