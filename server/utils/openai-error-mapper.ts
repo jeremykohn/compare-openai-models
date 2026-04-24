@@ -22,7 +22,11 @@ type UpstreamErrorPayload = {
 };
 
 function truncateValue(value: string, maxLength: number): string {
-  return value.slice(0, maxLength);
+  if (value.length <= maxLength) {
+    return value;
+  }
+
+  return value.slice(0, maxLength - 1) + "…";
 }
 
 function sanitizeAndLimit(

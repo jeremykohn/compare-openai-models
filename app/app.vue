@@ -6,6 +6,7 @@ import { useModelsState } from "./composables/use-models-state";
 import { useRequestState } from "./composables/use-request-state";
 import { normalizeUiError } from "./utils/error-normalization";
 import { logNormalizedUiError } from "./utils/log-normalized-ui-error";
+import { isRespondSuccessPayload } from "./utils/type-guards";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
@@ -17,12 +18,6 @@ const { state, start, succeed, fail } = useRequestState();
 const { state: modelsState, fetchModels } = useModelsState();
 
 const isLoading = computed(() => state.status === "loading");
-
-function isRespondSuccessPayload(
-  payload: Record<string, unknown>,
-): payload is { response: string } {
-  return typeof payload.response === "string";
-}
 
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
@@ -60,9 +55,7 @@ async function handleSubmit(): Promise<void> {
     let payload: unknown;
 
     try {
-      payload = (await response.json()) as
-        | { response: string; model: string }
-        | { message: string; details?: string };
+      payload = await response.json();
     } catch {
       payload = {
         statusCode: response.status,
@@ -71,7 +64,9 @@ async function handleSubmit(): Promise<void> {
     }
 
     const payloadObject =
-      payload && typeof payload === "object"
+      payload !== null &&
+      typeof payload === "object" &&
+      !Array.isArray(payload)
         ? (payload as Record<string, unknown>)
         : {};
 

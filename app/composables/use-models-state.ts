@@ -61,6 +61,30 @@ export function useModelsState() {
   let latestRequestId = 0;
   let controller: AbortController | null = null;
 
+  function setErrorState(
+    payload: unknown,
+    httpStatus: number,
+    httpStatusText: string,
+  ): void {
+    const payloadObject =
+      payload !== null &&
+      typeof payload === "object" &&
+      !Array.isArray(payload)
+        ? (payload as Record<string, unknown>)
+        : {};
+
+    const normalized = normalizeUiError({
+      ...payloadObject,
+      statusCode: httpStatus,
+      statusText: httpStatusText,
+    });
+
+    logNormalizedUiError("useModelsState", normalized);
+    state.status = "error";
+    state.error = normalized;
+    state.data = null;
+  }
+
   async function fetchModels(): Promise<void> {
     latestRequestId += 1;
     const currentRequestId = latestRequestId;
@@ -81,7 +105,13 @@ export function useModelsState() {
 
       let payload:
         | ModelsApiResponse
-        | { message: string; details?: string; code?: string; type?: string }
+        | {
+            message: string;
+            details?: string;
+            code?: string;
+            type?: string;
+            param?: string;
+          }
         | undefined;
       try {
         payload = (await response.json()) as
@@ -91,6 +121,7 @@ export function useModelsState() {
               details?: string;
               code?: string;
               type?: string;
+              param?: string;
             };
       } catch {
         payload = {
@@ -103,37 +134,12 @@ export function useModelsState() {
       }
 
       if (!response.ok) {
-        const payloadObject =
-          payload && typeof payload === "object"
-            ? (payload as Record<string, unknown>)
-            : {};
-
-        const normalized = normalizeUiError({
-          ...payloadObject,
-          statusCode: response.status,
-          statusText: response.statusText,
-        });
-
-        logNormalizedUiError("useModelsState", normalized);
-        state.status = "error";
-        state.error = normalized;
-        state.data = null;
+        setErrorState(payload, response.status, response.statusText);
         return;
       }
 
       if (!isModelsApiResponsePayload(payload)) {
-        const normalized = normalizeUiError({
-          ...(payload && typeof payload === "object"
-            ? (payload as Record<string, unknown>)
-            : {}),
-          statusCode: response.status,
-          statusText: response.statusText,
-        });
-
-        logNormalizedUiError("useModelsState", normalized);
-        state.status = "error";
-        state.error = normalized;
-        state.data = null;
+        setErrorState(payload, response.status, response.statusText);
         return;
       }
 
