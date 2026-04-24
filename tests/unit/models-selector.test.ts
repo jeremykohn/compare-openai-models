@@ -95,7 +95,8 @@ describe("ModelsSelector", () => {
         models: null,
         error: {
           category: "unknown",
-          message: "An unexpected error occurred. Please try again or contact support.",
+          message:
+            "An unexpected error occurred. Please try again or contact support.",
           details:
             '{"object":"list","data":[{"id":"gpt-4.1-mini"}],"usedConfigFilter":true}',
         },
