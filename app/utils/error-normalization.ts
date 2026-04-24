@@ -28,7 +28,7 @@ function truncateDetails(value: string): string {
     return value;
   }
 
-  return value.slice(0, DETAILS_MAX_LENGTH);
+  return value.slice(0, DETAILS_MAX_LENGTH - 1) + "…";
 }
 
 function sanitizeAndTruncateDetails(

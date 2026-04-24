@@ -24,6 +24,12 @@ function hasValidHttpStatus(value: unknown): boolean {
   );
 }
 
+export function isRespondSuccessPayload(
+  payload: Record<string, unknown>,
+): payload is { response: string } {
+  return typeof payload.response === "string";
+}
+
 export function isNetworkFetchError(error: unknown): boolean {
   if (!(error instanceof Error)) {
     return false;
