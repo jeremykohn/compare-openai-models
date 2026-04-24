@@ -64,9 +64,7 @@ async function handleSubmit(): Promise<void> {
     }
 
     const payloadObject =
-      payload !== null &&
-      typeof payload === "object" &&
-      !Array.isArray(payload)
+      payload !== null && typeof payload === "object" && !Array.isArray(payload)
         ? (payload as Record<string, unknown>)
         : {};
 
