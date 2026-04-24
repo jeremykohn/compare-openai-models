@@ -36,6 +36,27 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Send");
   });
 
+  it("handles malformed successful models payload as error state", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: async () => ({
+        object: "list",
+        data: [{ id: "gpt-4.1-mini" }],
+        usedConfigFilter: true,
+      }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.find('[data-testid="error-retry-button"]').exists()).toBe(
+      true,
+    );
+  });
+
   it("renders prompt field semantic attributes", async () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
 
@@ -118,8 +139,13 @@ describe("app ui", () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
     fetchMock.mockResolvedValueOnce({
       ok: false,
+      status: 400,
+      statusText: "Bad Request",
       json: async () => ({
         message: "Request to OpenAI failed.",
+        type: "invalid_request_error",
+        code: "model_not_found",
+        param: "model",
         details: "Authorization: Bearer abc",
       }),
     });
@@ -132,10 +158,38 @@ describe("app ui", () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain("Something went wrong");
-    expect(wrapper.text()).toContain("Show details");
+    expect(wrapper.text()).toContain("Error Details");
+    expect(wrapper.find('[data-testid="error-details-toggle"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.text()).toContain("Type");
+    expect(wrapper.text()).toContain("invalid_request_error");
+    expect(wrapper.text()).toContain("Status Code");
+    expect(wrapper.text()).toContain("400");
+    expect(wrapper.text()).toContain("Error Code");
+    expect(wrapper.text()).toContain("model_not_found");
+  });
 
-    const toggle = wrapper.get('[data-testid="error-details-toggle"]');
-    await toggle.trigger("click");
-    expect(wrapper.text()).toContain("Hide details");
+  it("treats malformed successful payload as normalized error", async () => {
+    fetchMock.mockResolvedValueOnce(modelsResponse());
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: async () => ({ model: "gpt-4.1-mini" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.text()).not.toContain("Response");
+    expect(wrapper.find('[data-testid="error-details-toggle"]').exists()).toBe(
+      true,
+    );
   });
 });

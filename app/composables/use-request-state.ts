@@ -1,11 +1,11 @@
 import { reactive } from "vue";
 import type { RequestStatus } from "~~/types/api";
+import type { NormalizedUiError } from "../utils/error-normalization";
 
 type RequestState = {
   status: RequestStatus;
   data: string | null;
-  error: string | null;
-  errorDetails: string | null;
+  error: NormalizedUiError | null;
 };
 
 export function useRequestState() {
@@ -13,35 +13,30 @@ export function useRequestState() {
     status: "idle",
     data: null,
     error: null,
-    errorDetails: null,
   });
 
   function start(): void {
     state.status = "loading";
     state.data = null;
     state.error = null;
-    state.errorDetails = null;
   }
 
   function succeed(data: string): void {
     state.status = "success";
     state.data = data;
     state.error = null;
-    state.errorDetails = null;
   }
 
-  function fail(error: string, details?: string): void {
+  function fail(error: NormalizedUiError): void {
     state.status = "error";
     state.data = null;
     state.error = error;
-    state.errorDetails = details ?? null;
   }
 
   function reset(): void {
     state.status = "idle";
     state.data = null;
     state.error = null;
-    state.errorDetails = null;
   }
 
   return {

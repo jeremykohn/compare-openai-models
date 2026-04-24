@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { OpenAIModel, RequestStatus } from "~~/types/api";
 import { MODELS_FALLBACK_NOTE_TEXT } from "~~/shared/constants/models";
+import type { NormalizedUiError } from "../utils/error-normalization";
 import UiErrorAlert from "./UiErrorAlert.vue";
 
 const props = withDefaults(
@@ -8,15 +9,13 @@ const props = withDefaults(
     selectedModelId: string;
     status: RequestStatus;
     models: ReadonlyArray<OpenAIModel> | null;
-    error?: string | null;
-    errorDetails?: string | null;
+    error?: NormalizedUiError | null;
     showFallbackNote: boolean;
     required?: boolean;
     disabled?: boolean;
   }>(),
   {
     error: null,
-    errorDetails: null,
     required: true,
     disabled: false,
   },
@@ -108,8 +107,12 @@ function onSelectChanged(event: Event): void {
 
     <div v-if="props.status === 'error'" id="models-select-error">
       <UiErrorAlert
-        :message="props.error ?? 'Unable to load models.'"
-        :details="props.errorDetails ?? undefined"
+        :error="
+          props.error ?? {
+            category: 'unknown',
+            message: 'Unable to load models.',
+          }
+        "
         :show-retry="true"
         @retry="emit('retry')"
       />

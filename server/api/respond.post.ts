@@ -12,6 +12,10 @@ import type {
 import { sanitizeOptionalErrorText } from "~~/app/utils/error-sanitization";
 import { validatePrompt } from "~~/app/utils/prompt-validation";
 import { validateOpenAIRuntimeConfig } from "../utils/openai-security";
+import {
+  mapOpenAIErrorResponse,
+  toSafeStatusText,
+} from "../utils/openai-error-mapper";
 import { extractResponseText } from "../utils/openai-response-parser";
 import { validateSelectedModel } from "../utils/openai-model-validation";
 
@@ -89,12 +93,15 @@ export default defineEventHandler(
       );
 
       if (!upstreamResponse.ok) {
-        const details = sanitizeOptionalErrorText(
-          await upstreamResponse.text(),
-        );
+        const mappedError = await mapOpenAIErrorResponse(upstreamResponse);
+
         throw buildError(upstreamResponse.status, {
           message: RESPOND_ROUTE_ERROR_MESSAGE,
-          details,
+          statusText: toSafeStatusText(upstreamResponse.statusText),
+          code: mappedError.code,
+          type: mappedError.type,
+          param: mappedError.param,
+          details: mappedError.details,
         });
       }
 

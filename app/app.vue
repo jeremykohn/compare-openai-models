@@ -6,6 +6,7 @@ import { useModelsState } from "./composables/use-models-state";
 import { useRequestState } from "./composables/use-request-state";
 import { normalizeUiError } from "./utils/error-normalization";
 import { logNormalizedUiError } from "./utils/log-normalized-ui-error";
+import { isRespondSuccessPayload } from "./utils/type-guards";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
@@ -51,23 +52,47 @@ async function handleSubmit(): Promise<void> {
       body: JSON.stringify(body),
     });
 
-    const payload = (await response.json()) as
-      | { response: string; model: string }
-      | { message: string; details?: string };
+    let payload: unknown;
+
+    try {
+      payload = await response.json();
+    } catch {
+      payload = {
+        statusCode: response.status,
+        statusText: response.statusText,
+      };
+    }
+
+    const payloadObject =
+      payload !== null && typeof payload === "object" && !Array.isArray(payload)
+        ? (payload as Record<string, unknown>)
+        : {};
+
+    const normalizedInput = {
+      ...payloadObject,
+      statusCode: response.status,
+      statusText: response.statusText,
+    };
 
     if (!response.ok) {
-      const normalized = normalizeUiError(payload);
+      const normalized = normalizeUiError(normalizedInput);
       logNormalizedUiError("app.handleSubmit", normalized);
-      fail(normalized.message, normalized.details);
+      fail(normalized);
       return;
     }
 
-    const successPayload = payload as { response: string; model: string };
-    succeed(successPayload.response);
+    if (!isRespondSuccessPayload(normalizedInput)) {
+      const normalized = normalizeUiError(normalizedInput);
+      logNormalizedUiError("app.handleSubmit", normalized);
+      fail(normalized);
+      return;
+    }
+
+    succeed(normalizedInput.response);
   } catch (error) {
     const normalized = normalizeUiError(error);
     logNormalizedUiError("app.handleSubmit", normalized);
-    fail(normalized.message, normalized.details);
+    fail(normalized);
   }
 }
 </script>
@@ -99,7 +124,6 @@ async function handleSubmit(): Promise<void> {
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
-          :error-details="modelsState.errorDetails"
           :show-fallback-note="modelsState.showFallbackNote"
           :disabled="isLoading"
           @update:selected-model-id="selectedModelId = $event"
@@ -168,9 +192,7 @@ async function handleSubmit(): Promise<void> {
 
         <UiErrorAlert
           v-else-if="state.status === 'error' && state.error"
-          :title="'Something went wrong'"
-          :message="state.error"
-          :details="state.errorDetails ?? undefined"
+          :error="state.error"
           :show-retry="false"
         />
       </section>

@@ -121,6 +121,7 @@ describe("/api/respond route integration", () => {
     const fetchSpy = vi.fn(async () => ({
       ok: false,
       status: 429,
+      statusText: "Too Many Requests",
       text: async () => "Authorization: Bearer sk-secret-12345678",
     })) as unknown as typeof fetch;
 
@@ -134,6 +135,67 @@ describe("/api/respond route integration", () => {
       statusCode: 429,
       data: {
         message: "Request to OpenAI failed.",
+        statusText: "Too Many Requests",
+        details: expect.stringContaining("[REDACTED]"),
+      },
+    });
+  });
+
+  it("extracts typed upstream fields from structured error payload", async () => {
+    const fetchSpy = vi.fn(async () => ({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      text: async () =>
+        JSON.stringify({
+          error: {
+            type: "invalid_request_error",
+            code: "model_not_found",
+            param: "model",
+          },
+        }),
+    })) as unknown as typeof fetch;
+
+    mockFetchImplementation(fetchSpy);
+
+    const handler = await loadRespondHandler(buildRuntimeConfig(), {
+      prompt: "hello",
+    });
+
+    await expect(handler({})).rejects.toMatchObject({
+      statusCode: 400,
+      data: {
+        message: "Request to OpenAI failed.",
+        statusText: "Bad Request",
+        type: "invalid_request_error",
+        code: "model_not_found",
+        param: "model",
+      },
+    });
+  });
+
+  it("falls back to sanitized stringified details for unsupported payload", async () => {
+    const fetchSpy = vi.fn(async () => ({
+      ok: false,
+      status: 422,
+      statusText: "Unprocessable Entity",
+      text: async () =>
+        JSON.stringify({
+          detail: "Authorization: Bearer sk-secret-12345678",
+        }),
+    })) as unknown as typeof fetch;
+
+    mockFetchImplementation(fetchSpy);
+
+    const handler = await loadRespondHandler(buildRuntimeConfig(), {
+      prompt: "hello",
+    });
+
+    await expect(handler({})).rejects.toMatchObject({
+      statusCode: 422,
+      data: {
+        message: "Request to OpenAI failed.",
+        statusText: "Unprocessable Entity",
         details: expect.stringContaining("[REDACTED]"),
       },
     });
