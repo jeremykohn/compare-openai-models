@@ -1,46 +1,73 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { DEFAULT_MODEL } from "~~/shared/constants/models";
 import ModelsSelector from "./components/ModelsSelector.vue";
 import UiErrorAlert from "./components/UiErrorAlert.vue";
 import { useModelsState } from "./composables/use-models-state";
 import { useRequestState } from "./composables/use-request-state";
 import { normalizeUiError } from "./utils/error-normalization";
+import type { NormalizedUiError } from "./utils/error-normalization";
 import { logNormalizedUiError } from "./utils/log-normalized-ui-error";
 import { isRespondSuccessPayload } from "./utils/type-guards";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
-const selectedModelId = ref("");
+const selectedModelIdLeft = ref("");
+const selectedModelIdRight = ref("");
+const submittedModelIdLeft = ref(DEFAULT_MODEL);
+const submittedModelIdRight = ref(DEFAULT_MODEL);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
-const { state, start, succeed, fail } = useRequestState();
+const {
+  state: leftRequestState,
+  start: startLeftRequest,
+  succeed: succeedLeftRequest,
+  fail: failLeftRequest,
+} = useRequestState();
+const {
+  state: rightRequestState,
+  start: startRightRequest,
+  succeed: succeedRightRequest,
+  fail: failRightRequest,
+} = useRequestState();
 const { state: modelsState, fetchModels } = useModelsState();
 
-const isLoading = computed(() => state.status === "loading");
+const isLoading = computed(
+  () =>
+    leftRequestState.status === "loading" ||
+    rightRequestState.status === "loading",
+);
 
-async function handleSubmit(): Promise<void> {
-  if (isLoading.value) {
-    return;
-  }
+const showOutputPanels = computed(
+  () =>
+    leftRequestState.status === "success" ||
+    leftRequestState.status === "error" ||
+    rightRequestState.status === "success" ||
+    rightRequestState.status === "error",
+);
 
-  validationError.value = null;
-  const promptResult = validatePrompt(prompt.value);
+const leftOutputHeading = computed(
+  () => `Response from Model 1 (${submittedModelIdLeft.value})`,
+);
 
-  if (!promptResult.isValid) {
-    validationError.value = promptResult.message;
-    promptRef.value?.focus();
-    return;
-  }
+const rightOutputHeading = computed(
+  () => `Response from Model 2 (${submittedModelIdRight.value})`,
+);
 
-  start();
-
+async function runSingleQuery(
+  promptText: string,
+  modelId: string,
+  side: "left" | "right",
+): Promise<
+  { ok: true; response: string } | { ok: false; error: NormalizedUiError }
+> {
   const body: { prompt: string; model?: string } = {
-    prompt: promptResult.trimmedPrompt,
+    prompt: promptText,
   };
 
-  if (selectedModelId.value.trim()) {
-    body.model = selectedModelId.value.trim();
+  if (modelId.trim()) {
+    body.model = modelId.trim();
   }
 
   try {
@@ -74,25 +101,74 @@ async function handleSubmit(): Promise<void> {
       statusText: response.statusText,
     };
 
-    if (!response.ok) {
+    if (!response.ok || !isRespondSuccessPayload(normalizedInput)) {
       const normalized = normalizeUiError(normalizedInput);
-      logNormalizedUiError("app.handleSubmit", normalized);
-      fail(normalized);
-      return;
+      logNormalizedUiError(`app.handleSubmit.${side}`, normalized);
+      return {
+        ok: false,
+        error: normalized,
+      };
     }
 
-    if (!isRespondSuccessPayload(normalizedInput)) {
-      const normalized = normalizeUiError(normalizedInput);
-      logNormalizedUiError("app.handleSubmit", normalized);
-      fail(normalized);
-      return;
-    }
-
-    succeed(normalizedInput.response);
+    return {
+      ok: true,
+      response: normalizedInput.response,
+    };
   } catch (error) {
     const normalized = normalizeUiError(error);
-    logNormalizedUiError("app.handleSubmit", normalized);
-    fail(normalized);
+    logNormalizedUiError(`app.handleSubmit.${side}`, normalized);
+    return {
+      ok: false,
+      error: normalized,
+    };
+  }
+}
+
+async function handleSubmit(): Promise<void> {
+  if (isLoading.value) {
+    return;
+  }
+
+  validationError.value = null;
+  const promptResult = validatePrompt(prompt.value);
+
+  if (!promptResult.isValid) {
+    validationError.value = promptResult.message;
+    promptRef.value?.focus();
+    return;
+  }
+
+  startLeftRequest();
+  startRightRequest();
+
+  submittedModelIdLeft.value =
+    selectedModelIdLeft.value.trim() || DEFAULT_MODEL;
+  submittedModelIdRight.value =
+    selectedModelIdRight.value.trim() || DEFAULT_MODEL;
+
+  const [leftResult, rightResult] = await Promise.all([
+    runSingleQuery(
+      promptResult.trimmedPrompt,
+      selectedModelIdLeft.value,
+      "left",
+    ),
+    runSingleQuery(
+      promptResult.trimmedPrompt,
+      selectedModelIdRight.value,
+      "right",
+    ),
+  ]);
+
+  if (leftResult.ok) {
+    succeedLeftRequest(leftResult.response);
+  } else {
+    failLeftRequest(leftResult.error);
+  }
+
+  if (rightResult.ok) {
+    succeedRightRequest(rightResult.response);
+  } else {
+    failRightRequest(rightResult.error);
   }
 }
 </script>
@@ -120,13 +196,15 @@ async function handleSubmit(): Promise<void> {
         @submit.prevent="handleSubmit"
       >
         <ModelsSelector
-          :selected-model-id="selectedModelId"
+          :selected-model-id-left="selectedModelIdLeft"
+          :selected-model-id-right="selectedModelIdRight"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
           :show-fallback-note="modelsState.showFallbackNote"
           :disabled="isLoading"
-          @update:selected-model-id="selectedModelId = $event"
+          @update:selected-model-id-left="selectedModelIdLeft = $event"
+          @update:selected-model-id-right="selectedModelIdRight = $event"
           @retry="fetchModels"
         />
 
@@ -171,7 +249,7 @@ async function handleSubmit(): Promise<void> {
 
       <section aria-live="polite" aria-atomic="true" class="grid gap-3">
         <div
-          v-if="state.status === 'loading'"
+          v-if="isLoading"
           role="status"
           aria-live="polite"
           class="inline-flex items-center gap-2 text-sm text-slate-700"
@@ -182,41 +260,75 @@ async function handleSubmit(): Promise<void> {
           <span>Waiting for response from ChatGPT...</span>
         </div>
 
-        <div
-          v-else-if="state.status === 'success' && state.data"
-          class="grid gap-4 md:grid-cols-2"
-        >
+        <div v-else-if="showOutputPanels" class="grid gap-4 md:grid-cols-2">
           <article
-            class="grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900 shadow-sm"
+            class="grid gap-3 rounded-2xl p-4 shadow-sm"
+            :class="
+              leftRequestState.status === 'error'
+                ? 'border border-red-200 bg-red-50'
+                : 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+            "
           >
-            <h2 class="text-base font-semibold">Output 1</h2>
-            <p class="whitespace-pre-wrap text-sm">{{ state.data }}</p>
+            <h2
+              class="text-base font-semibold"
+              :class="
+                leftRequestState.status === 'error'
+                  ? 'text-red-900'
+                  : 'text-emerald-900'
+              "
+            >
+              {{ leftOutputHeading }}
+            </h2>
+            <p
+              v-if="
+                leftRequestState.status === 'success' && leftRequestState.data
+              "
+              class="whitespace-pre-wrap text-sm"
+            >
+              {{ leftRequestState.data }}
+            </p>
+            <UiErrorAlert
+              v-else-if="
+                leftRequestState.status === 'error' && leftRequestState.error
+              "
+              :error="leftRequestState.error"
+              :show-retry="false"
+            />
           </article>
 
           <article
-            class="grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900 shadow-sm"
+            class="grid gap-3 rounded-2xl p-4 shadow-sm"
+            :class="
+              rightRequestState.status === 'error'
+                ? 'border border-red-200 bg-red-50'
+                : 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+            "
           >
-            <h2 class="text-base font-semibold">Output 2</h2>
-            <p class="whitespace-pre-wrap text-sm">{{ state.data }}</p>
-          </article>
-        </div>
-
-        <div
-          v-else-if="state.status === 'error' && state.error"
-          class="grid gap-4 md:grid-cols-2"
-        >
-          <article
-            class="grid gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm"
-          >
-            <h2 class="text-base font-semibold text-red-900">Output 1</h2>
-            <UiErrorAlert :error="state.error" :show-retry="false" />
-          </article>
-
-          <article
-            class="grid gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm"
-          >
-            <h2 class="text-base font-semibold text-red-900">Output 2</h2>
-            <UiErrorAlert :error="state.error" :show-retry="false" />
+            <h2
+              class="text-base font-semibold"
+              :class="
+                rightRequestState.status === 'error'
+                  ? 'text-red-900'
+                  : 'text-emerald-900'
+              "
+            >
+              {{ rightOutputHeading }}
+            </h2>
+            <p
+              v-if="
+                rightRequestState.status === 'success' && rightRequestState.data
+              "
+              class="whitespace-pre-wrap text-sm"
+            >
+              {{ rightRequestState.data }}
+            </p>
+            <UiErrorAlert
+              v-else-if="
+                rightRequestState.status === 'error' && rightRequestState.error
+              "
+              :error="rightRequestState.error"
+              :show-retry="false"
+            />
           </article>
         </div>
       </section>

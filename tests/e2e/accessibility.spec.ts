@@ -34,7 +34,8 @@ test("has no critical accessibility violations on idle-ready state", async ({
   await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }]);
 
   await page.goto("/");
-  await expect(page.getByLabel("Model *")).toBeVisible();
+  await expect(page.getByLabel("Model 1 *")).toBeVisible();
+  await expect(page.getByLabel("Model 2 *")).toBeVisible();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);
@@ -85,7 +86,7 @@ test("has no critical accessibility violations on success response state", async
 
   await page.goto("/");
   await waitForNuxtHydration(page);
-  await expect(page.getByLabel("Model *")).toContainText("gpt-4.1-mini");
+  await expect(page.getByLabel("Model 1 *")).toContainText("gpt-4.1-mini");
 
   await page.getByLabel("Prompt *").fill("hello");
   await Promise.all([
@@ -96,8 +97,16 @@ test("has no critical accessibility violations on success response state", async
     ),
     page.getByRole("button", { name: "Send" }).click(),
   ]);
-  await expect(page.getByRole("heading", { name: "Output 1" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Output 2" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Response from Model 1 (gpt-4.1-mini)",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Response from Model 2 (gpt-4.1-mini)",
+    }),
+  ).toBeVisible();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);

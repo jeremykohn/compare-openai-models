@@ -14,16 +14,20 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
-  const modelSelect = page.getByLabel("Model *");
-  const rightModelSelect = page.getByLabel("Model (inactive)");
+  const modelSelect = page.getByLabel("Model 1 *");
+  const rightModelSelect = page.getByLabel("Model 2 *");
   await expect(modelSelect).toBeVisible();
   await expect(rightModelSelect).toBeVisible();
   await expect(modelSelect).toBeEnabled();
-  await expect(rightModelSelect).toBeDisabled();
+  await expect(rightModelSelect).toBeEnabled();
   await expect(page.locator("#models-select option")).toHaveCount(3);
   await expect(page.locator("#models-select-right option")).toHaveCount(3);
   await expect(modelSelect).toHaveValue("");
+  await expect(rightModelSelect).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
+
+  await modelSelect.selectOption("gpt-4o");
+  await rightModelSelect.selectOption("gpt-4.1-mini");
 
   await page.getByLabel("Prompt *").fill("Write a greeting");
   await Promise.all([
@@ -32,11 +36,22 @@ test("runs happy path from load to rendered response", async ({ page }) => {
         response.url().includes("/api/respond") &&
         response.request().method() === "POST",
     ),
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/respond") &&
+        response.request().method() === "POST",
+    ),
     page.getByRole("button", { name: "Send" }).click(),
   ]);
 
-  await expect(page.getByRole("heading", { name: "Output 1" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Output 2" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Response from Model 1 (gpt-4o)" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Response from Model 2 (gpt-4.1-mini)",
+    }),
+  ).toBeVisible();
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
 });
 test("shows error details toggle when submission fails", async ({ page }) => {
@@ -58,6 +73,11 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   await promptInput.fill("Write a greeting");
   await expect(promptInput).toHaveValue("Write a greeting");
   await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/respond") &&
+        response.request().method() === "POST",
+    ),
     page.waitForResponse(
       (response) =>
         response.url().includes("/api/respond") &&
@@ -103,6 +123,11 @@ test("renders typed error metadata when API provides type/code/param", async ({
   await page.locator("#prompt-input").fill("Write a greeting");
 
   await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/respond") &&
+        response.request().method() === "POST",
+    ),
     page.waitForResponse(
       (response) =>
         response.url().includes("/api/respond") &&

@@ -63,7 +63,7 @@ describe("app accessibility", () => {
     expect(responseRegion.attributes("aria-atomic")).toBe("true");
   });
 
-  it("renders labeled model selectors with right selector disabled", async () => {
+  it("renders labeled model selectors with both selectors active", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -87,16 +87,18 @@ describe("app accessibility", () => {
     const leftSelect = wrapper.get("#models-select");
     const rightSelect = wrapper.get("#models-select-right");
 
-    expect(wrapper.get('label[for="models-select"]').text()).toContain("Model");
+    expect(wrapper.get('label[for="models-select"]').text()).toContain(
+      "Model 1",
+    );
     expect(wrapper.get('label[for="models-select-right"]').text()).toContain(
-      "Model (inactive)",
+      "Model 2",
     );
     expect(leftSelect.attributes("aria-describedby")).toContain(
       "models-select-help",
     );
     expect(rightSelect.attributes("aria-describedby")).toContain(
-      "models-select-right-note",
+      "models-select-help",
     );
-    expect(rightSelect.attributes("disabled")).toBeDefined();
+    expect(rightSelect.attributes("disabled")).toBeUndefined();
   });
 });

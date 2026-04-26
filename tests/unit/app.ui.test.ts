@@ -36,7 +36,7 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Send");
   });
 
-  it("shows left model selector active and right selector disabled", async () => {
+  it("shows both model selectors active", async () => {
     fetchMock.mockResolvedValueOnce(
       modelsResponse([
         { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
@@ -50,7 +50,29 @@ describe("app ui", () => {
     const rightSelect = wrapper.get("#models-select-right");
 
     expect(leftSelect.attributes("disabled")).toBeUndefined();
-    expect(rightSelect.attributes("disabled")).toBeDefined();
+    expect(rightSelect.attributes("disabled")).toBeUndefined();
+  });
+
+  it("tracks left and right model selections independently", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#models-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#models-select-right").setValue("gpt-4o");
+
+    expect(
+      (wrapper.get("#models-select").element as HTMLSelectElement).value,
+    ).toBe("gpt-4.1-mini");
+    expect(
+      (wrapper.get("#models-select-right").element as HTMLSelectElement).value,
+    ).toBe("gpt-4o");
   });
 
   it("handles malformed successful models payload as error state", async () => {
@@ -99,6 +121,8 @@ describe("app ui", () => {
     expect(prompt.attributes("aria-invalid")).toBe("true");
     expect(prompt.attributes("aria-describedby")).toContain("prompt-error");
     expect(wrapper.get("#prompt-error").attributes("role")).toBe("alert");
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("shows loading state while /api/respond is pending", async () => {
@@ -132,7 +156,7 @@ describe("app ui", () => {
     await flushPromises();
   });
 
-  it("submits prompt with left selected model only", async () => {
+  it("submits two model-targeted requests from a single send action", async () => {
     fetchMock.mockResolvedValueOnce(
       modelsResponse([
         { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
@@ -143,11 +167,16 @@ describe("app ui", () => {
       ok: true,
       json: async () => ({ response: "ok", model: "gpt-4o" }),
     });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "ok-2", model: "gpt-4.1-mini" }),
+    });
 
     const wrapper = mount(App);
     await flushPromises();
 
     await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue(" hello ");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -157,44 +186,70 @@ describe("app ui", () => {
       "/api/respond",
       expect.objectContaining({ method: "POST" }),
     );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      3,
+      "/api/respond",
+      expect.objectContaining({ method: "POST" }),
+    );
 
-    const requestInit = fetchMock.mock.calls[1]?.[1] as RequestInit;
-    const parsedBody = JSON.parse(String(requestInit.body)) as {
+    const leftRequestInit = fetchMock.mock.calls[1]?.[1] as RequestInit;
+    const leftParsedBody = JSON.parse(String(leftRequestInit.body)) as {
       prompt: string;
       model?: string;
-      rightModel?: string;
+    };
+    const rightRequestInit = fetchMock.mock.calls[2]?.[1] as RequestInit;
+    const rightParsedBody = JSON.parse(String(rightRequestInit.body)) as {
+      prompt: string;
+      model?: string;
     };
 
-    expect(parsedBody.prompt).toBe("hello");
-    expect(parsedBody.model).toBe("gpt-4o");
-    expect(parsedBody.rightModel).toBeUndefined();
+    expect(leftParsedBody.prompt).toBe("hello");
+    expect(leftParsedBody.model).toBe("gpt-4o");
+    expect(rightParsedBody.prompt).toBe("hello");
+    expect(rightParsedBody.model).toBe("gpt-4.1-mini");
   });
 
-  it("shows mirrored success output panels with identical response text", async () => {
-    fetchMock.mockResolvedValueOnce(modelsResponse());
+  it("renders independent success output for left and right responses", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
     fetchMock.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ response: "Hello\nWorld", model: "gpt-4.1-mini" }),
+      json: async () => ({ response: "Left response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
     });
 
     const wrapper = mount(App);
     await flushPromises();
 
+    await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Output 1");
-    expect(wrapper.text()).toContain("Output 2");
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4o)");
+    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
 
     const responseParagraphs = wrapper.findAll("article p.whitespace-pre-wrap");
     expect(responseParagraphs).toHaveLength(2);
-    expect(responseParagraphs[0]?.text()).toBe("Hello\nWorld");
-    expect(responseParagraphs[1]?.text()).toBe("Hello\nWorld");
+    expect(responseParagraphs[0]?.text()).toBe("Left response");
+    expect(responseParagraphs[1]?.text()).toBe("Right response");
   });
 
-  it("shows mirrored response error panels with details toggle labels", async () => {
-    fetchMock.mockResolvedValueOnce(modelsResponse());
+  it("renders left error and right success independently", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
     fetchMock.mockResolvedValueOnce({
       ok: false,
       status: 400,
@@ -207,20 +262,29 @@ describe("app ui", () => {
         details: "Authorization: Bearer abc",
       }),
     });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right success", model: "gpt-4.1-mini" }),
+    });
 
     const wrapper = mount(App);
     await flushPromises();
 
+    await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4o)");
+    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Something went wrong");
-    expect(wrapper.text()).toContain("Error Details");
+    expect(wrapper.text()).toContain("Right success");
+
     const errorToggles = wrapper.findAll(
       '[data-testid="error-details-toggle"]',
     );
-    expect(errorToggles).toHaveLength(2);
+    expect(errorToggles).toHaveLength(1);
     expect(wrapper.text()).toContain("Type");
     expect(wrapper.text()).toContain("invalid_request_error");
     expect(wrapper.text()).toContain("Status Code");
@@ -229,26 +293,42 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("model_not_found");
   });
 
-  it("treats malformed successful payload as normalized error", async () => {
-    fetchMock.mockResolvedValueOnce(modelsResponse());
+  it("renders left success and right error independently", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
     fetchMock.mockResolvedValueOnce({
       ok: true,
-      status: 200,
-      statusText: "OK",
-      json: async () => ({ model: "gpt-4.1-mini" }),
+      json: async () => ({ response: "Left success", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 503,
+      statusText: "Service Unavailable",
+      json: async () => ({
+        message: "Request to OpenAI failed.",
+        details: "Temporary outage",
+      }),
     });
 
     const wrapper = mount(App);
     await flushPromises();
 
+    await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4o)");
+    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
+    expect(wrapper.text()).toContain("Left success");
     expect(wrapper.text()).toContain("Something went wrong");
-    expect(wrapper.text()).not.toContain("Response");
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
-    ).toHaveLength(2);
+    ).toHaveLength(1);
   });
 });

@@ -7,7 +7,8 @@ describe("ModelsSelector", () => {
   it("shows loading indicator", () => {
     const wrapper = mount(ModelsSelector, {
       props: {
-        selectedModelId: "",
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
         status: "loading",
         models: null,
         showFallbackNote: false,
@@ -24,7 +25,8 @@ describe("ModelsSelector", () => {
   it("shows models and helper text", () => {
     const wrapper = mount(ModelsSelector, {
       props: {
-        selectedModelId: "",
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
         status: "success",
         models: [makeModel("gpt-4.1-mini")],
         showFallbackNote: true,
@@ -45,7 +47,7 @@ describe("ModelsSelector", () => {
     );
 
     const rightSelect = wrapper.get("#models-select-right");
-    expect(rightSelect.attributes("disabled")).toBeDefined();
+    expect(rightSelect.attributes("disabled")).toBeUndefined();
 
     const leftOptions = leftSelect
       .findAll("option")
@@ -59,7 +61,8 @@ describe("ModelsSelector", () => {
   it("shows disabled no-model state when success has no models", () => {
     const wrapper = mount(ModelsSelector, {
       props: {
-        selectedModelId: "",
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
         status: "success",
         models: [],
         showFallbackNote: false,
@@ -76,7 +79,8 @@ describe("ModelsSelector", () => {
   it("shows error alert, marks select invalid, and emits retry", async () => {
     const wrapper = mount(ModelsSelector, {
       props: {
-        selectedModelId: "",
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
         status: "error",
         models: null,
         error: {
@@ -104,26 +108,35 @@ describe("ModelsSelector", () => {
     expect(wrapper.emitted("retry")).toHaveLength(1);
   });
 
-  it("does not emit model updates from disabled right dropdown", async () => {
+  it("emits independent model updates from left and right dropdowns", async () => {
     const wrapper = mount(ModelsSelector, {
       props: {
-        selectedModelId: "",
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
         status: "success",
-        models: [makeModel("gpt-4.1-mini")],
+        models: [makeModel("gpt-4.1-mini"), makeModel("gpt-4o")],
         showFallbackNote: false,
       },
     });
 
+    const leftSelect = wrapper.get("#models-select");
     const rightSelect = wrapper.get("#models-select-right");
+    await leftSelect.setValue("gpt-4.1-mini");
     await rightSelect.setValue("gpt-4.1-mini");
 
-    expect(wrapper.emitted("update:selectedModelId")).toBeUndefined();
+    expect(wrapper.emitted("update:selectedModelIdLeft")).toEqual([
+      ["gpt-4.1-mini"],
+    ]);
+    expect(wrapper.emitted("update:selectedModelIdRight")).toEqual([
+      ["gpt-4.1-mini"],
+    ]);
   });
 
   it("surfaces malformed success payload normalization as error state", () => {
     const wrapper = mount(ModelsSelector, {
       props: {
-        selectedModelId: "",
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
         status: "error",
         models: null,
         error: {
@@ -141,5 +154,22 @@ describe("ModelsSelector", () => {
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("Error Details");
     expect(wrapper.text()).toContain('"usedConfigFilter":true');
+  });
+
+  it("renders Model 1 and Model 2 labels with proper associations", () => {
+    const wrapper = mount(ModelsSelector, {
+      props: {
+        selectedModelIdLeft: "",
+        selectedModelIdRight: "",
+        status: "success",
+        models: [makeModel("gpt-4.1-mini")],
+        showFallbackNote: false,
+      },
+    });
+
+    expect(wrapper.get('label[for="models-select"]').text()).toBe("Model 1 *");
+    expect(wrapper.get('label[for="models-select-right"]').text()).toBe(
+      "Model 2 *",
+    );
   });
 });
