@@ -5,6 +5,11 @@ import {
   mockRespondSuccess,
   startRespondRequestCapture,
 } from "./helpers/mock-api";
+import {
+  getLeftModelSelect,
+  getPromptInput,
+  getRightModelSelect,
+} from "./helpers/selectors";
 
 test("runs happy path from load to rendered response", async ({ page }) => {
   await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
@@ -15,8 +20,8 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
-  const modelSelect = page.getByLabel("Model 1 *");
-  const rightModelSelect = page.getByLabel("Model 2 *");
+  const modelSelect = getLeftModelSelect(page);
+  const rightModelSelect = getRightModelSelect(page);
   await expect(modelSelect).toBeVisible();
   await expect(rightModelSelect).toBeVisible();
   await expect(modelSelect).toBeEnabled();
@@ -30,7 +35,7 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await modelSelect.selectOption("gpt-4o");
   await rightModelSelect.selectOption("gpt-4.1-mini");
 
-  await page.getByLabel("Prompt *").fill("Write a greeting");
+  await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
 
@@ -98,12 +103,12 @@ test("shows left completion while right response is still pending", async ({
 
   await page.goto("/");
 
-  const modelSelect = page.getByLabel("Model 1 *");
-  const rightModelSelect = page.getByLabel("Model 2 *");
+  const modelSelect = getLeftModelSelect(page);
+  const rightModelSelect = getRightModelSelect(page);
   await modelSelect.selectOption("gpt-4o");
   await rightModelSelect.selectOption("gpt-4.1-mini");
 
-  await page.getByLabel("Prompt *").fill("Write a greeting");
+  await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
 
@@ -140,7 +145,7 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   ).toBeVisible();
   await expect(page.locator("#models-select option")).toHaveCount(2);
 
-  const promptInput = page.locator("#prompt-input");
+  const promptInput = getPromptInput(page);
   await promptInput.fill("Write a greeting");
   await expect(promptInput).toHaveValue("Write a greeting");
 
@@ -186,7 +191,7 @@ test("renders typed error metadata when API provides type/code/param", async ({
 
   await page.goto("/");
   await expect(page.locator("#models-select option")).toHaveCount(2);
-  await page.locator("#prompt-input").fill("Write a greeting");
+  await getPromptInput(page).fill("Write a greeting");
 
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();

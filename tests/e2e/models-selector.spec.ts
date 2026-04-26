@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { mockModelsSuccess } from "./helpers/mock-api";
+import { getLeftModelSelect } from "./helpers/selectors";
 
 test("shows loading indicator then model options", async ({ page }) => {
   let releaseModelsResponse: (() => void) | null = null;
@@ -34,8 +35,9 @@ test("shows loading indicator then model options", async ({ page }) => {
   await expect(page.getByText("Loading models...")).toBeVisible();
   (releaseModelsResponse as (() => void) | null)?.();
 
-  await expect(page.getByLabel("Model 1 *")).toBeVisible();
-  await expect(page.getByLabel("Model 1 *")).toContainText("gpt-4.1-mini");
+  const leftModelSelect = getLeftModelSelect(page);
+  await expect(leftModelSelect).toBeVisible();
+  await expect(leftModelSelect).toContainText("gpt-4.1-mini");
 });
 
 test("shows model fetch error and supports retry", async ({ page }) => {
@@ -86,8 +88,9 @@ test("shows model fetch error and supports retry", async ({ page }) => {
   shouldFail = false;
   await page.getByRole("button", { name: "Try again" }).click();
 
-  await expect(page.getByLabel("Model 1 *")).toBeVisible();
-  await expect(page.getByLabel("Model 1 *")).toContainText("gpt-4.1-mini");
+  const leftModelSelect = getLeftModelSelect(page);
+  await expect(leftModelSelect).toBeVisible();
+  await expect(leftModelSelect).toContainText("gpt-4.1-mini");
 });
 
 test("shows fallback note when server indicates fallback mode", async ({

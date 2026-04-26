@@ -8,6 +8,7 @@ import {
   mockRespondSuccess,
   startRespondRequestCapture,
 } from "./helpers/mock-api";
+import { getPromptInput } from "./helpers/selectors";
 
 async function analyzePage(page: Page) {
   return new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
@@ -89,7 +90,7 @@ test("has no critical accessibility violations on success response state", async
   await waitForNuxtHydration(page);
   await expect(page.getByLabel("Model 1 *")).toContainText("gpt-4.1-mini");
 
-  await page.getByLabel("Prompt *").fill("hello");
+  await getPromptInput(page).fill("hello");
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
 
@@ -142,7 +143,7 @@ test("has no critical accessibility violations on error states", async ({
   await page.reload();
   await waitForNuxtHydration(page);
 
-  await page.getByLabel("Prompt *").fill("hello");
+  await getPromptInput(page).fill("hello");
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
 
