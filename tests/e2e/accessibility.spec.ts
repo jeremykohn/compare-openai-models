@@ -6,6 +6,7 @@ import {
   mockModelsSuccess,
   mockRespondError,
   mockRespondSuccess,
+  startRespondRequestCapture,
 } from "./helpers/mock-api";
 
 async function analyzePage(page: Page) {
@@ -89,14 +90,13 @@ test("has no critical accessibility violations on success response state", async
   await expect(page.getByLabel("Model 1 *")).toContainText("gpt-4.1-mini");
 
   await page.getByLabel("Prompt *").fill("hello");
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.getByRole("button", { name: "Send" }).click(),
-  ]);
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
+
+  await expect(page.getByText("Hello from success state")).toHaveCount(2);
   await expect(
     page.getByRole("heading", {
       name: "Response from Model 1 (gpt-4.1-mini)",
@@ -107,6 +107,8 @@ test("has no critical accessibility violations on success response state", async
       name: "Response from Model 2 (gpt-4.1-mini)",
     }),
   ).toBeVisible();
+
+  capture.stop();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);
@@ -141,10 +143,17 @@ test("has no critical accessibility violations on error states", async ({
   await waitForNuxtHydration(page);
 
   await page.getByLabel("Prompt *").fill("hello");
+  const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
+
   await expect(page.getByText("Something went wrong").first()).toBeVisible({
     timeout: 10_000,
   });
+
+  capture.stop();
 
   const responseErrorResults = await analyzePage(page);
   expect(responseErrorResults.violations).toEqual([]);

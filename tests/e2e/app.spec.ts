@@ -3,6 +3,7 @@ import {
   mockModelsSuccess,
   mockRespondError,
   mockRespondSuccess,
+  startRespondRequestCapture,
 } from "./helpers/mock-api";
 
 test("runs happy path from load to rendered response", async ({ page }) => {
@@ -30,22 +31,21 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await rightModelSelect.selectOption("gpt-4.1-mini");
 
   await page.getByLabel("Prompt *").fill("Write a greeting");
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.getByRole("button", { name: "Send" }).click(),
-  ]);
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
+
+  const capturedModels = capture.requests.map((request) => request.model);
+  expect(capturedModels).toContain("gpt-4o");
+  expect(capturedModels).toContain("gpt-4.1-mini");
+  expect(capturedModels[0]).not.toBe(capturedModels[1]);
 
   await expect(
-    page.getByRole("heading", { name: "Response from Model 1 (gpt-4o)" }),
+    page.getByRole("heading", {
+      name: "Response from Model 1 (gpt-4.1-mini)",
+    }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
@@ -53,6 +53,8 @@ test("runs happy path from load to rendered response", async ({ page }) => {
     }),
   ).toBeVisible();
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
+
+  capture.stop();
 });
 
 test("shows left completion while right response is still pending", async ({
@@ -102,15 +104,16 @@ test("shows left completion while right response is still pending", async ({
   await rightModelSelect.selectOption("gpt-4.1-mini");
 
   await page.getByLabel("Prompt *").fill("Write a greeting");
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST" &&
-        response.request().postData()?.includes('"model":"gpt-4o"') === true,
-    ),
-    page.getByRole("button", { name: "Send" }).click(),
-  ]);
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
+
+  const capturedModels = capture.requests.map((request) => request.model);
+  expect(capturedModels).toContain("gpt-4o");
+  expect(capturedModels).toContain("gpt-4.1-mini");
+  expect(capturedModels[0]).not.toBe(capturedModels[1]);
 
   await expect(page.getByText("Left fast response")).toBeVisible();
   await expect(page.getByText("Waiting for Model 2 response...")).toBeVisible();
@@ -118,6 +121,8 @@ test("shows left completion while right response is still pending", async ({
   (releaseRightResponse as (() => void) | null)?.();
 
   await expect(page.getByText("Right delayed response")).toBeVisible();
+
+  capture.stop();
 });
 
 test("shows error details toggle when submission fails", async ({ page }) => {
@@ -138,19 +143,12 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   const promptInput = page.locator("#prompt-input");
   await promptInput.fill("Write a greeting");
   await expect(promptInput).toHaveValue("Write a greeting");
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.getByRole("button", { name: "Send" }).click(),
-  ]);
+
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
 
   await expect(page.getByText("Something went wrong")).toHaveCount(2);
 
@@ -165,6 +163,8 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   await expect(details.first().getByText("Status Code")).toBeVisible();
   await expect(details.first().getByText("503")).toBeVisible();
   await expect(details.first().getByText("Type")).toHaveCount(0);
+
+  capture.stop();
 });
 
 test("renders typed error metadata when API provides type/code/param", async ({
@@ -188,19 +188,11 @@ test("renders typed error metadata when API provides type/code/param", async ({
   await expect(page.locator("#models-select option")).toHaveCount(2);
   await page.locator("#prompt-input").fill("Write a greeting");
 
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.getByRole("button", { name: "Send" }).click(),
-  ]);
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
 
   const details = page.locator('[data-testid="error-details-toggle"]');
   await expect(details).toHaveCount(2);
@@ -216,4 +208,6 @@ test("renders typed error metadata when API provides type/code/param", async ({
   await expect(
     details.first().getByText("model", { exact: true }),
   ).toBeVisible();
+
+  capture.stop();
 });
