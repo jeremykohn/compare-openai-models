@@ -54,6 +54,72 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
 });
+
+test("shows left completion while right response is still pending", async ({
+  page,
+}) => {
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
+
+  let releaseRightResponse: (() => void) | null = null;
+
+  await page.route("**/api/respond", async (route) => {
+    const requestBody = route.request().postDataJSON() as {
+      model?: string;
+      prompt: string;
+    };
+
+    if (requestBody.model === "gpt-4o") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          response: "Left fast response",
+          model: "gpt-4o",
+        }),
+      });
+      return;
+    }
+
+    await new Promise<void>((resolve) => {
+      releaseRightResponse = () => resolve();
+    });
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        response: "Right delayed response",
+        model: "gpt-4.1-mini",
+      }),
+    });
+  });
+
+  await page.goto("/");
+
+  const modelSelect = page.getByLabel("Model 1 *");
+  const rightModelSelect = page.getByLabel("Model 2 *");
+  await modelSelect.selectOption("gpt-4o");
+  await rightModelSelect.selectOption("gpt-4.1-mini");
+
+  await page.getByLabel("Prompt *").fill("Write a greeting");
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/respond") &&
+        response.request().method() === "POST" &&
+        response.request().postData()?.includes('"model":"gpt-4o"') === true,
+    ),
+    page.getByRole("button", { name: "Send" }).click(),
+  ]);
+
+  await expect(page.getByText("Left fast response")).toBeVisible();
+  await expect(page.getByText("Waiting for Model 2 response...")).toBeVisible();
+
+  (releaseRightResponse as (() => void) | null)?.();
+
+  await expect(page.getByText("Right delayed response")).toBeVisible();
+});
+
 test("shows error details toggle when submission fails", async ({ page }) => {
   await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }]);
   await mockRespondError(

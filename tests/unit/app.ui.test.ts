@@ -128,13 +128,21 @@ describe("app ui", () => {
   it("shows loading state while /api/respond is pending", async () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
 
-    let resolveRespond: (value: unknown) => void = () => undefined;
-    const respondPromise = new Promise((resolve) => {
-      resolveRespond = resolve;
+    let resolveLeftRespond: (value: unknown) => void = () => undefined;
+    const leftRespondPromise = new Promise((resolve) => {
+      resolveLeftRespond = resolve;
+    });
+
+    let resolveRightRespond: (value: unknown) => void = () => undefined;
+    const rightRespondPromise = new Promise((resolve) => {
+      resolveRightRespond = resolve;
     });
 
     fetchMock.mockImplementationOnce(
-      async () => (await respondPromise) as never,
+      async () => (await leftRespondPromise) as never,
+    );
+    fetchMock.mockImplementationOnce(
+      async () => (await rightRespondPromise) as never,
     );
 
     const wrapper = mount(App);
@@ -144,14 +152,59 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Waiting for response from ChatGPT...");
+    expect(wrapper.text()).toContain("Waiting for Model 1 response...");
+    expect(wrapper.text()).toContain("Waiting for Model 2 response...");
     const sendButton = wrapper.get('button[type="submit"]');
     expect(sendButton.attributes("disabled")).toBeDefined();
     expect(sendButton.attributes("aria-busy")).toBe("true");
 
-    resolveRespond({
+    resolveLeftRespond({
       ok: true,
       json: async () => ({ response: "ok", model: "gpt-4.1-mini" }),
+    });
+    resolveRightRespond({
+      ok: true,
+      json: async () => ({ response: "ok-2", model: "gpt-4.1-mini" }),
+    });
+    await flushPromises();
+  });
+
+  it("shows left success while right side remains loading", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+
+    let resolveRightRespond: (value: unknown) => void = () => undefined;
+    const rightRespondPromise = new Promise((resolve) => {
+      resolveRightRespond = resolve;
+    });
+
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Left response", model: "gpt-4o" }),
+    });
+    fetchMock.mockImplementationOnce(
+      async () => (await rightRespondPromise) as never,
+    );
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Left response");
+    expect(wrapper.text()).toContain("Waiting for Model 2 response...");
+
+    resolveRightRespond({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
     });
     await flushPromises();
   });

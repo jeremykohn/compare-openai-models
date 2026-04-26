@@ -101,4 +101,69 @@ describe("app accessibility", () => {
     );
     expect(rightSelect.attributes("disabled")).toBeUndefined();
   });
+
+  it("renders side-specific loading status semantics during submit", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        object: "list",
+        data: [
+          {
+            id: "gpt-4.1-mini",
+            object: "model",
+            created: 0,
+            owned_by: "openai",
+          },
+          {
+            id: "gpt-4o",
+            object: "model",
+            created: 0,
+            owned_by: "openai",
+          },
+        ],
+        usedConfigFilter: true,
+        showFallbackNote: false,
+      }),
+    });
+
+    let resolveLeftRespond: (value: unknown) => void = () => undefined;
+    const leftRespondPromise = new Promise((resolve) => {
+      resolveLeftRespond = resolve;
+    });
+
+    let resolveRightRespond: (value: unknown) => void = () => undefined;
+    const rightRespondPromise = new Promise((resolve) => {
+      resolveRightRespond = resolve;
+    });
+
+    fetchMock.mockImplementationOnce(
+      async () => (await leftRespondPromise) as never,
+    );
+    fetchMock.mockImplementationOnce(
+      async () => (await rightRespondPromise) as never,
+    );
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#models-select").setValue("gpt-4o");
+    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Waiting for Model 1 response...");
+    expect(wrapper.text()).toContain("Waiting for Model 2 response...");
+    expect(wrapper.findAll('[role="status"]')).toHaveLength(2);
+
+    resolveLeftRespond({
+      ok: true,
+      json: async () => ({ response: "left", model: "gpt-4o" }),
+    });
+    resolveRightRespond({
+      ok: true,
+      json: async () => ({ response: "right", model: "gpt-4.1-mini" }),
+    });
+    await flushPromises();
+  });
 });

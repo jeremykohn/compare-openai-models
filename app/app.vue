@@ -41,6 +41,8 @@ const isLoading = computed(
 
 const showOutputPanels = computed(
   () =>
+    leftRequestState.status === "loading" ||
+    rightRequestState.status === "loading" ||
     leftRequestState.status === "success" ||
     leftRequestState.status === "error" ||
     rightRequestState.status === "success" ||
@@ -146,30 +148,33 @@ async function handleSubmit(): Promise<void> {
   submittedModelIdRight.value =
     selectedModelIdRight.value.trim() || DEFAULT_MODEL;
 
-  const [leftResult, rightResult] = await Promise.all([
-    runSingleQuery(
-      promptResult.trimmedPrompt,
-      selectedModelIdLeft.value,
-      "left",
-    ),
-    runSingleQuery(
-      promptResult.trimmedPrompt,
-      selectedModelIdRight.value,
-      "right",
-    ),
-  ]);
+  const leftPromise = runSingleQuery(
+    promptResult.trimmedPrompt,
+    selectedModelIdLeft.value,
+    "left",
+  ).then((leftResult) => {
+    if (leftResult.ok) {
+      succeedLeftRequest(leftResult.response);
+      return;
+    }
 
-  if (leftResult.ok) {
-    succeedLeftRequest(leftResult.response);
-  } else {
     failLeftRequest(leftResult.error);
-  }
+  });
 
-  if (rightResult.ok) {
-    succeedRightRequest(rightResult.response);
-  } else {
+  const rightPromise = runSingleQuery(
+    promptResult.trimmedPrompt,
+    selectedModelIdRight.value,
+    "right",
+  ).then((rightResult) => {
+    if (rightResult.ok) {
+      succeedRightRequest(rightResult.response);
+      return;
+    }
+
     failRightRequest(rightResult.error);
-  }
+  });
+
+  await Promise.all([leftPromise, rightPromise]);
 }
 </script>
 
@@ -248,25 +253,15 @@ async function handleSubmit(): Promise<void> {
       </form>
 
       <section aria-live="polite" aria-atomic="true" class="grid gap-3">
-        <div
-          v-if="isLoading"
-          role="status"
-          aria-live="polite"
-          class="inline-flex items-center gap-2 text-sm text-slate-700"
-        >
-          <span
-            class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
-          />
-          <span>Waiting for response from ChatGPT...</span>
-        </div>
-
-        <div v-else-if="showOutputPanels" class="grid gap-4 md:grid-cols-2">
+        <div v-if="showOutputPanels" class="grid gap-4 md:grid-cols-2">
           <article
             class="grid gap-3 rounded-2xl p-4 shadow-sm"
             :class="
               leftRequestState.status === 'error'
                 ? 'border border-red-200 bg-red-50'
-                : 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+                : leftRequestState.status === 'success'
+                  ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+                  : 'border border-slate-200 bg-white'
             "
           >
             <h2
@@ -274,13 +269,26 @@ async function handleSubmit(): Promise<void> {
               :class="
                 leftRequestState.status === 'error'
                   ? 'text-red-900'
-                  : 'text-emerald-900'
+                  : leftRequestState.status === 'success'
+                    ? 'text-emerald-900'
+                    : 'text-slate-900'
               "
             >
               {{ leftOutputHeading }}
             </h2>
+            <div
+              v-if="leftRequestState.status === 'loading'"
+              role="status"
+              aria-live="polite"
+              class="inline-flex items-center gap-2 text-sm text-slate-700"
+            >
+              <span
+                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
+              />
+              <span>Waiting for Model 1 response...</span>
+            </div>
             <p
-              v-if="
+              v-else-if="
                 leftRequestState.status === 'success' && leftRequestState.data
               "
               class="whitespace-pre-wrap text-sm"
@@ -301,7 +309,9 @@ async function handleSubmit(): Promise<void> {
             :class="
               rightRequestState.status === 'error'
                 ? 'border border-red-200 bg-red-50'
-                : 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+                : rightRequestState.status === 'success'
+                  ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+                  : 'border border-slate-200 bg-white'
             "
           >
             <h2
@@ -309,13 +319,26 @@ async function handleSubmit(): Promise<void> {
               :class="
                 rightRequestState.status === 'error'
                   ? 'text-red-900'
-                  : 'text-emerald-900'
+                  : rightRequestState.status === 'success'
+                    ? 'text-emerald-900'
+                    : 'text-slate-900'
               "
             >
               {{ rightOutputHeading }}
             </h2>
+            <div
+              v-if="rightRequestState.status === 'loading'"
+              role="status"
+              aria-live="polite"
+              class="inline-flex items-center gap-2 text-sm text-slate-700"
+            >
+              <span
+                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
+              />
+              <span>Waiting for Model 2 response...</span>
+            </div>
             <p
-              v-if="
+              v-else-if="
                 rightRequestState.status === 'success' && rightRequestState.data
               "
               class="whitespace-pre-wrap text-sm"
