@@ -287,7 +287,7 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4o)");
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
 
     const responseParagraphs = wrapper.findAll("article p.whitespace-pre-wrap");
@@ -376,12 +376,64 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4o)");
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Left success");
     expect(wrapper.text()).toContain("Something went wrong");
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
     ).toHaveLength(1);
+  });
+
+  it("treats successful payload missing model as normalized error", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "missing model field" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "right ok", model: "gpt-4.1-mini" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.text()).toContain("right ok");
+  });
+
+  it("treats successful payload with non-string model as normalized error", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "bad model type", model: 42 }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "right ok", model: "gpt-4.1-mini" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.text()).toContain("right ok");
   });
 });

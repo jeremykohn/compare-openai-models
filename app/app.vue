@@ -62,7 +62,8 @@ async function runSingleQuery(
   modelId: string,
   side: "left" | "right",
 ): Promise<
-  { ok: true; response: string } | { ok: false; error: NormalizedUiError }
+  | { ok: true; response: string; model: string }
+  | { ok: false; error: NormalizedUiError }
 > {
   const body: { prompt: string; model?: string } = {
     prompt: promptText,
@@ -115,6 +116,7 @@ async function runSingleQuery(
     return {
       ok: true,
       response: normalizedInput.response,
+      model: normalizedInput.model,
     };
   } catch (error) {
     const normalized = normalizeUiError(error);
@@ -154,6 +156,7 @@ async function handleSubmit(): Promise<void> {
     "left",
   ).then((leftResult) => {
     if (leftResult.ok) {
+      submittedModelIdLeft.value = leftResult.model;
       succeedLeftRequest(leftResult.response);
       return;
     }
@@ -167,6 +170,7 @@ async function handleSubmit(): Promise<void> {
     "right",
   ).then((rightResult) => {
     if (rightResult.ok) {
+      submittedModelIdRight.value = rightResult.model;
       succeedRightRequest(rightResult.response);
       return;
     }

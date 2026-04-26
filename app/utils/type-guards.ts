@@ -26,8 +26,10 @@ function hasValidHttpStatus(value: unknown): boolean {
 
 export function isRespondSuccessPayload(
   payload: Record<string, unknown>,
-): payload is { response: string } {
-  return typeof payload.response === "string";
+): payload is { response: string; model: string } {
+  return (
+    typeof payload.response === "string" && typeof payload.model === "string"
+  );
 }
 
 export function isNetworkFetchError(error: unknown): boolean {
