@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Locator } from "@playwright/test";
 import {
   mockModelsSuccess,
   mockRespondError,
@@ -10,6 +10,22 @@ import {
   getModel2Select,
   getPromptInput,
 } from "./helpers/selectors";
+
+async function expectContainedWithin(
+  childLocator: Locator,
+  parentLocator: Locator,
+) {
+  const child = await childLocator.boundingBox();
+  const parent = await parentLocator.boundingBox();
+
+  expect(child).not.toBeNull();
+  expect(parent).not.toBeNull();
+
+  expect((child?.x ?? 0) + (child?.width ?? 0)).toBeLessThanOrEqual(
+    (parent?.x ?? 0) + (parent?.width ?? 0) + 1,
+  );
+  expect(child?.x ?? 0).toBeGreaterThanOrEqual((parent?.x ?? 0) - 1);
+}
 
 test("runs happy path from load to rendered response", async ({ page }) => {
   await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
@@ -215,4 +231,78 @@ test("renders typed error metadata when API provides type/code/param", async ({
   ).toBeVisible();
 
   capture.stop();
+});
+
+test("keeps long heading and response content contained within output panels", async ({
+  page,
+}) => {
+  const longModelId =
+    "model-" + "supercalifragilisticexpialidocious".repeat(10);
+  const longResponse =
+    "response-" + "supercalifragilisticexpialidocious".repeat(18);
+
+  await mockModelsSuccess(page, [{ id: longModelId }]);
+  await mockRespondSuccess(page, longResponse, longModelId);
+
+  await page.goto("/");
+  await getModel1Select(page).selectOption(longModelId);
+  await getModel2Select(page).selectOption(longModelId);
+  await getPromptInput(page).fill("Write a greeting");
+  await page.getByRole("button", { name: "Send" }).click();
+
+  const firstPanel = page
+    .locator('section[aria-live="polite"] article')
+    .first();
+  const firstHeading = firstPanel.locator("h2");
+  const firstResponse = firstPanel.locator("p.whitespace-pre-wrap");
+
+  await expect(firstPanel).toBeVisible();
+  await expect(firstHeading).toContainText(longModelId);
+  await expect(firstResponse).toContainText(longResponse);
+  await expectContainedWithin(firstHeading, firstPanel);
+  await expectContainedWithin(firstResponse, firstPanel);
+});
+
+test("keeps expanded long error details contained within the error panel", async ({
+  page,
+}) => {
+  const longDetails =
+    "details-" + "supercalifragilisticexpialidocious".repeat(18);
+
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }]);
+  await page.route("**/api/respond", async (route) => {
+    await route.fulfill({
+      status: 400,
+      contentType: "application/json",
+      body: JSON.stringify({
+        message: "Request to OpenAI failed.",
+        details: longDetails,
+      }),
+    });
+  });
+
+  await page.goto("/");
+  await getModel1Select(page).selectOption("gpt-4.1-mini");
+  await getModel2Select(page).selectOption("gpt-4.1-mini");
+  await getPromptInput(page).fill("Write a greeting");
+  await page.getByRole("button", { name: "Send" }).click();
+
+  const firstPanel = page
+    .locator('section[aria-live="polite"] article')
+    .first();
+  const firstErrorAlert = firstPanel.locator('[role="alert"]');
+  const firstDetails = firstErrorAlert
+    .locator('[data-testid="error-details-toggle"]')
+    .first();
+  await expect(firstErrorAlert).toBeVisible();
+  await firstDetails.locator("summary").click();
+
+  const detailValue = firstDetails.locator("dd").last();
+  await expect(detailValue).toBeVisible();
+  const detailText = await detailValue.evaluate(
+    (element) => element.textContent ?? "",
+  );
+  expect(detailText.startsWith("details-")).toBe(true);
+  await expectContainedWithin(firstErrorAlert, firstPanel);
+  await expectContainedWithin(detailValue, firstErrorAlert);
 });

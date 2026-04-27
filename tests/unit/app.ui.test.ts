@@ -25,6 +25,8 @@ afterEach(() => {
   fetchMock.mockReset();
 });
 
+const longToken = "supercalifragilisticexpialidocious".repeat(12);
+
 describe("app ui", () => {
   it("renders title and send button", async () => {
     fetchMock.mockResolvedValueOnce(modelsResponse());
@@ -383,6 +385,96 @@ describe("app ui", () => {
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
     ).toHaveLength(1);
+  });
+
+  it("applies overflow-safe classes to long headings and response text", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: longToken, object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: longToken, model: longToken }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: longToken, model: longToken }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const outputPanels = wrapper.findAll("article");
+    expect(outputPanels).toHaveLength(2);
+    expect(outputPanels[0]?.classes()).toContain("min-w-0");
+    expect(outputPanels[0]?.classes()).toContain("max-w-full");
+
+    const heading = outputPanels[0]?.get("h2");
+    expect(heading?.classes()).toContain("min-w-0");
+    expect(heading?.classes()).toContain("break-words");
+    expect(heading?.text()).toContain(longToken);
+
+    const responseText = outputPanels[0]?.get("p.whitespace-pre-wrap");
+    expect(responseText?.classes()).toContain("min-w-0");
+    expect(responseText?.classes()).toContain("break-words");
+    expect(responseText?.text()).toBe(longToken);
+  });
+
+  it("applies overflow-safe classes to nested long error details", async () => {
+    fetchMock.mockResolvedValueOnce(modelsResponse());
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      json: async () => ({
+        message: longToken,
+        type: longToken,
+        code: longToken,
+        param: longToken,
+        details: longToken,
+      }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      json: async () => ({
+        message: longToken,
+        type: longToken,
+        code: longToken,
+        param: longToken,
+        details: longToken,
+      }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const errorAlert = wrapper.find('[role="alert"]');
+    expect(errorAlert.classes()).toContain("min-w-0");
+    expect(errorAlert.classes()).toContain("max-w-full");
+
+    const summary = wrapper.get("summary");
+    expect(summary.classes()).toContain("max-w-full");
+    expect(summary.classes()).toContain("break-words");
+    expect(summary.classes()).toContain("whitespace-normal");
+
+    const detailValues = wrapper.findAll("dd");
+    expect(detailValues.length).toBeGreaterThan(0);
+    for (const detailValue of detailValues) {
+      expect(detailValue.classes()).toContain("min-w-0");
+      expect(detailValue.classes()).toContain("break-words");
+      expect(detailValue.classes()).toContain("whitespace-pre-wrap");
+    }
   });
 
   it("treats successful payload missing model as normalized error", async () => {

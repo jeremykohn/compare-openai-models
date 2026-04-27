@@ -144,7 +144,10 @@ async function handleSubmit(): Promise<void> {
       </form>
 
       <section aria-live="polite" aria-atomic="true" class="grid gap-3">
-        <div v-if="showOutputPanels" class="grid gap-4 md:grid-cols-2">
+        <div
+          v-if="showOutputPanels"
+          class="grid items-start gap-4 md:grid-cols-2"
+        >
           <ModelOutputPanel
             label="Model 1"
             :heading="model1OutputHeading"

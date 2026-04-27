@@ -14,7 +14,7 @@ defineProps<{
 
 <template>
   <article
-    class="grid gap-3 rounded-2xl p-4 shadow-sm"
+    class="grid min-w-0 max-w-full gap-3 rounded-2xl p-4 shadow-sm"
     :class="
       status === 'error'
         ? 'border border-red-200 bg-red-50'
@@ -24,7 +24,7 @@ defineProps<{
     "
   >
     <h2
-      class="text-base font-semibold"
+      class="min-w-0 break-words text-base font-semibold"
       :class="
         status === 'error'
           ? 'text-red-900'
@@ -39,16 +39,18 @@ defineProps<{
       v-if="status === 'loading'"
       role="status"
       aria-live="polite"
-      class="inline-flex items-center gap-2 text-sm text-slate-700"
+      class="flex min-w-0 max-w-full flex-wrap items-center gap-2 text-sm text-slate-700"
     >
       <span
         class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
       />
-      <span>Waiting for {{ label }} response...</span>
+      <span class="min-w-0 break-words"
+        >Waiting for {{ label }} response...</span
+      >
     </div>
     <p
       v-else-if="status === 'success' && data"
-      class="whitespace-pre-wrap text-sm"
+      class="min-w-0 break-words whitespace-pre-wrap text-sm"
     >
       {{ data }}
     </p>
