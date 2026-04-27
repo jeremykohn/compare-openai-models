@@ -1,6 +1,12 @@
 {
-  "available-models": [],
-  "models-with-error": ["z-model"],
-  "models-with-no-response": ["legacy-model"],
-  "other-models": ["other-model"]
+    "available-models": [],
+    "models-with-error": [
+        "z-model"
+    ],
+    "models-with-no-response": [
+        "legacy-model"
+    ],
+    "other-models": [
+        "other-model"
+    ]
 }
