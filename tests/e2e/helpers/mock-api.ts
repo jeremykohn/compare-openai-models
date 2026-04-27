@@ -1,4 +1,4 @@
-import type { Page, Route } from "@playwright/test";
+import type { Page, Request, Route } from "@playwright/test";
 
 type ModelEntry = {
   id: string;
@@ -10,6 +10,17 @@ type ModelEntry = {
 type ModelsPayloadOptions = {
   usedConfigFilter?: boolean;
   showFallbackNote?: boolean;
+};
+
+type RespondRequestPayload = {
+  prompt: string;
+  model?: string;
+};
+
+type RespondRequestCapture = {
+  requests: RespondRequestPayload[];
+  getParseError: () => Error | null;
+  stop: () => void;
 };
 
 function normalizeModels(models: ModelEntry[]): Required<ModelEntry>[] {
@@ -110,4 +121,73 @@ export async function mockRespondError(
       }),
     });
   });
+}
+
+export function startRespondRequestCapture(page: Page): RespondRequestCapture {
+  const requests: RespondRequestPayload[] = [];
+  let parseError: Error | null = null;
+
+  const onRequest = (request: Request) => {
+    if (
+      !request.url().includes("/api/respond") ||
+      request.method() !== "POST"
+    ) {
+      return;
+    }
+
+    const rawPostData = request.postData();
+    if (!rawPostData) {
+      parseError =
+        parseError ?? new Error("Expected POST body for /api/respond request.");
+      return;
+    }
+
+    let parsedPayload: unknown;
+    try {
+      parsedPayload = JSON.parse(rawPostData);
+    } catch {
+      parseError =
+        parseError ??
+        new Error("Failed to parse /api/respond request body as JSON.");
+      return;
+    }
+
+    if (
+      !parsedPayload ||
+      typeof parsedPayload !== "object" ||
+      Array.isArray(parsedPayload)
+    ) {
+      parseError =
+        parseError ??
+        new Error("Expected /api/respond request payload to be a JSON object.");
+      return;
+    }
+
+    const candidate = parsedPayload as {
+      prompt?: unknown;
+      model?: unknown;
+    };
+
+    if (typeof candidate.prompt !== "string") {
+      parseError =
+        parseError ??
+        new Error(
+          "Expected /api/respond request payload to contain a string prompt.",
+        );
+      return;
+    }
+
+    requests.push({
+      prompt: candidate.prompt,
+      model: typeof candidate.model === "string" ? candidate.model : undefined,
+    });
+  };
+
+  page.on("request", onRequest);
+
+  return {
+    requests,
+    getParseError: () => parseError,
+    stop: () => page.off("request", onRequest),
+  };
 }

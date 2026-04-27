@@ -6,7 +6,9 @@ import {
   mockModelsSuccess,
   mockRespondError,
   mockRespondSuccess,
+  startRespondRequestCapture,
 } from "./helpers/mock-api";
+import { getPromptInput } from "./helpers/selectors";
 
 async function analyzePage(page: Page) {
   return new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
@@ -34,7 +36,8 @@ test("has no critical accessibility violations on idle-ready state", async ({
   await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }]);
 
   await page.goto("/");
-  await expect(page.getByLabel("Model *")).toBeVisible();
+  await expect(page.getByLabel("Model 1 *")).toBeVisible();
+  await expect(page.getByLabel("Model 2 *")).toBeVisible();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);
@@ -85,23 +88,32 @@ test("has no critical accessibility violations on success response state", async
 
   await page.goto("/");
   await waitForNuxtHydration(page);
-  await expect(page.getByLabel("Model *")).toContainText("gpt-4.1-mini");
+  await expect(page.getByLabel("Model 1 *")).toContainText("gpt-4.1-mini");
 
-  await page.getByLabel("Prompt *").fill("hello");
-  await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/respond") &&
-        response.request().method() === "POST",
-    ),
-    page.getByRole("button", { name: "Send" }).click(),
-  ]);
-  await expect(page.getByRole("heading", { name: "Response" })).toBeVisible();
+  await getPromptInput(page).fill("hello");
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
+
+  await expect(page.getByText("Hello from success state")).toHaveCount(2);
+  await expect(
+    page.getByRole("heading", {
+      name: "Response from Model 1 (gpt-4.1-mini)",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Response from Model 2 (gpt-4.1-mini)",
+    }),
+  ).toBeVisible();
+
+  capture.stop();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);
 });
-
 test("has no critical accessibility violations on error states", async ({
   page,
 }) => {
@@ -131,11 +143,18 @@ test("has no critical accessibility violations on error states", async ({
   await page.reload();
   await waitForNuxtHydration(page);
 
-  await page.getByLabel("Prompt *").fill("hello");
+  await getPromptInput(page).fill("hello");
+  const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
-  await expect(page.getByText("Something went wrong")).toBeVisible({
+
+  await expect.poll(() => capture.requests.length).toBe(2);
+  expect(capture.getParseError()).toBeNull();
+
+  await expect(page.getByText("Something went wrong").first()).toBeVisible({
     timeout: 10_000,
   });
+
+  capture.stop();
 
   const responseErrorResults = await analyzePage(page);
   expect(responseErrorResults.violations).toEqual([]);

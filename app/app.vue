@@ -1,23 +1,52 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import ModelsSelector from "./components/ModelsSelector.vue";
-import UiErrorAlert from "./components/UiErrorAlert.vue";
+import ModelOutputPanel from "./components/ModelOutputPanel.vue";
 import { useModelsState } from "./composables/use-models-state";
-import { useRequestState } from "./composables/use-request-state";
-import { normalizeUiError } from "./utils/error-normalization";
-import { logNormalizedUiError } from "./utils/log-normalized-ui-error";
-import { isRespondSuccessPayload } from "./utils/type-guards";
+import { useModelQuery } from "./composables/use-model-query";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
-const selectedModelId = ref("");
+const selectedModelIdModel1 = ref("");
+const selectedModelIdModel2 = ref("");
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
-const { state, start, succeed, fail } = useRequestState();
+const {
+  state: model1RequestState,
+  submittedModelId: submittedModelIdModel1,
+  query: queryModel1,
+} = useModelQuery("model1");
+const {
+  state: model2RequestState,
+  submittedModelId: submittedModelIdModel2,
+  query: queryModel2,
+} = useModelQuery("model2");
 const { state: modelsState, fetchModels } = useModelsState();
 
-const isLoading = computed(() => state.status === "loading");
+const isLoading = computed(
+  () =>
+    model1RequestState.status === "loading" ||
+    model2RequestState.status === "loading",
+);
+
+const showOutputPanels = computed(
+  () =>
+    model1RequestState.status === "loading" ||
+    model2RequestState.status === "loading" ||
+    model1RequestState.status === "success" ||
+    model1RequestState.status === "error" ||
+    model2RequestState.status === "success" ||
+    model2RequestState.status === "error",
+);
+
+const model1OutputHeading = computed(
+  () => `Response from Model 1 (${submittedModelIdModel1.value})`,
+);
+
+const model2OutputHeading = computed(
+  () => `Response from Model 2 (${submittedModelIdModel2.value})`,
+);
 
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
@@ -33,67 +62,10 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
-  start();
-
-  const body: { prompt: string; model?: string } = {
-    prompt: promptResult.trimmedPrompt,
-  };
-
-  if (selectedModelId.value.trim()) {
-    body.model = selectedModelId.value.trim();
-  }
-
-  try {
-    const response = await fetch("/api/respond", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-
-    let payload: unknown;
-
-    try {
-      payload = await response.json();
-    } catch {
-      payload = {
-        statusCode: response.status,
-        statusText: response.statusText,
-      };
-    }
-
-    const payloadObject =
-      payload !== null && typeof payload === "object" && !Array.isArray(payload)
-        ? (payload as Record<string, unknown>)
-        : {};
-
-    const normalizedInput = {
-      ...payloadObject,
-      statusCode: response.status,
-      statusText: response.statusText,
-    };
-
-    if (!response.ok) {
-      const normalized = normalizeUiError(normalizedInput);
-      logNormalizedUiError("app.handleSubmit", normalized);
-      fail(normalized);
-      return;
-    }
-
-    if (!isRespondSuccessPayload(normalizedInput)) {
-      const normalized = normalizeUiError(normalizedInput);
-      logNormalizedUiError("app.handleSubmit", normalized);
-      fail(normalized);
-      return;
-    }
-
-    succeed(normalizedInput.response);
-  } catch (error) {
-    const normalized = normalizeUiError(error);
-    logNormalizedUiError("app.handleSubmit", normalized);
-    fail(normalized);
-  }
+  await Promise.all([
+    queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
+    queryModel2(promptResult.trimmedPrompt, selectedModelIdModel2.value),
+  ]);
 }
 </script>
 
@@ -120,13 +92,15 @@ async function handleSubmit(): Promise<void> {
         @submit.prevent="handleSubmit"
       >
         <ModelsSelector
-          :selected-model-id="selectedModelId"
+          :selected-model-id-model1="selectedModelIdModel1"
+          :selected-model-id-model2="selectedModelIdModel2"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
           :show-fallback-note="modelsState.showFallbackNote"
           :disabled="isLoading"
-          @update:selected-model-id="selectedModelId = $event"
+          @update:selected-model-id-model1="selectedModelIdModel1 = $event"
+          @update:selected-model-id-model2="selectedModelIdModel2 = $event"
           @retry="fetchModels"
         />
 
@@ -170,31 +144,22 @@ async function handleSubmit(): Promise<void> {
       </form>
 
       <section aria-live="polite" aria-atomic="true" class="grid gap-3">
-        <div
-          v-if="state.status === 'loading'"
-          role="status"
-          aria-live="polite"
-          class="inline-flex items-center gap-2 text-sm text-slate-700"
-        >
-          <span
-            class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
+        <div v-if="showOutputPanels" class="grid gap-4 md:grid-cols-2">
+          <ModelOutputPanel
+            label="Model 1"
+            :heading="model1OutputHeading"
+            :status="model1RequestState.status"
+            :data="model1RequestState.data"
+            :error="model1RequestState.error"
           />
-          <span>Waiting for response from ChatGPT...</span>
+          <ModelOutputPanel
+            label="Model 2"
+            :heading="model2OutputHeading"
+            :status="model2RequestState.status"
+            :data="model2RequestState.data"
+            :error="model2RequestState.error"
+          />
         </div>
-
-        <article
-          v-else-if="state.status === 'success' && state.data"
-          class="grid gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-emerald-900 shadow-sm"
-        >
-          <h2 class="text-base font-semibold">Response</h2>
-          <p class="whitespace-pre-wrap text-sm">{{ state.data }}</p>
-        </article>
-
-        <UiErrorAlert
-          v-else-if="state.status === 'error' && state.error"
-          :error="state.error"
-          :show-retry="false"
-        />
       </section>
     </main>
 
