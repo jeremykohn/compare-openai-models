@@ -293,7 +293,8 @@ async function handleSubmit(): Promise<void> {
             </div>
             <p
               v-else-if="
-                model1RequestState.status === 'success' && model1RequestState.data
+                model1RequestState.status === 'success' &&
+                model1RequestState.data
               "
               class="whitespace-pre-wrap text-sm"
             >
@@ -301,7 +302,8 @@ async function handleSubmit(): Promise<void> {
             </p>
             <UiErrorAlert
               v-else-if="
-                model1RequestState.status === 'error' && model1RequestState.error
+                model1RequestState.status === 'error' &&
+                model1RequestState.error
               "
               :error="model1RequestState.error"
               :show-retry="false"
@@ -343,7 +345,8 @@ async function handleSubmit(): Promise<void> {
             </div>
             <p
               v-else-if="
-                model2RequestState.status === 'success' && model2RequestState.data
+                model2RequestState.status === 'success' &&
+                model2RequestState.data
               "
               class="whitespace-pre-wrap text-sm"
             >
@@ -351,7 +354,8 @@ async function handleSubmit(): Promise<void> {
             </p>
             <UiErrorAlert
               v-else-if="
-                model2RequestState.status === 'error' && model2RequestState.error
+                model2RequestState.status === 'error' &&
+                model2RequestState.error
               "
               :error="model2RequestState.error"
               :show-retry="false"

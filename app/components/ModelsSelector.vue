@@ -101,10 +101,7 @@ function onModel2SelectChanged(event: Event): void {
       </div>
 
       <div class="grid gap-2">
-        <label
-          class="text-sm font-semibold text-slate-700"
-          for="model2-select"
-        >
+        <label class="text-sm font-semibold text-slate-700" for="model2-select">
           Model 2 *
         </label>
         <select

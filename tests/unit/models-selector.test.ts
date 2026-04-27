@@ -168,8 +168,6 @@ describe("ModelsSelector", () => {
     });
 
     expect(wrapper.get('label[for="model1-select"]').text()).toBe("Model 1 *");
-    expect(wrapper.get('label[for="model2-select"]').text()).toBe(
-      "Model 2 *",
-    );
+    expect(wrapper.get('label[for="model2-select"]').text()).toBe("Model 2 *");
   });
 });
