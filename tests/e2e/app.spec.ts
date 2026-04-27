@@ -6,9 +6,9 @@ import {
   startRespondRequestCapture,
 } from "./helpers/mock-api";
 import {
-  getLeftModelSelect,
+  getModel1Select,
+  getModel2Select,
   getPromptInput,
-  getRightModelSelect,
 } from "./helpers/selectors";
 
 test("runs happy path from load to rendered response", async ({ page }) => {
@@ -20,20 +20,20 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
-  const modelSelect = getLeftModelSelect(page);
-  const rightModelSelect = getRightModelSelect(page);
-  await expect(modelSelect).toBeVisible();
-  await expect(rightModelSelect).toBeVisible();
-  await expect(modelSelect).toBeEnabled();
-  await expect(rightModelSelect).toBeEnabled();
-  await expect(page.locator("#models-select option")).toHaveCount(3);
-  await expect(page.locator("#models-select-right option")).toHaveCount(3);
-  await expect(modelSelect).toHaveValue("");
-  await expect(rightModelSelect).toHaveValue("");
+  const model1Select = getModel1Select(page);
+  const model2Select = getModel2Select(page);
+  await expect(model1Select).toBeVisible();
+  await expect(model2Select).toBeVisible();
+  await expect(model1Select).toBeEnabled();
+  await expect(model2Select).toBeEnabled();
+  await expect(page.locator("#model1-select option")).toHaveCount(3);
+  await expect(page.locator("#model2-select option")).toHaveCount(3);
+  await expect(model1Select).toHaveValue("");
+  await expect(model2Select).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 
-  await modelSelect.selectOption("gpt-4o");
-  await rightModelSelect.selectOption("gpt-4.1-mini");
+  await model1Select.selectOption("gpt-4o");
+  await model2Select.selectOption("gpt-4.1-mini");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
@@ -103,10 +103,10 @@ test("shows left completion while right response is still pending", async ({
 
   await page.goto("/");
 
-  const modelSelect = getLeftModelSelect(page);
-  const rightModelSelect = getRightModelSelect(page);
-  await modelSelect.selectOption("gpt-4o");
-  await rightModelSelect.selectOption("gpt-4.1-mini");
+  const model1Select = getModel1Select(page);
+  const model2Select = getModel2Select(page);
+  await model1Select.selectOption("gpt-4o");
+  await model2Select.selectOption("gpt-4.1-mini");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
@@ -143,7 +143,7 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
-  await expect(page.locator("#models-select option")).toHaveCount(2);
+  await expect(page.locator("#model1-select option")).toHaveCount(2);
 
   const promptInput = getPromptInput(page);
   await promptInput.fill("Write a greeting");
@@ -190,7 +190,7 @@ test("renders typed error metadata when API provides type/code/param", async ({
   });
 
   await page.goto("/");
-  await expect(page.locator("#models-select option")).toHaveCount(2);
+  await expect(page.locator("#model1-select option")).toHaveCount(2);
   await getPromptInput(page).fill("Write a greeting");
 
   const capture = startRespondRequestCapture(page);

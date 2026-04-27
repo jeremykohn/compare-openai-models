@@ -12,55 +12,55 @@ import { isRespondSuccessPayload } from "./utils/type-guards";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
-const selectedModelIdLeft = ref("");
-const selectedModelIdRight = ref("");
-const submittedModelIdLeft = ref(DEFAULT_MODEL);
-const submittedModelIdRight = ref(DEFAULT_MODEL);
+const selectedModelIdModel1 = ref("");
+const selectedModelIdModel2 = ref("");
+const submittedModelIdModel1 = ref(DEFAULT_MODEL);
+const submittedModelIdModel2 = ref(DEFAULT_MODEL);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
 const {
-  state: leftRequestState,
-  start: startLeftRequest,
-  succeed: succeedLeftRequest,
-  fail: failLeftRequest,
+  state: model1RequestState,
+  start: startModel1Request,
+  succeed: succeedModel1Request,
+  fail: failModel1Request,
 } = useRequestState();
 const {
-  state: rightRequestState,
-  start: startRightRequest,
-  succeed: succeedRightRequest,
-  fail: failRightRequest,
+  state: model2RequestState,
+  start: startModel2Request,
+  succeed: succeedModel2Request,
+  fail: failModel2Request,
 } = useRequestState();
 const { state: modelsState, fetchModels } = useModelsState();
 
 const isLoading = computed(
   () =>
-    leftRequestState.status === "loading" ||
-    rightRequestState.status === "loading",
+    model1RequestState.status === "loading" ||
+    model2RequestState.status === "loading",
 );
 
 const showOutputPanels = computed(
   () =>
-    leftRequestState.status === "loading" ||
-    rightRequestState.status === "loading" ||
-    leftRequestState.status === "success" ||
-    leftRequestState.status === "error" ||
-    rightRequestState.status === "success" ||
-    rightRequestState.status === "error",
+    model1RequestState.status === "loading" ||
+    model2RequestState.status === "loading" ||
+    model1RequestState.status === "success" ||
+    model1RequestState.status === "error" ||
+    model2RequestState.status === "success" ||
+    model2RequestState.status === "error",
 );
 
-const leftOutputHeading = computed(
-  () => `Response from Model 1 (${submittedModelIdLeft.value})`,
+const model1OutputHeading = computed(
+  () => `Response from Model 1 (${submittedModelIdModel1.value})`,
 );
 
-const rightOutputHeading = computed(
-  () => `Response from Model 2 (${submittedModelIdRight.value})`,
+const model2OutputHeading = computed(
+  () => `Response from Model 2 (${submittedModelIdModel2.value})`,
 );
 
 async function runSingleQuery(
   promptText: string,
   modelId: string,
-  side: "left" | "right",
+  modelRole: "model1" | "model2",
 ): Promise<
   | { ok: true; response: string; model: string }
   | { ok: false; error: NormalizedUiError }
@@ -106,7 +106,7 @@ async function runSingleQuery(
 
     if (!response.ok || !isRespondSuccessPayload(normalizedInput)) {
       const normalized = normalizeUiError(normalizedInput);
-      logNormalizedUiError(`app.handleSubmit.${side}`, normalized);
+      logNormalizedUiError(`app.handleSubmit.${modelRole}`, normalized);
       return {
         ok: false,
         error: normalized,
@@ -120,7 +120,7 @@ async function runSingleQuery(
     };
   } catch (error) {
     const normalized = normalizeUiError(error);
-    logNormalizedUiError(`app.handleSubmit.${side}`, normalized);
+    logNormalizedUiError(`app.handleSubmit.${modelRole}`, normalized);
     return {
       ok: false,
       error: normalized,
@@ -142,43 +142,43 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
-  startLeftRequest();
-  startRightRequest();
+  startModel1Request();
+  startModel2Request();
 
-  submittedModelIdLeft.value =
-    selectedModelIdLeft.value.trim() || DEFAULT_MODEL;
-  submittedModelIdRight.value =
-    selectedModelIdRight.value.trim() || DEFAULT_MODEL;
+  submittedModelIdModel1.value =
+    selectedModelIdModel1.value.trim() || DEFAULT_MODEL;
+  submittedModelIdModel2.value =
+    selectedModelIdModel2.value.trim() || DEFAULT_MODEL;
 
-  const leftPromise = runSingleQuery(
+  const model1Promise = runSingleQuery(
     promptResult.trimmedPrompt,
-    selectedModelIdLeft.value,
-    "left",
-  ).then((leftResult) => {
-    if (leftResult.ok) {
-      submittedModelIdLeft.value = leftResult.model;
-      succeedLeftRequest(leftResult.response);
+    selectedModelIdModel1.value,
+    "model1",
+  ).then((model1Result) => {
+    if (model1Result.ok) {
+      submittedModelIdModel1.value = model1Result.model;
+      succeedModel1Request(model1Result.response);
       return;
     }
 
-    failLeftRequest(leftResult.error);
+    failModel1Request(model1Result.error);
   });
 
-  const rightPromise = runSingleQuery(
+  const model2Promise = runSingleQuery(
     promptResult.trimmedPrompt,
-    selectedModelIdRight.value,
-    "right",
-  ).then((rightResult) => {
-    if (rightResult.ok) {
-      submittedModelIdRight.value = rightResult.model;
-      succeedRightRequest(rightResult.response);
+    selectedModelIdModel2.value,
+    "model2",
+  ).then((model2Result) => {
+    if (model2Result.ok) {
+      submittedModelIdModel2.value = model2Result.model;
+      succeedModel2Request(model2Result.response);
       return;
     }
 
-    failRightRequest(rightResult.error);
+    failModel2Request(model2Result.error);
   });
 
-  await Promise.all([leftPromise, rightPromise]);
+  await Promise.all([model1Promise, model2Promise]);
 }
 </script>
 
@@ -205,15 +205,15 @@ async function handleSubmit(): Promise<void> {
         @submit.prevent="handleSubmit"
       >
         <ModelsSelector
-          :selected-model-id-left="selectedModelIdLeft"
-          :selected-model-id-right="selectedModelIdRight"
+          :selected-model-id-model1="selectedModelIdModel1"
+          :selected-model-id-model2="selectedModelIdModel2"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
           :show-fallback-note="modelsState.showFallbackNote"
           :disabled="isLoading"
-          @update:selected-model-id-left="selectedModelIdLeft = $event"
-          @update:selected-model-id-right="selectedModelIdRight = $event"
+          @update:selected-model-id-model1="selectedModelIdModel1 = $event"
+          @update:selected-model-id-model2="selectedModelIdModel2 = $event"
           @retry="fetchModels"
         />
 
@@ -261,9 +261,9 @@ async function handleSubmit(): Promise<void> {
           <article
             class="grid gap-3 rounded-2xl p-4 shadow-sm"
             :class="
-              leftRequestState.status === 'error'
+              model1RequestState.status === 'error'
                 ? 'border border-red-200 bg-red-50'
-                : leftRequestState.status === 'success'
+                : model1RequestState.status === 'success'
                   ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
                   : 'border border-slate-200 bg-white'
             "
@@ -271,17 +271,17 @@ async function handleSubmit(): Promise<void> {
             <h2
               class="text-base font-semibold"
               :class="
-                leftRequestState.status === 'error'
+                model1RequestState.status === 'error'
                   ? 'text-red-900'
-                  : leftRequestState.status === 'success'
+                  : model1RequestState.status === 'success'
                     ? 'text-emerald-900'
                     : 'text-slate-900'
               "
             >
-              {{ leftOutputHeading }}
+              {{ model1OutputHeading }}
             </h2>
             <div
-              v-if="leftRequestState.status === 'loading'"
+              v-if="model1RequestState.status === 'loading'"
               role="status"
               aria-live="polite"
               class="inline-flex items-center gap-2 text-sm text-slate-700"
@@ -293,17 +293,17 @@ async function handleSubmit(): Promise<void> {
             </div>
             <p
               v-else-if="
-                leftRequestState.status === 'success' && leftRequestState.data
+                model1RequestState.status === 'success' && model1RequestState.data
               "
               class="whitespace-pre-wrap text-sm"
             >
-              {{ leftRequestState.data }}
+              {{ model1RequestState.data }}
             </p>
             <UiErrorAlert
               v-else-if="
-                leftRequestState.status === 'error' && leftRequestState.error
+                model1RequestState.status === 'error' && model1RequestState.error
               "
-              :error="leftRequestState.error"
+              :error="model1RequestState.error"
               :show-retry="false"
             />
           </article>
@@ -311,9 +311,9 @@ async function handleSubmit(): Promise<void> {
           <article
             class="grid gap-3 rounded-2xl p-4 shadow-sm"
             :class="
-              rightRequestState.status === 'error'
+              model2RequestState.status === 'error'
                 ? 'border border-red-200 bg-red-50'
-                : rightRequestState.status === 'success'
+                : model2RequestState.status === 'success'
                   ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
                   : 'border border-slate-200 bg-white'
             "
@@ -321,17 +321,17 @@ async function handleSubmit(): Promise<void> {
             <h2
               class="text-base font-semibold"
               :class="
-                rightRequestState.status === 'error'
+                model2RequestState.status === 'error'
                   ? 'text-red-900'
-                  : rightRequestState.status === 'success'
+                  : model2RequestState.status === 'success'
                     ? 'text-emerald-900'
                     : 'text-slate-900'
               "
             >
-              {{ rightOutputHeading }}
+              {{ model2OutputHeading }}
             </h2>
             <div
-              v-if="rightRequestState.status === 'loading'"
+              v-if="model2RequestState.status === 'loading'"
               role="status"
               aria-live="polite"
               class="inline-flex items-center gap-2 text-sm text-slate-700"
@@ -343,17 +343,17 @@ async function handleSubmit(): Promise<void> {
             </div>
             <p
               v-else-if="
-                rightRequestState.status === 'success' && rightRequestState.data
+                model2RequestState.status === 'success' && model2RequestState.data
               "
               class="whitespace-pre-wrap text-sm"
             >
-              {{ rightRequestState.data }}
+              {{ model2RequestState.data }}
             </p>
             <UiErrorAlert
               v-else-if="
-                rightRequestState.status === 'error' && rightRequestState.error
+                model2RequestState.status === 'error' && model2RequestState.error
               "
-              :error="rightRequestState.error"
+              :error="model2RequestState.error"
               :show-retry="false"
             />
           </article>

@@ -6,8 +6,8 @@ import UiErrorAlert from "./UiErrorAlert.vue";
 
 const props = withDefaults(
   defineProps<{
-    selectedModelIdLeft: string;
-    selectedModelIdRight: string;
+    selectedModelIdModel1: string;
+    selectedModelIdModel2: string;
     status: RequestStatus;
     models: ReadonlyArray<OpenAIModel> | null;
     error?: NormalizedUiError | null;
@@ -23,19 +23,19 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  "update:selectedModelIdLeft": [value: string];
-  "update:selectedModelIdRight": [value: string];
+  "update:selectedModelIdModel1": [value: string];
+  "update:selectedModelIdModel2": [value: string];
   retry: [];
 }>();
 
-function onLeftSelectChanged(event: Event): void {
+function onModel1SelectChanged(event: Event): void {
   const target = event.target as HTMLSelectElement;
-  emit("update:selectedModelIdLeft", target.value);
+  emit("update:selectedModelIdModel1", target.value);
 }
 
-function onRightSelectChanged(event: Event): void {
+function onModel2SelectChanged(event: Event): void {
   const target = event.target as HTMLSelectElement;
-  emit("update:selectedModelIdRight", target.value);
+  emit("update:selectedModelIdModel2", target.value);
 }
 </script>
 
@@ -55,13 +55,13 @@ function onRightSelectChanged(event: Event): void {
 
     <div v-else class="grid gap-3 md:grid-cols-2">
       <div class="grid gap-2">
-        <label class="text-sm font-semibold text-slate-700" for="models-select">
+        <label class="text-sm font-semibold text-slate-700" for="model1-select">
           Model 1 *
         </label>
         <select
-          id="models-select"
+          id="model1-select"
           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
-          :value="props.selectedModelIdLeft"
+          :value="props.selectedModelIdModel1"
           :disabled="
             props.disabled ||
             props.status === 'error' ||
@@ -75,7 +75,7 @@ function onRightSelectChanged(event: Event): void {
               ? 'models-select-help models-select-error'
               : 'models-select-help'
           "
-          @change="onLeftSelectChanged"
+          @change="onModel1SelectChanged"
         >
           <option
             v-if="
@@ -103,14 +103,14 @@ function onRightSelectChanged(event: Event): void {
       <div class="grid gap-2">
         <label
           class="text-sm font-semibold text-slate-700"
-          for="models-select-right"
+          for="model2-select"
         >
           Model 2 *
         </label>
         <select
-          id="models-select-right"
+          id="model2-select"
           class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
-          :value="props.selectedModelIdRight"
+          :value="props.selectedModelIdModel2"
           :disabled="
             props.disabled ||
             props.status === 'error' ||
@@ -124,7 +124,7 @@ function onRightSelectChanged(event: Event): void {
               ? 'models-select-help models-select-error'
               : 'models-select-help'
           "
-          @change="onRightSelectChanged"
+          @change="onModel2SelectChanged"
         >
           <option
             v-if="
@@ -141,7 +141,7 @@ function onRightSelectChanged(event: Event): void {
           </option>
           <option
             v-for="model in props.models ?? []"
-            :key="`right-${model.id}`"
+            :key="`model2-${model.id}`"
             :value="model.id"
           >
             {{ model.id }}

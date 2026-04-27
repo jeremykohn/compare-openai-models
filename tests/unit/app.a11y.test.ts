@@ -84,22 +84,22 @@ describe("app accessibility", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    const leftSelect = wrapper.get("#models-select");
-    const rightSelect = wrapper.get("#models-select-right");
+    const model1Select = wrapper.get("#model1-select");
+    const model2Select = wrapper.get("#model2-select");
 
-    expect(wrapper.get('label[for="models-select"]').text()).toContain(
+    expect(wrapper.get('label[for="model1-select"]').text()).toContain(
       "Model 1",
     );
-    expect(wrapper.get('label[for="models-select-right"]').text()).toContain(
+    expect(wrapper.get('label[for="model2-select"]').text()).toContain(
       "Model 2",
     );
-    expect(leftSelect.attributes("aria-describedby")).toContain(
+    expect(model1Select.attributes("aria-describedby")).toContain(
       "models-select-help",
     );
-    expect(rightSelect.attributes("aria-describedby")).toContain(
+    expect(model2Select.attributes("aria-describedby")).toContain(
       "models-select-help",
     );
-    expect(rightSelect.attributes("disabled")).toBeUndefined();
+    expect(model2Select.attributes("disabled")).toBeUndefined();
   });
 
   it("renders side-specific loading status semantics during submit", async () => {
@@ -146,8 +146,8 @@ describe("app accessibility", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4o");
-    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();

@@ -46,11 +46,11 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    const leftSelect = wrapper.get("#models-select");
-    const rightSelect = wrapper.get("#models-select-right");
+    const model1Select = wrapper.get("#model1-select");
+    const model2Select = wrapper.get("#model2-select");
 
-    expect(leftSelect.attributes("disabled")).toBeUndefined();
-    expect(rightSelect.attributes("disabled")).toBeUndefined();
+    expect(model1Select.attributes("disabled")).toBeUndefined();
+    expect(model2Select.attributes("disabled")).toBeUndefined();
   });
 
   it("tracks left and right model selections independently", async () => {
@@ -64,14 +64,14 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4.1-mini");
-    await wrapper.get("#models-select-right").setValue("gpt-4o");
+    await wrapper.get("#model1-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#model2-select").setValue("gpt-4o");
 
     expect(
-      (wrapper.get("#models-select").element as HTMLSelectElement).value,
+      (wrapper.get("#model1-select").element as HTMLSelectElement).value,
     ).toBe("gpt-4.1-mini");
     expect(
-      (wrapper.get("#models-select-right").element as HTMLSelectElement).value,
+      (wrapper.get("#model2-select").element as HTMLSelectElement).value,
     ).toBe("gpt-4o");
   });
 
@@ -193,8 +193,8 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4o");
-    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -228,8 +228,8 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4o");
-    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue(" hello ");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -281,8 +281,8 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4o");
-    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -323,8 +323,8 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4o");
-    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -370,8 +370,8 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    await wrapper.get("#models-select").setValue("gpt-4o");
-    await wrapper.get("#models-select-right").setValue("gpt-4.1-mini");
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
