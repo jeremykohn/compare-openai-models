@@ -1,36 +1,27 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { DEFAULT_MODEL } from "~~/shared/constants/models";
 import ModelsSelector from "./components/ModelsSelector.vue";
-import UiErrorAlert from "./components/UiErrorAlert.vue";
+import ModelOutputPanel from "./components/ModelOutputPanel.vue";
 import { useModelsState } from "./composables/use-models-state";
-import { useRequestState } from "./composables/use-request-state";
-import { normalizeUiError } from "./utils/error-normalization";
-import type { NormalizedUiError } from "./utils/error-normalization";
-import { logNormalizedUiError } from "./utils/log-normalized-ui-error";
-import { isRespondSuccessPayload } from "./utils/type-guards";
+import { useModelQuery } from "./composables/use-model-query";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
-const submittedModelIdModel1 = ref(DEFAULT_MODEL);
-const submittedModelIdModel2 = ref(DEFAULT_MODEL);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
 const {
   state: model1RequestState,
-  start: startModel1Request,
-  succeed: succeedModel1Request,
-  fail: failModel1Request,
-} = useRequestState();
+  submittedModelId: submittedModelIdModel1,
+  query: queryModel1,
+} = useModelQuery("model1");
 const {
   state: model2RequestState,
-  start: startModel2Request,
-  succeed: succeedModel2Request,
-  fail: failModel2Request,
-} = useRequestState();
+  submittedModelId: submittedModelIdModel2,
+  query: queryModel2,
+} = useModelQuery("model2");
 const { state: modelsState, fetchModels } = useModelsState();
 
 const isLoading = computed(
@@ -57,77 +48,6 @@ const model2OutputHeading = computed(
   () => `Response from Model 2 (${submittedModelIdModel2.value})`,
 );
 
-async function runSingleQuery(
-  promptText: string,
-  modelId: string,
-  modelRole: "model1" | "model2",
-): Promise<
-  | { ok: true; response: string; model: string }
-  | { ok: false; error: NormalizedUiError }
-> {
-  const body: { prompt: string; model?: string } = {
-    prompt: promptText,
-  };
-
-  if (modelId.trim()) {
-    body.model = modelId.trim();
-  }
-
-  try {
-    const response = await fetch("/api/respond", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-
-    let payload: unknown;
-
-    try {
-      payload = await response.json();
-    } catch {
-      payload = {
-        statusCode: response.status,
-        statusText: response.statusText,
-      };
-    }
-
-    const payloadObject =
-      payload !== null && typeof payload === "object" && !Array.isArray(payload)
-        ? (payload as Record<string, unknown>)
-        : {};
-
-    const normalizedInput = {
-      ...payloadObject,
-      statusCode: response.status,
-      statusText: response.statusText,
-    };
-
-    if (!response.ok || !isRespondSuccessPayload(normalizedInput)) {
-      const normalized = normalizeUiError(normalizedInput);
-      logNormalizedUiError(`app.handleSubmit.${modelRole}`, normalized);
-      return {
-        ok: false,
-        error: normalized,
-      };
-    }
-
-    return {
-      ok: true,
-      response: normalizedInput.response,
-      model: normalizedInput.model,
-    };
-  } catch (error) {
-    const normalized = normalizeUiError(error);
-    logNormalizedUiError(`app.handleSubmit.${modelRole}`, normalized);
-    return {
-      ok: false,
-      error: normalized,
-    };
-  }
-}
-
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
     return;
@@ -142,43 +62,10 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
-  startModel1Request();
-  startModel2Request();
-
-  submittedModelIdModel1.value =
-    selectedModelIdModel1.value.trim() || DEFAULT_MODEL;
-  submittedModelIdModel2.value =
-    selectedModelIdModel2.value.trim() || DEFAULT_MODEL;
-
-  const model1Promise = runSingleQuery(
-    promptResult.trimmedPrompt,
-    selectedModelIdModel1.value,
-    "model1",
-  ).then((model1Result) => {
-    if (model1Result.ok) {
-      submittedModelIdModel1.value = model1Result.model;
-      succeedModel1Request(model1Result.response);
-      return;
-    }
-
-    failModel1Request(model1Result.error);
-  });
-
-  const model2Promise = runSingleQuery(
-    promptResult.trimmedPrompt,
-    selectedModelIdModel2.value,
-    "model2",
-  ).then((model2Result) => {
-    if (model2Result.ok) {
-      submittedModelIdModel2.value = model2Result.model;
-      succeedModel2Request(model2Result.response);
-      return;
-    }
-
-    failModel2Request(model2Result.error);
-  });
-
-  await Promise.all([model1Promise, model2Promise]);
+  await Promise.all([
+    queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
+    queryModel2(promptResult.trimmedPrompt, selectedModelIdModel2.value),
+  ]);
 }
 </script>
 
@@ -258,109 +145,20 @@ async function handleSubmit(): Promise<void> {
 
       <section aria-live="polite" aria-atomic="true" class="grid gap-3">
         <div v-if="showOutputPanels" class="grid gap-4 md:grid-cols-2">
-          <article
-            class="grid gap-3 rounded-2xl p-4 shadow-sm"
-            :class="
-              model1RequestState.status === 'error'
-                ? 'border border-red-200 bg-red-50'
-                : model1RequestState.status === 'success'
-                  ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
-                  : 'border border-slate-200 bg-white'
-            "
-          >
-            <h2
-              class="text-base font-semibold"
-              :class="
-                model1RequestState.status === 'error'
-                  ? 'text-red-900'
-                  : model1RequestState.status === 'success'
-                    ? 'text-emerald-900'
-                    : 'text-slate-900'
-              "
-            >
-              {{ model1OutputHeading }}
-            </h2>
-            <div
-              v-if="model1RequestState.status === 'loading'"
-              role="status"
-              aria-live="polite"
-              class="inline-flex items-center gap-2 text-sm text-slate-700"
-            >
-              <span
-                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
-              />
-              <span>Waiting for Model 1 response...</span>
-            </div>
-            <p
-              v-else-if="
-                model1RequestState.status === 'success' &&
-                model1RequestState.data
-              "
-              class="whitespace-pre-wrap text-sm"
-            >
-              {{ model1RequestState.data }}
-            </p>
-            <UiErrorAlert
-              v-else-if="
-                model1RequestState.status === 'error' &&
-                model1RequestState.error
-              "
-              :error="model1RequestState.error"
-              :show-retry="false"
-            />
-          </article>
-
-          <article
-            class="grid gap-3 rounded-2xl p-4 shadow-sm"
-            :class="
-              model2RequestState.status === 'error'
-                ? 'border border-red-200 bg-red-50'
-                : model2RequestState.status === 'success'
-                  ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
-                  : 'border border-slate-200 bg-white'
-            "
-          >
-            <h2
-              class="text-base font-semibold"
-              :class="
-                model2RequestState.status === 'error'
-                  ? 'text-red-900'
-                  : model2RequestState.status === 'success'
-                    ? 'text-emerald-900'
-                    : 'text-slate-900'
-              "
-            >
-              {{ model2OutputHeading }}
-            </h2>
-            <div
-              v-if="model2RequestState.status === 'loading'"
-              role="status"
-              aria-live="polite"
-              class="inline-flex items-center gap-2 text-sm text-slate-700"
-            >
-              <span
-                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-700"
-              />
-              <span>Waiting for Model 2 response...</span>
-            </div>
-            <p
-              v-else-if="
-                model2RequestState.status === 'success' &&
-                model2RequestState.data
-              "
-              class="whitespace-pre-wrap text-sm"
-            >
-              {{ model2RequestState.data }}
-            </p>
-            <UiErrorAlert
-              v-else-if="
-                model2RequestState.status === 'error' &&
-                model2RequestState.error
-              "
-              :error="model2RequestState.error"
-              :show-retry="false"
-            />
-          </article>
+          <ModelOutputPanel
+            label="Model 1"
+            :heading="model1OutputHeading"
+            :status="model1RequestState.status"
+            :data="model1RequestState.data"
+            :error="model1RequestState.error"
+          />
+          <ModelOutputPanel
+            label="Model 2"
+            :heading="model2OutputHeading"
+            :status="model2RequestState.status"
+            :data="model2RequestState.data"
+            :error="model2RequestState.error"
+          />
         </div>
       </section>
     </main>
