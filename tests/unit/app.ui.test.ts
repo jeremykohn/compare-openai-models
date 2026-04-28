@@ -158,6 +158,9 @@ describe("app ui", () => {
 
     expect(wrapper.text()).toContain("Waiting for Model 1 response...");
     expect(wrapper.text()).toContain("Waiting for Model 2 response...");
+    expect(wrapper.text()).toContain(
+      "Waiting for Model 1 and Model 2 responses...",
+    );
     const sendButton = wrapper.get('button[type="submit"]');
     expect(sendButton.attributes("disabled")).toBeDefined();
     expect(sendButton.attributes("aria-busy")).toBe("true");
@@ -298,6 +301,15 @@ describe("app ui", () => {
     expect(responseParagraphs).toHaveLength(2);
     expect(responseParagraphs[0]?.text()).toBe("Left response");
     expect(responseParagraphs[1]?.text()).toBe("Right response");
+    expect(wrapper.text()).toContain(
+      "Comparison between responses of Models 1 and 2",
+    );
+    const comparisonPanel = wrapper.get(
+      '[data-testid="comparison-output-panel"]',
+    );
+    const placeholderText = comparisonPanel.get("p");
+    expect(placeholderText.text()).toBe("New feature coming soon!");
+    expect(placeholderText.classes()).toContain("italic");
   });
 
   it("renders left error and right success independently", async () => {
@@ -411,7 +423,9 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    const outputPanels = wrapper.findAll("article");
+    const outputPanels = wrapper.findAll(
+      '[data-testid="model-output-panels-grid"] article',
+    );
     expect(outputPanels).toHaveLength(2);
     expect(outputPanels[0]?.classes()).toContain("min-w-0");
     expect(outputPanels[0]?.classes()).toContain("max-w-full");

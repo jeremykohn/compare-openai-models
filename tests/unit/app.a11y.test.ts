@@ -162,7 +162,10 @@ describe("app accessibility", () => {
 
     expect(wrapper.text()).toContain("Waiting for Model 1 response...");
     expect(wrapper.text()).toContain("Waiting for Model 2 response...");
-    expect(wrapper.findAll('[role="status"]')).toHaveLength(2);
+    expect(wrapper.text()).toContain(
+      "Waiting for Model 1 and Model 2 responses...",
+    );
+    expect(wrapper.findAll('[role="status"]')).toHaveLength(3);
 
     resolveLeftRespond({
       ok: true,

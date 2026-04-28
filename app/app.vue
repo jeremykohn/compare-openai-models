@@ -68,6 +68,12 @@ const outputPanels = computed(() => [
   },
 ]);
 
+const isComparisonWaiting = computed(
+  () =>
+    model1RequestState.status === "loading" ||
+    model2RequestState.status === "loading",
+);
+
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
     return;
@@ -168,19 +174,48 @@ async function handleSubmit(): Promise<void> {
       </form>
 
       <section aria-live="polite" aria-atomic="true" class="grid gap-3">
-        <div
-          v-if="showOutputPanels"
-          class="grid items-start gap-4 md:grid-cols-2"
-        >
-          <ModelOutputPanel
-            v-for="panel in outputPanels"
-            :key="panel.key"
-            :label="panel.label"
-            :heading="panel.heading"
-            :status="panel.status"
-            :data="panel.data"
-            :error="panel.error"
-          />
+        <div v-if="showOutputPanels" class="grid gap-4">
+          <div
+            data-testid="model-output-panels-grid"
+            class="grid items-start gap-4 md:grid-cols-2"
+          >
+            <ModelOutputPanel
+              v-for="panel in outputPanels"
+              :key="panel.key"
+              :label="panel.label"
+              :heading="panel.heading"
+              :status="panel.status"
+              :data="panel.data"
+              :error="panel.error"
+            />
+          </div>
+
+          <article
+            data-testid="comparison-output-panel"
+            class="min-w-0 max-w-full overflow-x-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm"
+          >
+            <div
+              v-if="isComparisonWaiting"
+              data-testid="comparison-output-waiting"
+              role="status"
+              aria-live="polite"
+              class="inline-flex items-center gap-2 text-sm text-slate-600"
+            >
+              <span
+                aria-hidden="true"
+                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-500"
+              />
+              <span>Waiting for Model 1 and Model 2 responses...</span>
+            </div>
+            <div v-else class="grid gap-2">
+              <h2 class="text-base font-semibold text-slate-800">
+                Comparison between responses of Models 1 and 2
+              </h2>
+              <p class="text-sm italic text-slate-600">
+                New feature coming soon!
+              </p>
+            </div>
+          </article>
         </div>
       </section>
     </main>

@@ -74,6 +74,12 @@ test("runs happy path from load to rendered response", async ({ page }) => {
     }),
   ).toBeVisible();
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
+  await expect(
+    page.getByRole("heading", {
+      name: "Comparison between responses of Models 1 and 2",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText("New feature coming soon!")).toBeVisible();
 
   capture.stop();
 });
@@ -138,10 +144,14 @@ test("shows left completion while right response is still pending", async ({
 
   await expect(page.getByText("Left fast response")).toBeVisible();
   await expect(page.getByText("Waiting for Model 2 response...")).toBeVisible();
+  await expect(
+    page.getByText("Waiting for Model 1 and Model 2 responses..."),
+  ).toBeVisible();
 
   (releaseRightResponse as (() => void) | null)?.();
 
   await expect(page.getByText("Right delayed response")).toBeVisible();
+  await expect(page.getByText("New feature coming soon!")).toBeVisible();
 
   capture.stop();
 });
