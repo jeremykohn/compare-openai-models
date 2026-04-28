@@ -48,6 +48,25 @@ const model2OutputHeading = computed(
   () => `Response from Model 2 (${submittedModelIdModel2.value})`,
 );
 
+const outputPanels = computed(() => [
+  {
+    key: "model1",
+    label: "Model 1",
+    heading: model1OutputHeading.value,
+    status: model1RequestState.status,
+    data: model1RequestState.data,
+    error: model1RequestState.error,
+  },
+  {
+    key: "model2",
+    label: "Model 2",
+    heading: model2OutputHeading.value,
+    status: model2RequestState.status,
+    data: model2RequestState.data,
+    error: model2RequestState.error,
+  },
+]);
+
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
     return;
@@ -149,18 +168,13 @@ async function handleSubmit(): Promise<void> {
           class="grid items-start gap-4 md:grid-cols-2"
         >
           <ModelOutputPanel
-            label="Model 1"
-            :heading="model1OutputHeading"
-            :status="model1RequestState.status"
-            :data="model1RequestState.data"
-            :error="model1RequestState.error"
-          />
-          <ModelOutputPanel
-            label="Model 2"
-            :heading="model2OutputHeading"
-            :status="model2RequestState.status"
-            :data="model2RequestState.data"
-            :error="model2RequestState.error"
+            v-for="panel in outputPanels"
+            :key="panel.key"
+            :label="panel.label"
+            :heading="panel.heading"
+            :status="panel.status"
+            :data="panel.data"
+            :error="panel.error"
           />
         </div>
       </section>

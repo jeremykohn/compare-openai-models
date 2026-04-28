@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import type { NormalizedUiError } from "../utils/error-normalization";
+import UiErrorDetailRow from "./UiErrorDetailRow.vue";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     error: NormalizedUiError;
     showRetry?: boolean;
@@ -24,6 +26,32 @@ const emit = defineEmits<{
 function onRetry(): void {
   emit("retry");
 }
+
+const detailRows = computed(() => {
+  const rows: Array<{ label: string; value: string | number }> = [];
+
+  if (props.error.type) {
+    rows.push({ label: "Type", value: props.error.type });
+  }
+
+  if (typeof props.error.statusCode === "number") {
+    rows.push({ label: "Status Code", value: props.error.statusCode });
+  }
+
+  if (props.error.code) {
+    rows.push({ label: "Error Code", value: props.error.code });
+  }
+
+  if (props.error.param) {
+    rows.push({ label: "Param", value: props.error.param });
+  }
+
+  if (props.error.details) {
+    rows.push({ label: "Details", value: props.error.details });
+  }
+
+  return rows;
+});
 </script>
 
 <template>
@@ -47,55 +75,12 @@ function onRetry(): void {
       </summary>
 
       <dl class="mt-2 grid min-w-0 max-w-full gap-1">
-        <div
-          v-if="error.type"
-          class="grid min-w-0 grid-cols-[auto,minmax(0,1fr)] gap-x-2"
-        >
-          <dt class="break-words font-semibold">Type</dt>
-          <dd class="min-w-0 break-words whitespace-pre-wrap">
-            {{ error.type }}
-          </dd>
-        </div>
-
-        <div
-          v-if="typeof error.statusCode === 'number'"
-          class="grid min-w-0 grid-cols-[auto,minmax(0,1fr)] gap-x-2"
-        >
-          <dt class="break-words font-semibold">Status Code</dt>
-          <dd class="min-w-0 break-words whitespace-pre-wrap">
-            {{ error.statusCode }}
-          </dd>
-        </div>
-
-        <div
-          v-if="error.code"
-          class="grid min-w-0 grid-cols-[auto,minmax(0,1fr)] gap-x-2"
-        >
-          <dt class="break-words font-semibold">Error Code</dt>
-          <dd class="min-w-0 break-words whitespace-pre-wrap">
-            {{ error.code }}
-          </dd>
-        </div>
-
-        <div
-          v-if="error.param"
-          class="grid min-w-0 grid-cols-[auto,minmax(0,1fr)] gap-x-2"
-        >
-          <dt class="break-words font-semibold">Param</dt>
-          <dd class="min-w-0 break-words whitespace-pre-wrap">
-            {{ error.param }}
-          </dd>
-        </div>
-
-        <div
-          v-if="error.details"
-          class="grid min-w-0 grid-cols-[auto,minmax(0,1fr)] gap-x-2"
-        >
-          <dt class="break-words font-semibold">Details</dt>
-          <dd class="min-w-0 break-words whitespace-pre-wrap">
-            {{ error.details }}
-          </dd>
-        </div>
+        <UiErrorDetailRow
+          v-for="(row, index) in detailRows"
+          :key="`${row.label}-${index}`"
+          :label="row.label"
+          :value="row.value"
+        />
       </dl>
     </details>
 
