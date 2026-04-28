@@ -14,12 +14,12 @@ defineProps<{
 
 <template>
   <article
-    class="grid min-w-0 max-w-full gap-3 rounded-2xl p-4 shadow-sm"
+    class="grid min-w-0 max-w-full gap-3 rounded-2xl p-6 shadow-sm"
     :class="
       status === 'error'
         ? 'border border-red-200 bg-red-50'
         : status === 'success'
-          ? 'border border-emerald-200 bg-emerald-50 p-6 text-emerald-900'
+          ? 'border border-emerald-200 bg-emerald-50 text-emerald-900'
           : 'border border-slate-200 bg-white'
     "
   >

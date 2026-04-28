@@ -99,6 +99,46 @@ describe("ModelOutputPanel", () => {
     expect(wrapper.get("article").classes()).toContain("bg-emerald-50");
   });
 
+  it("uses the same panel padding across loading, success, and error states", () => {
+    const loadingWrapper = mount(ModelOutputPanel, {
+      props: {
+        label: "Model 1",
+        heading: "Response from Model 1 (gpt-4.1-mini)",
+        status: "loading",
+        data: null,
+        error: null,
+      },
+    });
+
+    const successWrapper = mount(ModelOutputPanel, {
+      props: {
+        label: "Model 1",
+        heading: "Response from Model 1 (gpt-4.1-mini)",
+        status: "success",
+        data: "OK",
+        error: null,
+      },
+    });
+
+    const errorWrapper = mount(ModelOutputPanel, {
+      props: {
+        label: "Model 1",
+        heading: "Response from Model 1 (gpt-4.1-mini)",
+        status: "error",
+        data: null,
+        error: { category: "api", message: "Error" },
+      },
+    });
+
+    expect(loadingWrapper.get("article").classes()).toContain("p-6");
+    expect(successWrapper.get("article").classes()).toContain("p-6");
+    expect(errorWrapper.get("article").classes()).toContain("p-6");
+
+    expect(loadingWrapper.get("article").classes()).not.toContain("p-4");
+    expect(successWrapper.get("article").classes()).not.toContain("p-4");
+    expect(errorWrapper.get("article").classes()).not.toContain("p-4");
+  });
+
   it("shows nothing when status is idle", () => {
     const wrapper = mount(ModelOutputPanel, {
       props: {
