@@ -9,6 +9,7 @@ const props = withDefaults(
   defineProps<{
     selectedModelIdModel1: string;
     selectedModelIdModel2: string;
+    selectedModelIdModelComparison?: string;
     status: RequestStatus;
     models: ReadonlyArray<OpenAIModel> | null;
     error?: NormalizedUiError | null;
@@ -17,6 +18,7 @@ const props = withDefaults(
     disabled?: boolean;
   }>(),
   {
+    selectedModelIdModelComparison: "",
     error: null,
     required: true,
     disabled: false,
@@ -26,6 +28,7 @@ const props = withDefaults(
 const emit = defineEmits<{
   "update:selectedModelIdModel1": [value: string];
   "update:selectedModelIdModel2": [value: string];
+  "update:selectedModelIdModelComparison": [value: string];
   retry: [];
 }>();
 </script>
@@ -44,14 +47,49 @@ const emit = defineEmits<{
       <span>Loading models...</span>
     </div>
 
-    <div v-else class="grid gap-3 md:grid-cols-2">
+    <div v-else class="grid gap-3">
+      <div class="grid gap-3 md:grid-cols-2">
+        <ModelSelectField
+          id="model1-select"
+          label="Model 1"
+          :value="props.selectedModelIdModel1"
+          :models="props.models"
+          :status="props.status"
+          :disabled="props.disabled"
+          :required="props.required"
+          :invalid="props.status === 'error'"
+          :described-by="
+            props.status === 'error'
+              ? 'models-select-help models-select-error'
+              : 'models-select-help'
+          "
+          @change="emit('update:selectedModelIdModel1', $event)"
+        />
+        <ModelSelectField
+          id="model2-select"
+          label="Model 2"
+          :value="props.selectedModelIdModel2"
+          :models="props.models"
+          :status="props.status"
+          :disabled="props.disabled"
+          :required="props.required"
+          :invalid="props.status === 'error'"
+          :described-by="
+            props.status === 'error'
+              ? 'models-select-help models-select-error'
+              : 'models-select-help'
+          "
+          @change="emit('update:selectedModelIdModel2', $event)"
+        />
+      </div>
+
       <ModelSelectField
-        id="model1-select"
-        label="Model 1"
-        :value="props.selectedModelIdModel1"
+        id="model-comparison-select"
+        label="Model for comparing outputs"
+        :value="props.selectedModelIdModelComparison"
         :models="props.models"
         :status="props.status"
-        :disabled="props.disabled"
+        :disabled="true"
         :required="props.required"
         :invalid="props.status === 'error'"
         :described-by="
@@ -59,23 +97,7 @@ const emit = defineEmits<{
             ? 'models-select-help models-select-error'
             : 'models-select-help'
         "
-        @change="emit('update:selectedModelIdModel1', $event)"
-      />
-      <ModelSelectField
-        id="model2-select"
-        label="Model 2"
-        :value="props.selectedModelIdModel2"
-        :models="props.models"
-        :status="props.status"
-        :disabled="props.disabled"
-        :required="props.required"
-        :invalid="props.status === 'error'"
-        :described-by="
-          props.status === 'error'
-            ? 'models-select-help models-select-error'
-            : 'models-select-help'
-        "
-        @change="emit('update:selectedModelIdModel2', $event)"
+        @change="emit('update:selectedModelIdModelComparison', $event)"
       />
     </div>
 

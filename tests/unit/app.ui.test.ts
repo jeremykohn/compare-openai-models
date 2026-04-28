@@ -50,9 +50,11 @@ describe("app ui", () => {
 
     const model1Select = wrapper.get("#model1-select");
     const model2Select = wrapper.get("#model2-select");
+    const modelComparisonSelect = wrapper.get("#model-comparison-select");
 
     expect(model1Select.attributes("disabled")).toBeUndefined();
     expect(model2Select.attributes("disabled")).toBeUndefined();
+    expect(modelComparisonSelect.attributes("disabled")).toBeDefined();
   });
 
   it("tracks left and right model selections independently", async () => {

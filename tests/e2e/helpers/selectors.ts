@@ -8,6 +8,10 @@ export function getModel2Select(page: Page) {
   return page.locator("#model2-select");
 }
 
+export function getModelComparisonSelect(page: Page) {
+  return page.locator("#model-comparison-select");
+}
+
 export function getPromptInput(page: Page) {
   return page.locator("#prompt-input");
 }

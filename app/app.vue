@@ -9,6 +9,7 @@ import { validatePrompt } from "./utils/prompt-validation";
 const prompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
+const selectedModelIdModelComparison = ref("");
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -113,6 +114,7 @@ async function handleSubmit(): Promise<void> {
         <ModelsSelector
           :selected-model-id-model1="selectedModelIdModel1"
           :selected-model-id-model2="selectedModelIdModel2"
+          :selected-model-id-model-comparison="selectedModelIdModelComparison"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
@@ -120,6 +122,9 @@ async function handleSubmit(): Promise<void> {
           :disabled="isLoading"
           @update:selected-model-id-model1="selectedModelIdModel1 = $event"
           @update:selected-model-id-model2="selectedModelIdModel2 = $event"
+          @update:selected-model-id-model-comparison="
+            selectedModelIdModelComparison = $event
+          "
           @retry="fetchModels"
         />
 
