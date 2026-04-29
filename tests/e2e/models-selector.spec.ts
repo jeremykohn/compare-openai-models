@@ -39,7 +39,7 @@ test("shows loading indicator then model options", async ({ page }) => {
   const modelComparisonSelect = getModelComparisonSelect(page);
   await expect(model1Select).toBeVisible();
   await expect(modelComparisonSelect).toBeVisible();
-  await expect(modelComparisonSelect).toBeDisabled();
+  await expect(modelComparisonSelect).toBeEnabled();
   await expect(model1Select).toContainText("gpt-4.1-mini");
 });
 
