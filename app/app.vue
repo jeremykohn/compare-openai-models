@@ -128,7 +128,8 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
-  submittedModelIdModel3.value = selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
+  submittedModelIdModel3.value =
+    selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
 
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),

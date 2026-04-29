@@ -360,9 +360,9 @@ describe("app ui", () => {
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
       "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o)",
     );
-    expect(wrapper.get('[data-testid="comparison-output-heading"]').text()).toBe(
-      "Error: Cannot produce comparison",
-    );
+    expect(
+      wrapper.get('[data-testid="comparison-output-heading"]').text(),
+    ).toBe("Error: Cannot produce comparison");
 
     const errorToggles = wrapper.findAll(
       '[data-testid="error-details-toggle"]',
@@ -413,9 +413,9 @@ describe("app ui", () => {
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
       "Unable to compare model outputs due to errors when querying Model 2 (gpt-4.1-mini)",
     );
-    expect(wrapper.get('[data-testid="comparison-output-heading"]').text()).toBe(
-      "Error: Cannot produce comparison",
-    );
+    expect(
+      wrapper.get('[data-testid="comparison-output-heading"]').text(),
+    ).toBe("Error: Cannot produce comparison");
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
     ).toHaveLength(1);
@@ -453,9 +453,9 @@ describe("app ui", () => {
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
       "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o), Model 2 (gpt-4.1-mini)",
     );
-    expect(wrapper.get('[data-testid="comparison-output-heading"]').text()).toBe(
-      "Error: Cannot produce comparison",
-    );
+    expect(
+      wrapper.get('[data-testid="comparison-output-heading"]').text(),
+    ).toBe("Error: Cannot produce comparison");
   });
 
   it("applies overflow-safe classes to long headings and response text", async () => {
