@@ -38,7 +38,7 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Send");
   });
 
-  it("shows both visible model selectors active", async () => {
+  it("shows both model selectors active", async () => {
     fetchMock.mockResolvedValueOnce(
       modelsResponse([
         { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
@@ -50,10 +50,11 @@ describe("app ui", () => {
 
     const model1Select = wrapper.get("#model1-select");
     const model2Select = wrapper.get("#model2-select");
+    const model3Select = wrapper.get("#model-comparison-select");
 
     expect(model1Select.attributes("disabled")).toBeUndefined();
     expect(model2Select.attributes("disabled")).toBeUndefined();
-    expect(wrapper.find("#model-comparison-select").exists()).toBe(false);
+    expect(model3Select.attributes("disabled")).toBeUndefined();
   });
 
   it("tracks left and right model selections independently", async () => {
@@ -157,7 +158,7 @@ describe("app ui", () => {
 
     expect(wrapper.text()).toContain("Waiting for Model 1 response...");
     expect(wrapper.text()).toContain("Waiting for Model 2 response...");
-    expect(wrapper.text()).not.toContain(
+    expect(wrapper.text()).toContain(
       "Waiting for Model 1 and Model 2 responses...",
     );
     const sendButton = wrapper.get('button[type="submit"]');
@@ -236,6 +237,7 @@ describe("app ui", () => {
 
     await wrapper.get("#model1-select").setValue("gpt-4o");
     await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
     await wrapper.get("#prompt-input").setValue(" hello ");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -291,6 +293,7 @@ describe("app ui", () => {
 
     await wrapper.get("#model1-select").setValue("gpt-4o");
     await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -302,9 +305,19 @@ describe("app ui", () => {
     expect(responseParagraphs).toHaveLength(2);
     expect(responseParagraphs[0]?.text()).toBe("Left response");
     expect(responseParagraphs[1]?.text()).toBe("Right response");
-    expect(
-      wrapper.find('[data-testid="comparison-output-panel"]').exists(),
-    ).toBe(false);
+    expect(wrapper.text()).toContain(
+      "Comparison of responses from Model 1 and Model 2",
+    );
+    const comparisonPanel = wrapper.get(
+      '[data-testid="comparison-output-panel"]',
+    );
+    const placeholderText = comparisonPanel.get(
+      '[data-testid="comparison-output-placeholder"]',
+    );
+    expect(placeholderText.text()).toBe(
+      "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
+    );
+    expect(placeholderText.classes()).toContain("italic");
   });
 
   it("renders left error and right success independently", async () => {
@@ -344,9 +357,12 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("Right success");
+    expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
+      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o)",
+    );
     expect(
-      wrapper.find('[data-testid="comparison-output-error"]').exists(),
-    ).toBe(false);
+      wrapper.get('[data-testid="comparison-output-heading"]').text(),
+    ).toBe("Error: Cannot produce comparison");
 
     const errorToggles = wrapper.findAll(
       '[data-testid="error-details-toggle"]',
@@ -394,15 +410,18 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Left success");
     expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
+      "Unable to compare model outputs due to errors when querying Model 2 (gpt-4.1-mini)",
+    );
     expect(
-      wrapper.find('[data-testid="comparison-output-error"]').exists(),
-    ).toBe(false);
+      wrapper.get('[data-testid="comparison-output-heading"]').text(),
+    ).toBe("Error: Cannot produce comparison");
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
     ).toHaveLength(1);
   });
 
-  it("renders both side errors when both outer requests fail", async () => {
+  it("renders deterministic comparison error order when both outer requests fail", async () => {
     fetchMock.mockResolvedValueOnce(
       modelsResponse([
         { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
@@ -431,10 +450,12 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.findAll('[role="alert"]')).toHaveLength(2);
+    expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
+      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o), Model 2 (gpt-4.1-mini)",
+    );
     expect(
-      wrapper.find('[data-testid="comparison-output-error"]').exists(),
-    ).toBe(false);
+      wrapper.get('[data-testid="comparison-output-heading"]').text(),
+    ).toBe("Error: Cannot produce comparison");
   });
 
   it("applies overflow-safe classes to long headings and response text", async () => {

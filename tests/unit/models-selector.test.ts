@@ -9,6 +9,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "loading",
         models: null,
         showFallbackNote: false,
@@ -27,6 +28,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "success",
         models: [makeModel("gpt-4.1-mini")],
         showFallbackNote: true,
@@ -49,13 +51,20 @@ describe("ModelsSelector", () => {
     const rightSelect = wrapper.get("#model2-select");
     expect(rightSelect.attributes("disabled")).toBeUndefined();
 
+    const model3Select = wrapper.get("#model-comparison-select");
+    expect(model3Select.attributes("disabled")).toBeUndefined();
+
     const leftOptions = leftSelect
       .findAll("option")
       .map((option) => option.text());
     const rightOptions = rightSelect
       .findAll("option")
       .map((option) => option.text());
+    const model3Options = model3Select
+      .findAll("option")
+      .map((option) => option.text());
     expect(rightOptions).toEqual(leftOptions);
+    expect(model3Options).toEqual(leftOptions);
   });
 
   it("shows disabled no-model state when success has no models", () => {
@@ -63,6 +72,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "success",
         models: [],
         showFallbackNote: false,
@@ -71,8 +81,10 @@ describe("ModelsSelector", () => {
 
     const leftSelect = wrapper.get("#model1-select");
     const rightSelect = wrapper.get("#model2-select");
+    const model3Select = wrapper.get("#model-comparison-select");
     expect(leftSelect.attributes("disabled")).toBeDefined();
     expect(rightSelect.attributes("disabled")).toBeDefined();
+    expect(model3Select.attributes("disabled")).toBeDefined();
     expect(wrapper.text()).toContain("No models available");
   });
 
@@ -81,6 +93,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "error",
         models: null,
         error: {
@@ -94,8 +107,10 @@ describe("ModelsSelector", () => {
 
     const leftSelect = wrapper.get("#model1-select");
     const rightSelect = wrapper.get("#model2-select");
+    const model3Select = wrapper.get("#model-comparison-select");
     expect(leftSelect.attributes("disabled")).toBeDefined();
     expect(rightSelect.attributes("disabled")).toBeDefined();
+    expect(model3Select.attributes("disabled")).toBeDefined();
     expect(leftSelect.attributes("aria-invalid")).toBe("true");
     expect(leftSelect.attributes("aria-describedby")).toContain(
       "models-select-error",
@@ -113,6 +128,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "success",
         models: [makeModel("gpt-4.1-mini"), makeModel("gpt-4o")],
         showFallbackNote: false,
@@ -137,6 +153,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "error",
         models: null,
         error: {
@@ -161,6 +178,7 @@ describe("ModelsSelector", () => {
       props: {
         selectedModelIdModel1: "",
         selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
         status: "success",
         models: [makeModel("gpt-4.1-mini")],
         showFallbackNote: false,
@@ -169,5 +187,30 @@ describe("ModelsSelector", () => {
 
     expect(wrapper.get('label[for="model1-select"]').text()).toBe("Model 1 *");
     expect(wrapper.get('label[for="model2-select"]').text()).toBe("Model 2 *");
+    expect(wrapper.get('label[for="model-comparison-select"]').text()).toBe(
+      "Model 3 for comparing responses *",
+    );
+    expect(
+      wrapper.get("#model-comparison-select").attributes("disabled"),
+    ).toBeUndefined();
+  });
+
+  it("emits model 3 updates", async () => {
+    const wrapper = mount(ModelsSelector, {
+      props: {
+        selectedModelIdModel1: "",
+        selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
+        status: "success",
+        models: [makeModel("gpt-4.1-mini"), makeModel("gpt-4o")],
+        showFallbackNote: false,
+      },
+    });
+
+    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
+
+    expect(wrapper.emitted("update:selectedModelIdModel3")).toEqual([
+      ["gpt-4o"],
+    ]);
   });
 });
