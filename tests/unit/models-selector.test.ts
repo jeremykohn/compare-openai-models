@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
 import ModelsSelector from "../../app/components/ModelsSelector.vue";
+import { MODEL_SELECT_IDS } from "../../shared/constants/model-selectors";
 import { makeModel } from "../helpers/fixtures";
 
 describe("ModelsSelector", () => {
@@ -41,17 +42,17 @@ describe("ModelsSelector", () => {
     );
     expect(wrapper.text()).toContain("Note: List of OpenAI models");
 
-    const leftSelect = wrapper.get("#model1-select");
+    const leftSelect = wrapper.get(`#${MODEL_SELECT_IDS.model1}`);
     expect(leftSelect.attributes("aria-required")).toBe("true");
     expect(leftSelect.attributes("aria-invalid")).toBe("false");
     expect(leftSelect.attributes("aria-describedby")).toBe(
       "models-select-help",
     );
 
-    const rightSelect = wrapper.get("#model2-select");
+    const rightSelect = wrapper.get(`#${MODEL_SELECT_IDS.model2}`);
     expect(rightSelect.attributes("disabled")).toBeUndefined();
 
-    const model3Select = wrapper.get("#model3-select");
+    const model3Select = wrapper.get(`#${MODEL_SELECT_IDS.model3}`);
     expect(model3Select.attributes("disabled")).toBeUndefined();
 
     const leftOptions = leftSelect
@@ -79,9 +80,9 @@ describe("ModelsSelector", () => {
       },
     });
 
-    const leftSelect = wrapper.get("#model1-select");
-    const rightSelect = wrapper.get("#model2-select");
-    const model3Select = wrapper.get("#model3-select");
+    const leftSelect = wrapper.get(`#${MODEL_SELECT_IDS.model1}`);
+    const rightSelect = wrapper.get(`#${MODEL_SELECT_IDS.model2}`);
+    const model3Select = wrapper.get(`#${MODEL_SELECT_IDS.model3}`);
     expect(leftSelect.attributes("disabled")).toBeDefined();
     expect(rightSelect.attributes("disabled")).toBeDefined();
     expect(model3Select.attributes("disabled")).toBeDefined();
@@ -105,9 +106,9 @@ describe("ModelsSelector", () => {
       },
     });
 
-    const leftSelect = wrapper.get("#model1-select");
-    const rightSelect = wrapper.get("#model2-select");
-    const model3Select = wrapper.get("#model3-select");
+    const leftSelect = wrapper.get(`#${MODEL_SELECT_IDS.model1}`);
+    const rightSelect = wrapper.get(`#${MODEL_SELECT_IDS.model2}`);
+    const model3Select = wrapper.get(`#${MODEL_SELECT_IDS.model3}`);
     expect(leftSelect.attributes("disabled")).toBeDefined();
     expect(rightSelect.attributes("disabled")).toBeDefined();
     expect(model3Select.attributes("disabled")).toBeDefined();
@@ -135,8 +136,8 @@ describe("ModelsSelector", () => {
       },
     });
 
-    const leftSelect = wrapper.get("#model1-select");
-    const rightSelect = wrapper.get("#model2-select");
+    const leftSelect = wrapper.get(`#${MODEL_SELECT_IDS.model1}`);
+    const rightSelect = wrapper.get(`#${MODEL_SELECT_IDS.model2}`);
     await leftSelect.setValue("gpt-4.1-mini");
     await rightSelect.setValue("gpt-4.1-mini");
 
@@ -185,13 +186,17 @@ describe("ModelsSelector", () => {
       },
     });
 
-    expect(wrapper.get('label[for="model1-select"]').text()).toBe("Model 1 *");
-    expect(wrapper.get('label[for="model2-select"]').text()).toBe("Model 2 *");
-    expect(wrapper.get('label[for="model3-select"]').text()).toBe(
+    expect(wrapper.get(`label[for="${MODEL_SELECT_IDS.model1}"]`).text()).toBe(
+      "Model 1 *",
+    );
+    expect(wrapper.get(`label[for="${MODEL_SELECT_IDS.model2}"]`).text()).toBe(
+      "Model 2 *",
+    );
+    expect(wrapper.get(`label[for="${MODEL_SELECT_IDS.model3}"]`).text()).toBe(
       "Model 3 for comparing responses *",
     );
     expect(
-      wrapper.get("#model3-select").attributes("disabled"),
+      wrapper.get(`#${MODEL_SELECT_IDS.model3}`).attributes("disabled"),
     ).toBeUndefined();
   });
 
@@ -207,7 +212,7 @@ describe("ModelsSelector", () => {
       },
     });
 
-    await wrapper.get("#model3-select").setValue("gpt-4o");
+    await wrapper.get(`#${MODEL_SELECT_IDS.model3}`).setValue("gpt-4o");
 
     expect(wrapper.emitted("update:selectedModelIdModel3")).toEqual([
       ["gpt-4o"],

@@ -1,4 +1,5 @@
 import { test, expect, type Locator } from "@playwright/test";
+import { MODEL_SELECT_IDS } from "../../shared/constants/model-selectors";
 import {
   mockModelsSuccess,
   mockRespondError,
@@ -46,9 +47,15 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(model1Select).toBeEnabled();
   await expect(model2Select).toBeEnabled();
   await expect(model3Select).toBeEnabled();
-  await expect(page.locator("#model1-select option")).toHaveCount(3);
-  await expect(page.locator("#model2-select option")).toHaveCount(3);
-  await expect(page.locator("#model3-select option")).toHaveCount(3);
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
+    3,
+  );
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model2} option`)).toHaveCount(
+    3,
+  );
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model3} option`)).toHaveCount(
+    3,
+  );
   await expect(model1Select).toHaveValue("");
   await expect(model2Select).toHaveValue("");
   await expect(model3Select).toHaveValue("");
@@ -186,7 +193,9 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "ChatGPT prompt tester" }),
   ).toBeVisible();
-  await expect(page.locator("#model1-select option")).toHaveCount(2);
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
+    2,
+  );
 
   const promptInput = getPromptInput(page);
   await promptInput.fill("Write a greeting");
@@ -238,7 +247,9 @@ test("renders typed error metadata when API provides type/code/param", async ({
   });
 
   await page.goto("/");
-  await expect(page.locator("#model1-select option")).toHaveCount(2);
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
+    2,
+  );
   await getPromptInput(page).fill("Write a greeting");
 
   const capture = startRespondRequestCapture(page);
