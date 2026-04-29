@@ -50,7 +50,7 @@ describe("app ui", () => {
 
     const model1Select = wrapper.get("#model1-select");
     const model2Select = wrapper.get("#model2-select");
-    const model3Select = wrapper.get("#model-comparison-select");
+    const model3Select = wrapper.get("#model3-select");
 
     expect(model1Select.attributes("disabled")).toBeUndefined();
     expect(model2Select.attributes("disabled")).toBeUndefined();
@@ -237,7 +237,7 @@ describe("app ui", () => {
 
     await wrapper.get("#model1-select").setValue("gpt-4o");
     await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
-    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
+    await wrapper.get("#model3-select").setValue("gpt-4o");
     await wrapper.get("#prompt-input").setValue(" hello ");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -293,7 +293,7 @@ describe("app ui", () => {
 
     await wrapper.get("#model1-select").setValue("gpt-4o");
     await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
-    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
+    await wrapper.get("#model3-select").setValue("gpt-4o");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();

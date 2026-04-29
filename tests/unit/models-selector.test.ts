@@ -51,7 +51,7 @@ describe("ModelsSelector", () => {
     const rightSelect = wrapper.get("#model2-select");
     expect(rightSelect.attributes("disabled")).toBeUndefined();
 
-    const model3Select = wrapper.get("#model-comparison-select");
+    const model3Select = wrapper.get("#model3-select");
     expect(model3Select.attributes("disabled")).toBeUndefined();
 
     const leftOptions = leftSelect
@@ -81,7 +81,7 @@ describe("ModelsSelector", () => {
 
     const leftSelect = wrapper.get("#model1-select");
     const rightSelect = wrapper.get("#model2-select");
-    const model3Select = wrapper.get("#model-comparison-select");
+    const model3Select = wrapper.get("#model3-select");
     expect(leftSelect.attributes("disabled")).toBeDefined();
     expect(rightSelect.attributes("disabled")).toBeDefined();
     expect(model3Select.attributes("disabled")).toBeDefined();
@@ -107,7 +107,7 @@ describe("ModelsSelector", () => {
 
     const leftSelect = wrapper.get("#model1-select");
     const rightSelect = wrapper.get("#model2-select");
-    const model3Select = wrapper.get("#model-comparison-select");
+    const model3Select = wrapper.get("#model3-select");
     expect(leftSelect.attributes("disabled")).toBeDefined();
     expect(rightSelect.attributes("disabled")).toBeDefined();
     expect(model3Select.attributes("disabled")).toBeDefined();
@@ -187,11 +187,11 @@ describe("ModelsSelector", () => {
 
     expect(wrapper.get('label[for="model1-select"]').text()).toBe("Model 1 *");
     expect(wrapper.get('label[for="model2-select"]').text()).toBe("Model 2 *");
-    expect(wrapper.get('label[for="model-comparison-select"]').text()).toBe(
+    expect(wrapper.get('label[for="model3-select"]').text()).toBe(
       "Model 3 for comparing responses *",
     );
     expect(
-      wrapper.get("#model-comparison-select").attributes("disabled"),
+      wrapper.get("#model3-select").attributes("disabled"),
     ).toBeUndefined();
   });
 
@@ -207,7 +207,7 @@ describe("ModelsSelector", () => {
       },
     });
 
-    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
+    await wrapper.get("#model3-select").setValue("gpt-4o");
 
     expect(wrapper.emitted("update:selectedModelIdModel3")).toEqual([
       ["gpt-4o"],

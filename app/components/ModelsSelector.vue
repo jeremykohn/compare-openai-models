@@ -84,7 +84,7 @@ const emit = defineEmits<{
       </div>
 
       <ModelSelectField
-        id="model-comparison-select"
+        id="model3-select"
         label="Model 3 for comparing responses"
         :value="props.selectedModelIdModel3"
         :models="props.models"

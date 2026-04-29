@@ -8,7 +8,7 @@ import {
 import {
   getModel1Select,
   getModel2Select,
-  getModelComparisonSelect,
+  getModel3Select,
   getPromptInput,
 } from "./helpers/selectors";
 
@@ -39,7 +39,7 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   ).toBeVisible();
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
-  const model3Select = getModelComparisonSelect(page);
+  const model3Select = getModel3Select(page);
   await expect(model1Select).toBeVisible();
   await expect(model2Select).toBeVisible();
   await expect(model3Select).toBeVisible();
@@ -48,7 +48,7 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(model3Select).toBeEnabled();
   await expect(page.locator("#model1-select option")).toHaveCount(3);
   await expect(page.locator("#model2-select option")).toHaveCount(3);
-  await expect(page.locator("#model-comparison-select option")).toHaveCount(3);
+  await expect(page.locator("#model3-select option")).toHaveCount(3);
   await expect(model1Select).toHaveValue("");
   await expect(model2Select).toHaveValue("");
   await expect(model3Select).toHaveValue("");
@@ -138,7 +138,7 @@ test("shows left completion while right response is still pending", async ({
 
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
-  const model3Select = getModelComparisonSelect(page);
+  const model3Select = getModel3Select(page);
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
   await model3Select.selectOption("gpt-4o");
