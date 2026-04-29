@@ -102,6 +102,19 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   capture.stop();
 });
 
+test("exposes stable literal selector ID contract values", async ({ page }) => {
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
+
+  await page.goto("/");
+
+  await expect(page.locator("#model1-select")).toBeVisible();
+  await expect(page.locator("#model2-select")).toBeVisible();
+  await expect(page.locator("#model3-select")).toBeVisible();
+  await expect(page.locator("#model1-select option")).toHaveCount(3);
+  await expect(page.locator("#model2-select option")).toHaveCount(3);
+  await expect(page.locator("#model3-select option")).toHaveCount(3);
+});
+
 test("shows left completion while right response is still pending", async ({
   page,
 }) => {

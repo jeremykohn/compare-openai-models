@@ -5,6 +5,29 @@ import { MODEL_SELECT_IDS } from "../../shared/constants/model-selectors";
 import { makeModel } from "../helpers/fixtures";
 
 describe("ModelsSelector", () => {
+  it("exposes stable literal selector ID contract values", () => {
+    const wrapper = mount(ModelsSelector, {
+      props: {
+        selectedModelIdModel1: "",
+        selectedModelIdModel2: "",
+        selectedModelIdModel3: "",
+        status: "success",
+        models: [makeModel("gpt-4.1-mini")],
+        showFallbackNote: false,
+      },
+    });
+
+    expect(wrapper.get("#model1-select").attributes("id")).toBe(
+      "model1-select",
+    );
+    expect(wrapper.get("#model2-select").attributes("id")).toBe(
+      "model2-select",
+    );
+    expect(wrapper.get("#model3-select").attributes("id")).toBe(
+      "model3-select",
+    );
+  });
+
   it("shows loading indicator", () => {
     const wrapper = mount(ModelsSelector, {
       props: {
