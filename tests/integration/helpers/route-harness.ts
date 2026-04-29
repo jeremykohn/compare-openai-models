@@ -6,6 +6,7 @@ type RuntimeConfigShape = {
   openaiAllowedHosts: string;
   openaiAllowInsecureHttp: string;
   openaiDisableModelsCache?: string;
+  openaiModelsConfigPath?: string;
 };
 
 const defaultRuntimeConfig: RuntimeConfigShape = {

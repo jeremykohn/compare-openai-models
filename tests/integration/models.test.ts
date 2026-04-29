@@ -1,5 +1,6 @@
-import { writeFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { clearModelsResponseCache } from "../../server/utils/models-response-cache";
 import {
@@ -8,9 +9,8 @@ import {
   mockFetchImplementation,
 } from "./helpers/route-harness";
 
-const modelsConfigFilePath = fileURLToPath(
-  new URL("../../server/assets/models/openai-models.json", import.meta.url),
-);
+let tempDirectoryPath = "";
+let modelsConfigFilePath = "";
 
 async function writeValidConfig(): Promise<void> {
   await writeFile(
@@ -31,13 +31,20 @@ async function writeValidConfig(): Promise<void> {
 
 describe("/api/models route integration", () => {
   beforeEach(async () => {
+    tempDirectoryPath = await mkdtemp(
+      join(tmpdir(), "compare-openai-models-config-"),
+    );
+    modelsConfigFilePath = join(tempDirectoryPath, "openai-models.json");
     clearModelsResponseCache();
     await writeValidConfig();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    await rm(tempDirectoryPath, { recursive: true, force: true });
+    tempDirectoryPath = "";
+    modelsConfigFilePath = "";
   });
 
   it("returns strict model shape, sorted list, and metadata on valid config", async () => {
@@ -69,7 +76,9 @@ describe("/api/models route integration", () => {
       })) as unknown as typeof fetch,
     );
 
-    const handler = await loadModelsHandler(buildRuntimeConfig());
+    const handler = await loadModelsHandler(
+      buildRuntimeConfig({ openaiModelsConfigPath: modelsConfigFilePath }),
+    );
     const response = (await handler()) as {
       object: string;
       data: Array<{ id: string; object: string }>;
@@ -102,7 +111,9 @@ describe("/api/models route integration", () => {
       })) as unknown as typeof fetch,
     );
 
-    const handler = await loadModelsHandler(buildRuntimeConfig());
+    const handler = await loadModelsHandler(
+      buildRuntimeConfig({ openaiModelsConfigPath: modelsConfigFilePath }),
+    );
     const response = (await handler()) as {
       data: Array<{ id: string }>;
       usedConfigFilter: boolean;
@@ -127,7 +138,9 @@ describe("/api/models route integration", () => {
       })) as unknown as typeof fetch,
     );
 
-    const handler = await loadModelsHandler(buildRuntimeConfig());
+    const handler = await loadModelsHandler(
+      buildRuntimeConfig({ openaiModelsConfigPath: modelsConfigFilePath }),
+    );
 
     await expect(handler()).rejects.toMatchObject({
       statusCode: 429,
@@ -156,7 +169,9 @@ describe("/api/models route integration", () => {
       })) as unknown as typeof fetch,
     );
 
-    const handler = await loadModelsHandler(buildRuntimeConfig());
+    const handler = await loadModelsHandler(
+      buildRuntimeConfig({ openaiModelsConfigPath: modelsConfigFilePath }),
+    );
 
     await expect(handler()).rejects.toMatchObject({
       statusCode: 400,

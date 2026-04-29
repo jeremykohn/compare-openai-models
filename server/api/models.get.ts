@@ -30,6 +30,14 @@ const configPath = fileURLToPath(
   new URL("../assets/models/openai-models.json", import.meta.url),
 );
 
+function resolveModelsConfigPath(overridePath?: string): string {
+  if (!overridePath || overridePath.trim().length === 0) {
+    return configPath;
+  }
+
+  return overridePath;
+}
+
 type OpenAIModelsPayload = {
   data?: Array<{
     id?: string;
@@ -87,9 +95,10 @@ async function fetchUpstreamModels(
 async function buildModelsResponse(
   baseUrl: string,
   apiKey: string,
+  modelsConfigPath: string,
 ): Promise<ModelsApiResponse> {
   const upstreamModels = await fetchUpstreamModels(baseUrl, apiKey);
-  const configResult = await loadOpenAIModelsConfig(configPath);
+  const configResult = await loadOpenAIModelsConfig(modelsConfigPath);
 
   const models = configResult.isValid
     ? filterModelsByExclusionSet(
@@ -114,6 +123,7 @@ export default defineEventHandler(async () => {
       openaiAllowedHosts: string;
       openaiAllowInsecureHttp: string;
       openaiDisableModelsCache: string;
+      openaiModelsConfigPath?: string;
     };
     const validated = validateOpenAIRuntimeConfig({
       openaiApiKey: runtimeConfig.openaiApiKey,
@@ -125,6 +135,9 @@ export default defineEventHandler(async () => {
     const disableCache = parseBooleanConfig(
       runtimeConfig.openaiDisableModelsCache,
     );
+    const modelsConfigPath = resolveModelsConfigPath(
+      runtimeConfig.openaiModelsConfigPath,
+    );
     const cacheKey = getModelsResponseCacheKey(validated.baseUrl);
 
     if (!disableCache) {
@@ -134,7 +147,11 @@ export default defineEventHandler(async () => {
           return cached.record;
         }
 
-        void buildModelsResponse(validated.baseUrl, validated.apiKey)
+        void buildModelsResponse(
+          validated.baseUrl,
+          validated.apiKey,
+          modelsConfigPath,
+        )
           .then((freshValue) => {
             setCachedModelsResponse(cacheKey, freshValue);
           })
@@ -149,6 +166,7 @@ export default defineEventHandler(async () => {
     const response = await buildModelsResponse(
       validated.baseUrl,
       validated.apiKey,
+      modelsConfigPath,
     );
 
     if (!disableCache) {
