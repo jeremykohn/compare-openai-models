@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { DEFAULT_MODEL } from "~~/shared/constants/models";
 import ModelsSelector from "./components/ModelsSelector.vue";
 import ModelOutputPanel from "./components/ModelOutputPanel.vue";
+import ComparisonOutputPanel from "./components/ComparisonOutputPanel.vue";
 import { useModelsState } from "./composables/use-models-state";
 import { useModelQuery } from "./composables/use-model-query";
+import { useComparisonUiState } from "./composables/use-comparison-ui-state";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
@@ -27,91 +29,22 @@ const {
 } = useModelQuery("model2");
 const { state: modelsState, fetchModels } = useModelsState();
 
-const isLoading = computed(
-  () =>
-    model1RequestState.status === "loading" ||
-    model2RequestState.status === "loading",
-);
-
-const showOutputPanels = computed(
-  () =>
-    model1RequestState.status === "loading" ||
-    model2RequestState.status === "loading" ||
-    model1RequestState.status === "success" ||
-    model1RequestState.status === "error" ||
-    model2RequestState.status === "success" ||
-    model2RequestState.status === "error",
-);
-
-const model1OutputHeading = computed(
-  () => `Response from Model 1 (${submittedModelIdModel1.value})`,
-);
-
-const model2OutputHeading = computed(
-  () => `Response from Model 2 (${submittedModelIdModel2.value})`,
-);
-
-const outputPanels = computed(() => [
-  {
-    key: "model1",
-    label: "Model 1",
-    heading: model1OutputHeading.value,
-    status: model1RequestState.status,
-    data: model1RequestState.data,
-    error: model1RequestState.error,
-  },
-  {
-    key: "model2",
-    label: "Model 2",
-    heading: model2OutputHeading.value,
-    status: model2RequestState.status,
-    data: model2RequestState.data,
-    error: model2RequestState.error,
-  },
-]);
-
-const isComparisonWaiting = computed(
-  () =>
-    model1RequestState.status === "loading" ||
-    model2RequestState.status === "loading",
-);
-
-const hasModel1Error = computed(() => model1RequestState.status === "error");
-const hasModel2Error = computed(() => model2RequestState.status === "error");
-const hasAnyOuterError = computed(
-  () => hasModel1Error.value || hasModel2Error.value,
-);
-const hasBothOuterSuccess = computed(
-  () =>
-    model1RequestState.status === "success" &&
-    model2RequestState.status === "success",
-);
-
-const comparisonPlaceholderText = computed(
-  () =>
-    `New feature coming soon: Using ${submittedModelIdModel3.value} to compare responses from ${submittedModelIdModel1.value} and ${submittedModelIdModel2.value}`,
-);
-
-const comparisonErrorText = computed(() => {
-  const erroredModelDescriptors: string[] = [];
-
-  if (hasModel1Error.value) {
-    erroredModelDescriptors.push(`Model 1 (${submittedModelIdModel1.value})`);
-  }
-
-  if (hasModel2Error.value) {
-    erroredModelDescriptors.push(`Model 2 (${submittedModelIdModel2.value})`);
-  }
-
-  return `Unable to compare model outputs due to errors when querying ${erroredModelDescriptors.join(", ")}`;
-});
-
-const comparisonPanelHeading = computed(() => {
-  if (hasAnyOuterError.value) {
-    return "Error: Cannot produce comparison";
-  }
-
-  return "Comparison of responses from Model 1 and Model 2";
+const {
+  isLoading,
+  showOutputPanels,
+  outputPanels,
+  isComparisonWaiting,
+  hasAnyOuterError,
+  hasBothOuterSuccess,
+  comparisonPlaceholderText,
+  comparisonErrorText,
+  comparisonPanelHeading,
+} = useComparisonUiState({
+  model1State: model1RequestState,
+  model2State: model2RequestState,
+  submittedModelIdModel1,
+  submittedModelIdModel2,
+  submittedModelIdModel3,
 });
 
 async function handleSubmit(): Promise<void> {
@@ -231,46 +164,14 @@ async function handleSubmit(): Promise<void> {
             />
           </div>
 
-          <article
-            data-testid="comparison-output-panel"
-            class="min-w-0 max-w-full overflow-x-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm"
-          >
-            <div
-              v-if="isComparisonWaiting"
-              data-testid="comparison-output-waiting"
-              role="status"
-              aria-live="polite"
-              class="inline-flex items-center gap-2 text-sm text-slate-600"
-            >
-              <span
-                aria-hidden="true"
-                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-500"
-              />
-              <span>Waiting for Model 1 and Model 2 responses...</span>
-            </div>
-            <div v-else class="grid gap-2">
-              <h2
-                data-testid="comparison-output-heading"
-                class="text-base font-semibold text-slate-800"
-              >
-                {{ comparisonPanelHeading }}
-              </h2>
-              <p
-                v-if="hasAnyOuterError"
-                class="text-sm text-red-700"
-                data-testid="comparison-output-error"
-              >
-                {{ comparisonErrorText }}
-              </p>
-              <p
-                v-else-if="hasBothOuterSuccess"
-                class="text-sm italic text-slate-600"
-                data-testid="comparison-output-placeholder"
-              >
-                {{ comparisonPlaceholderText }}
-              </p>
-            </div>
-          </article>
+          <ComparisonOutputPanel
+            :is-waiting="isComparisonWaiting"
+            :heading="comparisonPanelHeading"
+            :has-outer-error="hasAnyOuterError"
+            :has-both-outer-success="hasBothOuterSuccess"
+            :error-text="comparisonErrorText"
+            :placeholder-text="comparisonPlaceholderText"
+          />
         </div>
       </section>
     </main>
