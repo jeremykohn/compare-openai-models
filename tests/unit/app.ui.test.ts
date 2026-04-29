@@ -54,7 +54,7 @@ describe("app ui", () => {
 
     expect(model1Select.attributes("disabled")).toBeUndefined();
     expect(model2Select.attributes("disabled")).toBeUndefined();
-    expect(modelComparisonSelect.attributes("disabled")).toBeDefined();
+    expect(modelComparisonSelect.attributes("disabled")).toBeUndefined();
   });
 
   it("tracks left and right model selections independently", async () => {
@@ -237,6 +237,7 @@ describe("app ui", () => {
 
     await wrapper.get("#model1-select").setValue("gpt-4o");
     await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
     await wrapper.get("#prompt-input").setValue(" hello ");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -267,6 +268,8 @@ describe("app ui", () => {
     expect(leftParsedBody.model).toBe("gpt-4o");
     expect(rightParsedBody.prompt).toBe("hello");
     expect(rightParsedBody.model).toBe("gpt-4.1-mini");
+    expect(leftParsedBody).not.toHaveProperty("comparisonModel");
+    expect(rightParsedBody).not.toHaveProperty("comparisonModel");
   });
 
   it("renders independent success output for left and right responses", async () => {
@@ -290,6 +293,7 @@ describe("app ui", () => {
 
     await wrapper.get("#model1-select").setValue("gpt-4o");
     await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
     await wrapper.get("#prompt-input").setValue("hello");
     await wrapper.get("form").trigger("submit");
     await flushPromises();
@@ -307,8 +311,12 @@ describe("app ui", () => {
     const comparisonPanel = wrapper.get(
       '[data-testid="comparison-output-panel"]',
     );
-    const placeholderText = comparisonPanel.get("p");
-    expect(placeholderText.text()).toBe("New feature coming soon!");
+    const placeholderText = comparisonPanel.get(
+      '[data-testid="comparison-output-placeholder"]',
+    );
+    expect(placeholderText.text()).toBe(
+      "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
+    );
     expect(placeholderText.classes()).toContain("italic");
   });
 
@@ -349,6 +357,9 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("Right success");
+    expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
+      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4o)",
+    );
 
     const errorToggles = wrapper.findAll(
       '[data-testid="error-details-toggle"]',
@@ -396,9 +407,46 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Left success");
     expect(wrapper.text()).toContain("Something went wrong");
+    expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
+      "Cannot compare model outputs due to errors when querying Model 2 (gpt-4.1-mini)",
+    );
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
     ).toHaveLength(1);
+  });
+
+  it("renders deterministic comparison error order when both outer requests fail", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      json: async () => ({ message: "left failed" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      json: async () => ({ message: "right failed" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
+      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4o), Model 2 (gpt-4.1-mini)",
+    );
   });
 
   it("applies overflow-safe classes to long headings and response text", async () => {

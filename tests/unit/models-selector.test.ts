@@ -52,7 +52,7 @@ describe("ModelsSelector", () => {
     expect(rightSelect.attributes("disabled")).toBeUndefined();
 
     const comparisonSelect = wrapper.get("#model-comparison-select");
-    expect(comparisonSelect.attributes("disabled")).toBeDefined();
+    expect(comparisonSelect.attributes("disabled")).toBeUndefined();
 
     const leftOptions = leftSelect
       .findAll("option")
@@ -190,8 +190,27 @@ describe("ModelsSelector", () => {
     expect(wrapper.get('label[for="model-comparison-select"]').text()).toBe(
       "Model for comparing outputs *",
     );
-    expect(wrapper.get("#model-comparison-select").attributes("disabled")).toBe(
-      "",
-    );
+    expect(
+      wrapper.get("#model-comparison-select").attributes("disabled"),
+    ).toBeUndefined();
+  });
+
+  it("emits comparison model updates", async () => {
+    const wrapper = mount(ModelsSelector, {
+      props: {
+        selectedModelIdModel1: "",
+        selectedModelIdModel2: "",
+        selectedModelIdModelComparison: "",
+        status: "success",
+        models: [makeModel("gpt-4.1-mini"), makeModel("gpt-4o")],
+        showFallbackNote: false,
+      },
+    });
+
+    await wrapper.get("#model-comparison-select").setValue("gpt-4o");
+
+    expect(wrapper.emitted("update:selectedModelIdModelComparison")).toEqual([
+      ["gpt-4o"],
+    ]);
   });
 });

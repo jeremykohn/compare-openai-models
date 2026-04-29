@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { DEFAULT_MODEL } from "~~/shared/constants/models";
 import ModelsSelector from "./components/ModelsSelector.vue";
 import ModelOutputPanel from "./components/ModelOutputPanel.vue";
 import { useModelsState } from "./composables/use-models-state";
@@ -10,6 +11,7 @@ const prompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
 const selectedModelIdModelComparison = ref("");
+const submittedModelIdModelComparison = ref(DEFAULT_MODEL);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -74,6 +76,36 @@ const isComparisonWaiting = computed(
     model2RequestState.status === "loading",
 );
 
+const hasModel1Error = computed(() => model1RequestState.status === "error");
+const hasModel2Error = computed(() => model2RequestState.status === "error");
+const hasAnyOuterError = computed(
+  () => hasModel1Error.value || hasModel2Error.value,
+);
+const hasBothOuterSuccess = computed(
+  () =>
+    model1RequestState.status === "success" &&
+    model2RequestState.status === "success",
+);
+
+const comparisonPlaceholderText = computed(
+  () =>
+    `New feature coming soon: Using ${submittedModelIdModelComparison.value} to compare responses from ${submittedModelIdModel1.value} and ${submittedModelIdModel2.value}`,
+);
+
+const comparisonErrorText = computed(() => {
+  const erroredModelDescriptors: string[] = [];
+
+  if (hasModel1Error.value) {
+    erroredModelDescriptors.push(`Model 1 (${submittedModelIdModel1.value})`);
+  }
+
+  if (hasModel2Error.value) {
+    erroredModelDescriptors.push(`Model 2 (${submittedModelIdModel2.value})`);
+  }
+
+  return `Cannot compare model outputs due to errors when querying ${erroredModelDescriptors.join(", ")}`;
+});
+
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
     return;
@@ -87,6 +119,9 @@ async function handleSubmit(): Promise<void> {
     promptRef.value?.focus();
     return;
   }
+
+  submittedModelIdModelComparison.value =
+    selectedModelIdModelComparison.value.trim() || DEFAULT_MODEL;
 
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
@@ -211,8 +246,19 @@ async function handleSubmit(): Promise<void> {
               <h2 class="text-base font-semibold text-slate-800">
                 Comparison between responses of Models 1 and 2
               </h2>
-              <p class="text-sm italic text-slate-600">
-                New feature coming soon!
+              <p
+                v-if="hasAnyOuterError"
+                class="text-sm text-red-700"
+                data-testid="comparison-output-error"
+              >
+                {{ comparisonErrorText }}
+              </p>
+              <p
+                v-else-if="hasBothOuterSuccess"
+                class="text-sm italic text-slate-600"
+                data-testid="comparison-output-placeholder"
+              >
+                {{ comparisonPlaceholderText }}
               </p>
             </div>
           </article>

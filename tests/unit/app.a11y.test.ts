@@ -104,9 +104,57 @@ describe("app accessibility", () => {
       "models-select-help",
     );
     expect(model2Select.attributes("disabled")).toBeUndefined();
-    expect(modelComparisonSelect.attributes("disabled")).toBeDefined();
+    expect(modelComparisonSelect.attributes("disabled")).toBeUndefined();
     expect(modelComparisonSelect.attributes("aria-describedby")).toContain(
       "models-select-help",
+    );
+  });
+
+  it("renders third-panel conditional message text in accessible output", async () => {
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        object: "list",
+        data: [
+          {
+            id: "gpt-4.1-mini",
+            object: "model",
+            created: 0,
+            owned_by: "openai",
+          },
+          {
+            id: "gpt-4o",
+            object: "model",
+            created: 0,
+            owned_by: "openai",
+          },
+        ],
+        usedConfigFilter: true,
+        showFallbackNote: false,
+      }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      json: async () => ({ message: "left failed" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "right ok", model: "gpt-4.1-mini" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#model1-select").setValue("gpt-4o");
+    await wrapper.get("#model2-select").setValue("gpt-4.1-mini");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(
+      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4o)",
     );
   });
 

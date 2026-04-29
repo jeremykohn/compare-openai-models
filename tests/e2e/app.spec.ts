@@ -38,18 +38,24 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   ).toBeVisible();
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
+  const comparisonSelect = page.locator("#model-comparison-select");
   await expect(model1Select).toBeVisible();
   await expect(model2Select).toBeVisible();
+  await expect(comparisonSelect).toBeVisible();
   await expect(model1Select).toBeEnabled();
   await expect(model2Select).toBeEnabled();
+  await expect(comparisonSelect).toBeEnabled();
   await expect(page.locator("#model1-select option")).toHaveCount(3);
   await expect(page.locator("#model2-select option")).toHaveCount(3);
+  await expect(page.locator("#model-comparison-select option")).toHaveCount(3);
   await expect(model1Select).toHaveValue("");
   await expect(model2Select).toHaveValue("");
+  await expect(comparisonSelect).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
+  await comparisonSelect.selectOption("gpt-4o");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
@@ -79,7 +85,11 @@ test("runs happy path from load to rendered response", async ({ page }) => {
       name: "Comparison between responses of Models 1 and 2",
     }),
   ).toBeVisible();
-  await expect(page.getByText("New feature coming soon!")).toBeVisible();
+  await expect(
+    page.getByText(
+      "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
+    ),
+  ).toBeVisible();
 
   capture.stop();
 });
@@ -151,7 +161,11 @@ test("shows left completion while right response is still pending", async ({
   (releaseRightResponse as (() => void) | null)?.();
 
   await expect(page.getByText("Right delayed response")).toBeVisible();
-  await expect(page.getByText("New feature coming soon!")).toBeVisible();
+  await expect(
+    page.getByText(
+      "New feature coming soon: Using gpt-4.1-mini to compare responses from gpt-4o and gpt-4.1-mini",
+    ),
+  ).toBeVisible();
 
   capture.stop();
 });
@@ -182,6 +196,11 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   expect(capture.getParseError()).toBeNull();
 
   await expect(page.getByText("Something went wrong")).toHaveCount(2);
+  await expect(
+    page.getByText(
+      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4.1-mini), Model 2 (gpt-4.1-mini)",
+    ),
+  ).toBeVisible();
 
   const details = page.locator('[data-testid="error-details-toggle"]');
   await expect(details).toHaveCount(2);

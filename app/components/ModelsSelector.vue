@@ -89,7 +89,7 @@ const emit = defineEmits<{
         :value="props.selectedModelIdModelComparison"
         :models="props.models"
         :status="props.status"
-        :disabled="true"
+        :disabled="props.disabled"
         :required="props.required"
         :invalid="props.status === 'error'"
         :described-by="
