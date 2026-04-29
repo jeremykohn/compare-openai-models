@@ -154,8 +154,9 @@ describe("app accessibility", () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain(
-      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4o)",
+      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o)",
     );
+    expect(wrapper.text()).toContain("Error: Cannot produce comparison");
   });
 
   it("renders side-specific loading status semantics during submit", async () => {

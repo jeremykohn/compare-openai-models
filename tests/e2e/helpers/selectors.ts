@@ -8,9 +8,11 @@ export function getModel2Select(page: Page) {
   return page.locator("#model2-select");
 }
 
-export function getModelComparisonSelect(page: Page) {
-  return page.locator("#model-comparison-select");
+export function getModel3Select(page: Page) {
+  return page.getByLabel(/Model 3 for comparing responses/);
 }
+
+export const getModelComparisonSelect = getModel3Select;
 
 export function getPromptInput(page: Page) {
   return page.locator("#prompt-input");

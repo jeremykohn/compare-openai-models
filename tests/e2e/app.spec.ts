@@ -83,7 +83,7 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
   await expect(
     page.getByRole("heading", {
-      name: "Comparison between responses of Models 1 and 2",
+      name: "Comparison of responses from Model 1 and Model 2",
     }),
   ).toBeVisible();
   await expect(
@@ -199,8 +199,11 @@ test("shows error details toggle when submission fails", async ({ page }) => {
   await expect(page.getByText("Something went wrong")).toHaveCount(2);
   await expect(
     page.getByText(
-      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4.1-mini), Model 2 (gpt-4.1-mini)",
+      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4.1-mini), Model 2 (gpt-4.1-mini)",
     ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Error: Cannot produce comparison" }),
   ).toBeVisible();
 
   const details = page.locator('[data-testid="error-details-toggle"]');

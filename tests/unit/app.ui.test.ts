@@ -306,7 +306,7 @@ describe("app ui", () => {
     expect(responseParagraphs[0]?.text()).toBe("Left response");
     expect(responseParagraphs[1]?.text()).toBe("Right response");
     expect(wrapper.text()).toContain(
-      "Comparison between responses of Models 1 and 2",
+      "Comparison of responses from Model 1 and Model 2",
     );
     const comparisonPanel = wrapper.get(
       '[data-testid="comparison-output-panel"]',
@@ -358,7 +358,10 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("Right success");
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
-      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4o)",
+      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o)",
+    );
+    expect(wrapper.get('[data-testid="comparison-output-heading"]').text()).toBe(
+      "Error: Cannot produce comparison",
     );
 
     const errorToggles = wrapper.findAll(
@@ -408,7 +411,10 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Left success");
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
-      "Cannot compare model outputs due to errors when querying Model 2 (gpt-4.1-mini)",
+      "Unable to compare model outputs due to errors when querying Model 2 (gpt-4.1-mini)",
+    );
+    expect(wrapper.get('[data-testid="comparison-output-heading"]').text()).toBe(
+      "Error: Cannot produce comparison",
     );
     expect(
       wrapper.findAll('[data-testid="error-details-toggle"]'),
@@ -445,7 +451,10 @@ describe("app ui", () => {
     await flushPromises();
 
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
-      "Cannot compare model outputs due to errors when querying Model 1 (gpt-4o), Model 2 (gpt-4.1-mini)",
+      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o), Model 2 (gpt-4.1-mini)",
+    );
+    expect(wrapper.get('[data-testid="comparison-output-heading"]').text()).toBe(
+      "Error: Cannot produce comparison",
     );
   });
 

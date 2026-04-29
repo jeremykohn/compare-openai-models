@@ -103,7 +103,15 @@ const comparisonErrorText = computed(() => {
     erroredModelDescriptors.push(`Model 2 (${submittedModelIdModel2.value})`);
   }
 
-  return `Cannot compare model outputs due to errors when querying ${erroredModelDescriptors.join(", ")}`;
+  return `Unable to compare model outputs due to errors when querying ${erroredModelDescriptors.join(", ")}`;
+});
+
+const comparisonPanelHeading = computed(() => {
+  if (hasAnyOuterError.value) {
+    return "Error: Cannot produce comparison";
+  }
+
+  return "Comparison of responses from Model 1 and Model 2";
 });
 
 async function handleSubmit(): Promise<void> {
@@ -240,8 +248,11 @@ async function handleSubmit(): Promise<void> {
               <span>Waiting for Model 1 and Model 2 responses...</span>
             </div>
             <div v-else class="grid gap-2">
-              <h2 class="text-base font-semibold text-slate-800">
-                Comparison between responses of Models 1 and 2
+              <h2
+                data-testid="comparison-output-heading"
+                class="text-base font-semibold text-slate-800"
+              >
+                {{ comparisonPanelHeading }}
               </h2>
               <p
                 v-if="hasAnyOuterError"
