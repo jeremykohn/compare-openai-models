@@ -8,6 +8,7 @@ import {
 import {
   getModel1Select,
   getModel2Select,
+  getModel3Select,
   getPromptInput,
 } from "./helpers/selectors";
 
@@ -38,24 +39,24 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   ).toBeVisible();
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
-  const comparisonSelect = page.locator("#model-comparison-select");
+  const model3Select = getModel3Select(page);
   await expect(model1Select).toBeVisible();
   await expect(model2Select).toBeVisible();
-  await expect(comparisonSelect).toBeVisible();
+  await expect(model3Select).toBeVisible();
   await expect(model1Select).toBeEnabled();
   await expect(model2Select).toBeEnabled();
-  await expect(comparisonSelect).toBeEnabled();
+  await expect(model3Select).toBeEnabled();
   await expect(page.locator("#model1-select option")).toHaveCount(3);
   await expect(page.locator("#model2-select option")).toHaveCount(3);
   await expect(page.locator("#model-comparison-select option")).toHaveCount(3);
   await expect(model1Select).toHaveValue("");
   await expect(model2Select).toHaveValue("");
-  await expect(comparisonSelect).toHaveValue("");
+  await expect(model3Select).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
-  await comparisonSelect.selectOption("gpt-4o");
+  await model3Select.selectOption("gpt-4o");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);

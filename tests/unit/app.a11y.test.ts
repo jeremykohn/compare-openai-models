@@ -86,7 +86,7 @@ describe("app accessibility", () => {
 
     const model1Select = wrapper.get("#model1-select");
     const model2Select = wrapper.get("#model2-select");
-    const modelComparisonSelect = wrapper.get("#model-comparison-select");
+    const model3Select = wrapper.get("#model-comparison-select");
 
     expect(wrapper.get('label[for="model1-select"]').text()).toContain(
       "Model 1",
@@ -96,7 +96,7 @@ describe("app accessibility", () => {
     );
     expect(
       wrapper.get('label[for="model-comparison-select"]').text(),
-    ).toContain("Model for comparing outputs");
+    ).toContain("Model 3 for comparing responses");
     expect(model1Select.attributes("aria-describedby")).toContain(
       "models-select-help",
     );
@@ -104,8 +104,8 @@ describe("app accessibility", () => {
       "models-select-help",
     );
     expect(model2Select.attributes("disabled")).toBeUndefined();
-    expect(modelComparisonSelect.attributes("disabled")).toBeUndefined();
-    expect(modelComparisonSelect.attributes("aria-describedby")).toContain(
+    expect(model3Select.attributes("disabled")).toBeUndefined();
+    expect(model3Select.attributes("aria-describedby")).toContain(
       "models-select-help",
     );
   });

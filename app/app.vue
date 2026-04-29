@@ -10,8 +10,8 @@ import { validatePrompt } from "./utils/prompt-validation";
 const prompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
-const selectedModelIdModelComparison = ref("");
-const submittedModelIdModelComparison = ref(DEFAULT_MODEL);
+const selectedModelIdModel3 = ref("");
+const submittedModelIdModel3 = ref(DEFAULT_MODEL);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -89,7 +89,7 @@ const hasBothOuterSuccess = computed(
 
 const comparisonPlaceholderText = computed(
   () =>
-    `New feature coming soon: Using ${submittedModelIdModelComparison.value} to compare responses from ${submittedModelIdModel1.value} and ${submittedModelIdModel2.value}`,
+    `New feature coming soon: Using ${submittedModelIdModel3.value} to compare responses from ${submittedModelIdModel1.value} and ${submittedModelIdModel2.value}`,
 );
 
 const comparisonErrorText = computed(() => {
@@ -120,8 +120,7 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
-  submittedModelIdModelComparison.value =
-    selectedModelIdModelComparison.value.trim() || DEFAULT_MODEL;
+  submittedModelIdModel3.value = selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
 
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
@@ -155,7 +154,7 @@ async function handleSubmit(): Promise<void> {
         <ModelsSelector
           :selected-model-id-model1="selectedModelIdModel1"
           :selected-model-id-model2="selectedModelIdModel2"
-          :selected-model-id-model-comparison="selectedModelIdModelComparison"
+          :selected-model-id-model3="selectedModelIdModel3"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
@@ -163,9 +162,7 @@ async function handleSubmit(): Promise<void> {
           :disabled="isLoading"
           @update:selected-model-id-model1="selectedModelIdModel1 = $event"
           @update:selected-model-id-model2="selectedModelIdModel2 = $event"
-          @update:selected-model-id-model-comparison="
-            selectedModelIdModelComparison = $event
-          "
+          @update:selected-model-id-model3="selectedModelIdModel3 = $event"
           @retry="fetchModels"
         />
 
