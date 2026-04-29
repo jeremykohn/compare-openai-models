@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { DEFAULT_MODEL } from "~~/shared/constants/models";
 import ModelsSelector from "./components/ModelsSelector.vue";
 import ModelOutputPanel from "./components/ModelOutputPanel.vue";
 import { useModelsState } from "./composables/use-models-state";
@@ -10,8 +9,6 @@ import { validatePrompt } from "./utils/prompt-validation";
 const prompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
-const selectedModelIdModel3 = ref("");
-const submittedModelIdModel3 = ref(DEFAULT_MODEL);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -70,50 +67,6 @@ const outputPanels = computed(() => [
   },
 ]);
 
-const isComparisonWaiting = computed(
-  () =>
-    model1RequestState.status === "loading" ||
-    model2RequestState.status === "loading",
-);
-
-const hasModel1Error = computed(() => model1RequestState.status === "error");
-const hasModel2Error = computed(() => model2RequestState.status === "error");
-const hasAnyOuterError = computed(
-  () => hasModel1Error.value || hasModel2Error.value,
-);
-const hasBothOuterSuccess = computed(
-  () =>
-    model1RequestState.status === "success" &&
-    model2RequestState.status === "success",
-);
-
-const comparisonPlaceholderText = computed(
-  () =>
-    `New feature coming soon: Using ${submittedModelIdModel3.value} to compare responses from ${submittedModelIdModel1.value} and ${submittedModelIdModel2.value}`,
-);
-
-const comparisonErrorText = computed(() => {
-  const erroredModelDescriptors: string[] = [];
-
-  if (hasModel1Error.value) {
-    erroredModelDescriptors.push(`Model 1 (${submittedModelIdModel1.value})`);
-  }
-
-  if (hasModel2Error.value) {
-    erroredModelDescriptors.push(`Model 2 (${submittedModelIdModel2.value})`);
-  }
-
-  return `Unable to compare model outputs due to errors when querying ${erroredModelDescriptors.join(", ")}`;
-});
-
-const comparisonPanelHeading = computed(() => {
-  if (hasAnyOuterError.value) {
-    return "Error: Cannot produce comparison";
-  }
-
-  return "Comparison of responses from Model 1 and Model 2";
-});
-
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
     return;
@@ -127,9 +80,6 @@ async function handleSubmit(): Promise<void> {
     promptRef.value?.focus();
     return;
   }
-
-  submittedModelIdModel3.value =
-    selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
 
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
@@ -163,7 +113,6 @@ async function handleSubmit(): Promise<void> {
         <ModelsSelector
           :selected-model-id-model1="selectedModelIdModel1"
           :selected-model-id-model2="selectedModelIdModel2"
-          :selected-model-id-model3="selectedModelIdModel3"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
@@ -171,7 +120,6 @@ async function handleSubmit(): Promise<void> {
           :disabled="isLoading"
           @update:selected-model-id-model1="selectedModelIdModel1 = $event"
           @update:selected-model-id-model2="selectedModelIdModel2 = $event"
-          @update:selected-model-id-model3="selectedModelIdModel3 = $event"
           @retry="fetchModels"
         />
 
@@ -230,47 +178,6 @@ async function handleSubmit(): Promise<void> {
               :error="panel.error"
             />
           </div>
-
-          <article
-            data-testid="comparison-output-panel"
-            class="min-w-0 max-w-full overflow-x-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm"
-          >
-            <div
-              v-if="isComparisonWaiting"
-              data-testid="comparison-output-waiting"
-              role="status"
-              aria-live="polite"
-              class="inline-flex items-center gap-2 text-sm text-slate-600"
-            >
-              <span
-                aria-hidden="true"
-                class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-500"
-              />
-              <span>Waiting for Model 1 and Model 2 responses...</span>
-            </div>
-            <div v-else class="grid gap-2">
-              <h2
-                data-testid="comparison-output-heading"
-                class="text-base font-semibold text-slate-800"
-              >
-                {{ comparisonPanelHeading }}
-              </h2>
-              <p
-                v-if="hasAnyOuterError"
-                class="text-sm text-red-700"
-                data-testid="comparison-output-error"
-              >
-                {{ comparisonErrorText }}
-              </p>
-              <p
-                v-else-if="hasBothOuterSuccess"
-                class="text-sm italic text-slate-600"
-                data-testid="comparison-output-placeholder"
-              >
-                {{ comparisonPlaceholderText }}
-              </p>
-            </div>
-          </article>
         </div>
       </section>
     </main>

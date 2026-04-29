@@ -9,7 +9,6 @@ const props = withDefaults(
   defineProps<{
     selectedModelIdModel1: string;
     selectedModelIdModel2: string;
-    selectedModelIdModel3?: string;
     status: RequestStatus;
     models: ReadonlyArray<OpenAIModel> | null;
     error?: NormalizedUiError | null;
@@ -18,7 +17,6 @@ const props = withDefaults(
     disabled?: boolean;
   }>(),
   {
-    selectedModelIdModel3: "",
     error: null,
     required: true,
     disabled: false,
@@ -28,7 +26,6 @@ const props = withDefaults(
 const emit = defineEmits<{
   "update:selectedModelIdModel1": [value: string];
   "update:selectedModelIdModel2": [value: string];
-  "update:selectedModelIdModel3": [value: string];
   retry: [];
 }>();
 </script>
@@ -82,23 +79,6 @@ const emit = defineEmits<{
           @change="emit('update:selectedModelIdModel2', $event)"
         />
       </div>
-
-      <ModelSelectField
-        id="model-comparison-select"
-        label="Model 3 for comparing responses"
-        :value="props.selectedModelIdModel3"
-        :models="props.models"
-        :status="props.status"
-        :disabled="props.disabled"
-        :required="props.required"
-        :invalid="props.status === 'error'"
-        :described-by="
-          props.status === 'error'
-            ? 'models-select-help models-select-error'
-            : 'models-select-help'
-        "
-        @change="emit('update:selectedModelIdModel3', $event)"
-      />
     </div>
 
     <p

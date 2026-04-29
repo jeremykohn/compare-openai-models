@@ -8,7 +8,7 @@ import {
   mockRespondSuccess,
   startRespondRequestCapture,
 } from "./helpers/mock-api";
-import { getModel3Select, getPromptInput } from "./helpers/selectors";
+import { getPromptInput } from "./helpers/selectors";
 
 async function analyzePage(page: Page) {
   return new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
@@ -38,7 +38,7 @@ test("has no critical accessibility violations on idle-ready state", async ({
   await page.goto("/");
   await expect(page.getByLabel("Model 1 *")).toBeVisible();
   await expect(page.getByLabel("Model 2 *")).toBeVisible();
-  await expect(getModel3Select(page)).toBeVisible();
+  await expect(page.locator("#model-comparison-select")).toHaveCount(0);
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);

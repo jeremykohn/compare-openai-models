@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { mockModelsSuccess } from "./helpers/mock-api";
-import { getModel1Select, getModel3Select } from "./helpers/selectors";
+import { getModel1Select, getModel2Select } from "./helpers/selectors";
 
 test("shows loading indicator then model options", async ({ page }) => {
   let releaseModelsResponse: (() => void) | null = null;
@@ -36,10 +36,11 @@ test("shows loading indicator then model options", async ({ page }) => {
   (releaseModelsResponse as (() => void) | null)?.();
 
   const model1Select = getModel1Select(page);
-  const model3Select = getModel3Select(page);
+  const model2Select = getModel2Select(page);
   await expect(model1Select).toBeVisible();
-  await expect(model3Select).toBeVisible();
-  await expect(model3Select).toBeEnabled();
+  await expect(model2Select).toBeVisible();
+  await expect(model2Select).toBeEnabled();
+  await expect(page.locator("#model-comparison-select")).toHaveCount(0);
   await expect(model1Select).toContainText("gpt-4.1-mini");
 });
 

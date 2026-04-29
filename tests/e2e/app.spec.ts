@@ -8,7 +8,6 @@ import {
 import {
   getModel1Select,
   getModel2Select,
-  getModel3Select,
   getPromptInput,
 } from "./helpers/selectors";
 
@@ -39,24 +38,19 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   ).toBeVisible();
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
-  const model3Select = getModel3Select(page);
   await expect(model1Select).toBeVisible();
   await expect(model2Select).toBeVisible();
-  await expect(model3Select).toBeVisible();
   await expect(model1Select).toBeEnabled();
   await expect(model2Select).toBeEnabled();
-  await expect(model3Select).toBeEnabled();
   await expect(page.locator("#model1-select option")).toHaveCount(3);
   await expect(page.locator("#model2-select option")).toHaveCount(3);
-  await expect(page.locator("#model-comparison-select option")).toHaveCount(3);
+  await expect(page.locator("#model-comparison-select")).toHaveCount(0);
   await expect(model1Select).toHaveValue("");
   await expect(model2Select).toHaveValue("");
-  await expect(model3Select).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
-  await model3Select.selectOption("gpt-4o");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
@@ -82,15 +76,8 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
   await expect(
-    page.getByRole("heading", {
-      name: "Comparison of responses from Model 1 and Model 2",
-    }),
-  ).toBeVisible();
-  await expect(
-    page.getByText(
-      "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
-    ),
-  ).toBeVisible();
+    page.locator('[data-testid="comparison-output-panel"]'),
+  ).toHaveCount(0);
 
   capture.stop();
 });
@@ -157,16 +144,14 @@ test("shows left completion while right response is still pending", async ({
   await expect(page.getByText("Waiting for Model 2 response...")).toBeVisible();
   await expect(
     page.getByText("Waiting for Model 1 and Model 2 responses..."),
-  ).toBeVisible();
+  ).toHaveCount(0);
 
   (releaseRightResponse as (() => void) | null)?.();
 
   await expect(page.getByText("Right delayed response")).toBeVisible();
   await expect(
-    page.getByText(
-      "New feature coming soon: Using gpt-4.1-mini to compare responses from gpt-4o and gpt-4.1-mini",
-    ),
-  ).toBeVisible();
+    page.locator('[data-testid="comparison-output-panel"]'),
+  ).toHaveCount(0);
 
   capture.stop();
 });
@@ -198,13 +183,8 @@ test("shows error details toggle when submission fails", async ({ page }) => {
 
   await expect(page.getByText("Something went wrong")).toHaveCount(2);
   await expect(
-    page.getByText(
-      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4.1-mini), Model 2 (gpt-4.1-mini)",
-    ),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Error: Cannot produce comparison" }),
-  ).toBeVisible();
+    page.locator('[data-testid="comparison-output-panel"]'),
+  ).toHaveCount(0);
 
   const details = page.locator('[data-testid="error-details-toggle"]');
   await expect(details).toHaveCount(2);

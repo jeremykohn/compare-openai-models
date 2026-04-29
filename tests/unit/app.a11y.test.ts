@@ -63,7 +63,7 @@ describe("app accessibility", () => {
     expect(responseRegion.attributes("aria-atomic")).toBe("true");
   });
 
-  it("renders labeled model selectors with both selectors active", async () => {
+  it("renders labeled model selectors with two selectors active", async () => {
     fetchMock.mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -86,7 +86,6 @@ describe("app accessibility", () => {
 
     const model1Select = wrapper.get("#model1-select");
     const model2Select = wrapper.get("#model2-select");
-    const model3Select = wrapper.get("#model-comparison-select");
 
     expect(wrapper.get('label[for="model1-select"]').text()).toContain(
       "Model 1",
@@ -94,9 +93,6 @@ describe("app accessibility", () => {
     expect(wrapper.get('label[for="model2-select"]').text()).toContain(
       "Model 2",
     );
-    expect(
-      wrapper.get('label[for="model-comparison-select"]').text(),
-    ).toContain("Model 3 for comparing responses");
     expect(model1Select.attributes("aria-describedby")).toContain(
       "models-select-help",
     );
@@ -104,13 +100,10 @@ describe("app accessibility", () => {
       "models-select-help",
     );
     expect(model2Select.attributes("disabled")).toBeUndefined();
-    expect(model3Select.attributes("disabled")).toBeUndefined();
-    expect(model3Select.attributes("aria-describedby")).toContain(
-      "models-select-help",
-    );
+    expect(wrapper.find("#model-comparison-select").exists()).toBe(false);
   });
 
-  it("renders third-panel conditional message text in accessible output", async () => {
+  it("does not render comparison panel content in output", async () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -153,10 +146,9 @@ describe("app accessibility", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain(
-      "Unable to compare model outputs due to errors when querying Model 1 (gpt-4o)",
-    );
-    expect(wrapper.text()).toContain("Error: Cannot produce comparison");
+    expect(
+      wrapper.find('[data-testid="comparison-output-panel"]').exists(),
+    ).toBe(false);
   });
 
   it("renders side-specific loading status semantics during submit", async () => {
@@ -211,10 +203,10 @@ describe("app accessibility", () => {
 
     expect(wrapper.text()).toContain("Waiting for Model 1 response...");
     expect(wrapper.text()).toContain("Waiting for Model 2 response...");
-    expect(wrapper.text()).toContain(
+    expect(wrapper.text()).not.toContain(
       "Waiting for Model 1 and Model 2 responses...",
     );
-    expect(wrapper.findAll('[role="status"]')).toHaveLength(3);
+    expect(wrapper.findAll('[role="status"]')).toHaveLength(2);
 
     resolveLeftRespond({
       ok: true,
