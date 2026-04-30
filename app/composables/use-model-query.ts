@@ -67,9 +67,9 @@ async function fetchModelResponse(
   }
 }
 
-export function useModelQuery(role: "model1" | "model2") {
+export function useModelQuery(role: "model1" | "model2" | "model3") {
   const submittedModelId = ref(DEFAULT_MODEL);
-  const { state, start, succeed, fail } = useRequestState();
+  const { state, start, succeed, fail, reset } = useRequestState();
 
   async function query(promptText: string, modelId: string): Promise<void> {
     start();
@@ -85,5 +85,5 @@ export function useModelQuery(role: "model1" | "model2") {
     }
   }
 
-  return { state, submittedModelId, query };
+  return { state, submittedModelId, query, reset };
 }

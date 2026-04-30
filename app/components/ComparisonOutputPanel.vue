@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import type { RequestStatus } from "~~/types/api";
+import type { NormalizedUiError } from "../utils/error-normalization";
+import UiErrorAlert from "./UiErrorAlert.vue";
 
 const props = defineProps<{
   isWaiting: boolean;
@@ -8,12 +11,18 @@ const props = defineProps<{
   errorText: string;
   generatedPromptText: string | null;
   promptResetKey: number;
+  model3Status: RequestStatus;
+  model3Data: string | null;
+  model3Error: NormalizedUiError | null;
+  isModel3Loading: boolean;
 }>();
 
 const isPromptVisible = ref(false);
 const promptRegionId = "comparison-model-3-prompt";
 
-const isPromptToggleDisabled = computed(() => !props.generatedPromptText);
+const isPromptToggleDisabled = computed(
+  () => !props.generatedPromptText || props.model3Status !== "success",
+);
 
 watch(
   () => props.promptResetKey,
@@ -51,6 +60,55 @@ function togglePromptVisibility(): void {
     >
       {{ heading }}
     </h2>
+    <div
+      v-if="isWaiting"
+      data-testid="comparison-output-waiting"
+      role="status"
+      aria-live="polite"
+      class="mt-3 inline-flex items-center gap-2 text-sm text-slate-600"
+    >
+      <span
+        aria-hidden="true"
+        class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-500"
+      />
+      <span>Waiting for Model 1 and Model 2 responses...</span>
+    </div>
+    <div v-else class="mt-3 grid gap-2">
+      <div
+        v-if="isModel3Loading"
+        data-testid="comparison-model3-loading"
+        role="status"
+        aria-live="polite"
+        class="inline-flex items-center gap-2 text-sm text-slate-600"
+      >
+        <span
+          aria-hidden="true"
+          class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-500"
+        />
+        <span>Waiting for Model 3 response...</span>
+      </div>
+      <p
+        v-else-if="model3Status === 'success' && model3Data"
+        data-testid="comparison-model3-response"
+        class="min-w-0 break-words whitespace-pre-wrap text-sm text-slate-900"
+      >
+        {{ model3Data }}
+      </p>
+      <UiErrorAlert
+        v-else-if="model3Status === 'error' && model3Error"
+        data-testid="comparison-model3-error"
+        :error="model3Error"
+        :show-retry="false"
+        details-toggle-test-id="comparison-model3-error-details-toggle"
+      />
+      <p
+        v-else-if="hasOuterError"
+        class="text-sm text-red-700"
+        data-testid="comparison-output-error"
+      >
+        {{ errorText }}
+      </p>
+    </div>
     <button
       type="button"
       data-testid="comparison-model3-prompt-toggle"
@@ -69,27 +127,5 @@ function togglePromptVisibility(): void {
       class="mt-3 max-w-full overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm whitespace-pre-wrap text-slate-900"
       >{{ generatedPromptText }}</pre
     >
-    <div
-      v-if="isWaiting"
-      data-testid="comparison-output-waiting"
-      role="status"
-      aria-live="polite"
-      class="mt-3 inline-flex items-center gap-2 text-sm text-slate-600"
-    >
-      <span
-        aria-hidden="true"
-        class="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-500"
-      />
-      <span>Waiting for Model 1 and Model 2 responses...</span>
-    </div>
-    <div v-else class="mt-3 grid gap-2">
-      <p
-        v-if="hasOuterError"
-        class="text-sm text-red-700"
-        data-testid="comparison-output-error"
-      >
-        {{ errorText }}
-      </p>
-    </div>
   </article>
 </template>

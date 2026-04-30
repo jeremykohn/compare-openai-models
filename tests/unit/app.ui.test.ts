@@ -231,6 +231,10 @@ describe("app ui", () => {
       ok: true,
       json: async () => ({ response: "ok-2", model: "gpt-4.1-mini" }),
     });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "model3 ok", model: "gpt-4o" }),
+    });
 
     const wrapper = mount(App);
     await flushPromises();
@@ -287,6 +291,10 @@ describe("app ui", () => {
       ok: true,
       json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
     });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Model 3 comparison", model: "gpt-4o" }),
+    });
 
     const wrapper = mount(App);
     await flushPromises();
@@ -301,10 +309,16 @@ describe("app ui", () => {
     expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
 
-    const responseParagraphs = wrapper.findAll("article p.whitespace-pre-wrap");
+    const modelGrid = wrapper.get('[data-testid="model-output-panels-grid"]');
+    const responseParagraphs = modelGrid.findAll(
+      "article p.whitespace-pre-wrap",
+    );
     expect(responseParagraphs).toHaveLength(2);
     expect(responseParagraphs[0]?.text()).toBe("Left response");
     expect(responseParagraphs[1]?.text()).toBe("Right response");
+    expect(
+      wrapper.get('[data-testid="comparison-model3-response"]').text(),
+    ).toBe("Model 3 comparison");
     expect(wrapper.text()).toContain(
       "Response from Model 3 (gpt-4o) comparing responses from Model 1 and Model 2",
     );
@@ -334,7 +348,9 @@ describe("app ui", () => {
     expect(generatedPrompt.text()).toContain("Right response");
 
     expect(
-      comparisonPanel.find('[data-testid="comparison-output-placeholder"]').exists(),
+      comparisonPanel
+        .find('[data-testid="comparison-output-placeholder"]')
+        .exists(),
     ).toBe(false);
   });
 
@@ -351,6 +367,10 @@ describe("app ui", () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ response: "First right", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "First model3", model: "gpt-4.1-mini" }),
     });
     fetchMock.mockResolvedValueOnce({
       ok: true,
@@ -539,6 +559,10 @@ describe("app ui", () => {
       ok: true,
       json: async () => ({ response: longToken, model: longToken }),
     });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: longToken, model: longToken }),
+    });
 
     const wrapper = mount(App);
     await flushPromises();
@@ -559,7 +583,7 @@ describe("app ui", () => {
     expect(heading?.classes()).toContain("break-words");
     expect(heading?.text()).toContain(longToken);
 
-    const responseText = outputPanels[0]?.get("p.whitespace-pre-wrap");
+    const responseText = outputPanels[0]?.get("p.whitespace-pre-wrap.min-w-0");
     expect(responseText?.classes()).toContain("min-w-0");
     expect(responseText?.classes()).toContain("break-words");
     expect(responseText?.text()).toBe(longToken);
@@ -667,5 +691,170 @@ describe("app ui", () => {
 
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("right ok");
+  });
+
+  it("shows model 3 loading state while model 3 query is pending", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Left response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
+    });
+    // model3 promise is left pending throughout this test
+    fetchMock.mockReturnValueOnce(new Promise(() => {}));
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const comparisonPanel = wrapper.get(
+      '[data-testid="comparison-output-panel"]',
+    );
+    const loadingEl = comparisonPanel.get(
+      '[data-testid="comparison-model3-loading"]',
+    );
+    expect(loadingEl.attributes("role")).toBe("status");
+    expect(loadingEl.text()).toContain("Waiting for Model 3 response...");
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-response"]')
+        .exists(),
+    ).toBe(false);
+  });
+
+  it("renders model 3 response text in third panel on model 3 success", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Left response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Comparison result", model: "gpt-4o" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#model3-select").setValue("gpt-4o");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const comparisonPanel = wrapper.get(
+      '[data-testid="comparison-output-panel"]',
+    );
+    expect(
+      comparisonPanel.get('[data-testid="comparison-model3-response"]').text(),
+    ).toBe("Comparison result");
+    // Toggle button is below response text in DOM order
+    const html = comparisonPanel.html();
+    const responsePos = html.indexOf("comparison-model3-response");
+    const togglePos = html.indexOf("comparison-model3-prompt-toggle");
+    expect(responsePos).toBeLessThan(togglePos);
+    // Toggle is enabled on success
+    const toggle = comparisonPanel.get(
+      '[data-testid="comparison-model3-prompt-toggle"]',
+    );
+    expect(toggle.attributes("disabled")).toBeUndefined();
+  });
+
+  it("renders error in third panel when model 3 query fails", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Left response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      json: async () => ({ message: "Model 3 failed" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const comparisonPanel = wrapper.get(
+      '[data-testid="comparison-output-panel"]',
+    );
+    expect(
+      comparisonPanel.find('[data-testid="comparison-model3-error"]').exists(),
+    ).toBe(true);
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-error-details-toggle"]')
+        .exists(),
+    ).toBe(true);
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-response"]')
+        .exists(),
+    ).toBe(false);
+  });
+
+  it("does not issue model 3 query when model 1 fails", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      json: async () => ({ message: "Model 1 failed" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right ok", model: "gpt-4.1-mini" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    // Only 3 fetch calls: models + model1 + model2 (no model3 call)
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(
+      wrapper.find('[data-testid="comparison-model3-loading"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="comparison-model3-response"]').exists(),
+    ).toBe(false);
   });
 });

@@ -97,7 +97,7 @@ test("has no critical accessibility violations on success response state", async
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
 
-  await expect.poll(() => capture.requests.length).toBe(2);
+  await expect.poll(() => capture.requests.length).toBeGreaterThanOrEqual(2);
   expect(capture.getParseError()).toBeNull();
 
   await expect(page.getByText("Hello from success state")).toHaveCount(2);
@@ -115,6 +115,9 @@ test("has no critical accessibility violations on success response state", async
     page.getByRole("heading", {
       name: /Response from Model 3 \(.+\) comparing responses from Model 1 and Model 2/,
     }),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-testid="comparison-model3-response"]'),
   ).toBeVisible();
 
   capture.stop();

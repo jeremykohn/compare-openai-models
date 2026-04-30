@@ -22,6 +22,7 @@ export type OutputPanelState = {
 export function useComparisonUiState(options: {
   model1State: ModelRequestState;
   model2State: ModelRequestState;
+  model3State: ModelRequestState;
   submittedPrompt: Ref<string>;
   submittedModelIdModel1: Ref<string>;
   submittedModelIdModel2: Ref<string>;
@@ -144,5 +145,6 @@ export function useComparisonUiState(options: {
     generatedModel3Prompt,
     comparisonErrorText,
     comparisonPanelHeading,
+    isModel3Loading: computed(() => options.model3State.status === "loading"),
   };
 }

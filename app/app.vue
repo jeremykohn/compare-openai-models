@@ -30,6 +30,11 @@ const {
   query: queryModel2,
 } = useModelQuery("model2");
 const { state: modelsState, fetchModels } = useModelsState();
+const {
+  state: model3RequestState,
+  query: queryModel3,
+  reset: resetModel3,
+} = useModelQuery("model3");
 
 const {
   isLoading,
@@ -40,9 +45,11 @@ const {
   generatedModel3Prompt,
   comparisonErrorText,
   comparisonPanelHeading,
+  isModel3Loading,
 } = useComparisonUiState({
   model1State: model1RequestState,
   model2State: model2RequestState,
+  model3State: model3RequestState,
   submittedPrompt,
   submittedModelIdModel1,
   submittedModelIdModel2,
@@ -67,11 +74,20 @@ async function handleSubmit(): Promise<void> {
     selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
   submittedPrompt.value = promptResult.trimmedPrompt;
   comparisonPromptResetKey.value += 1;
+  resetModel3();
 
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
     queryModel2(promptResult.trimmedPrompt, selectedModelIdModel2.value),
   ]);
+
+  if (
+    model1RequestState.status === "success" &&
+    model2RequestState.status === "success" &&
+    generatedModel3Prompt.value
+  ) {
+    await queryModel3(generatedModel3Prompt.value, selectedModelIdModel3.value);
+  }
 }
 </script>
 
@@ -175,6 +191,10 @@ async function handleSubmit(): Promise<void> {
             :error-text="comparisonErrorText"
             :generated-prompt-text="generatedModel3Prompt"
             :prompt-reset-key="comparisonPromptResetKey"
+            :model3-status="model3RequestState.status"
+            :model3-data="model3RequestState.data"
+            :model3-error="model3RequestState.error"
+            :is-model3-loading="isModel3Loading"
           />
         </div>
       </section>
