@@ -99,6 +99,27 @@ test("runs happy path from load to rendered response", async ({ page }) => {
     "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
   );
 
+  const promptToggle = page.locator(
+    '[data-testid="comparison-model3-prompt-toggle"]',
+  );
+  await expect(promptToggle).toBeVisible();
+  await expect(promptToggle).toHaveText("Prompt for Model 3");
+  await expect(promptToggle).toHaveAttribute("aria-expanded", "false");
+
+  const generatedPrompt = page.locator(
+    '[data-testid="comparison-model3-generated-prompt"]',
+  );
+  await expect(generatedPrompt).toBeHidden();
+
+  await promptToggle.click();
+  await expect(promptToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(generatedPrompt).toBeVisible();
+  await expect(generatedPrompt).toContainText(
+    "The text of the original prompt was:",
+  );
+  await expect(generatedPrompt).toContainText("Write a greeting");
+  await expect(generatedPrompt).toContainText("Hello from ChatGPT");
+
   capture.stop();
 });
 

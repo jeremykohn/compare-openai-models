@@ -311,6 +311,25 @@ describe("app ui", () => {
     const comparisonPanel = wrapper.get(
       '[data-testid="comparison-output-panel"]',
     );
+    const promptToggle = comparisonPanel.get(
+      '[data-testid="comparison-model3-prompt-toggle"]',
+    );
+    expect(promptToggle.text()).toBe("Prompt for Model 3");
+    expect(promptToggle.attributes("aria-expanded")).toBe("false");
+
+    await promptToggle.trigger("click");
+    expect(promptToggle.attributes("aria-expanded")).toBe("true");
+    const generatedPrompt = comparisonPanel.get(
+      '[data-testid="comparison-model3-generated-prompt"]',
+    );
+    expect(generatedPrompt.isVisible()).toBe(true);
+    expect(generatedPrompt.text()).toContain(
+      "The text of the original prompt was:",
+    );
+    expect(generatedPrompt.text()).toContain("hello");
+    expect(generatedPrompt.text()).toContain("Left response");
+    expect(generatedPrompt.text()).toContain("Right response");
+
     const placeholderText = comparisonPanel.get(
       '[data-testid="comparison-output-placeholder"]',
     );
@@ -318,6 +337,55 @@ describe("app ui", () => {
       "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
     );
     expect(placeholderText.classes()).toContain("italic");
+  });
+
+  it("resets model 3 prompt toggle to collapsed on a new submission", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "First left", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "First right", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Second left", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Second right", model: "gpt-4.1-mini" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("first prompt");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const comparisonPanel = wrapper.get(
+      '[data-testid="comparison-output-panel"]',
+    );
+    const promptToggle = comparisonPanel.get(
+      '[data-testid="comparison-model3-prompt-toggle"]',
+    );
+    await promptToggle.trigger("click");
+    expect(promptToggle.attributes("aria-expanded")).toBe("true");
+    const generatedPrompt = comparisonPanel.get(
+      '[data-testid="comparison-model3-generated-prompt"]',
+    );
+    expect(generatedPrompt.isVisible()).toBe(true);
+
+    await wrapper.get("#prompt-input").setValue("second prompt");
+    await wrapper.get("form").trigger("submit");
+
+    expect(promptToggle.attributes("aria-expanded")).toBe("false");
   });
 
   it("renders left error and right success independently", async () => {

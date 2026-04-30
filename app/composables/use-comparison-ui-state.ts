@@ -1,6 +1,7 @@
 import { computed, type Ref } from "vue";
 import type { RequestStatus } from "~~/types/api";
 import type { NormalizedUiError } from "../utils/error-normalization";
+import model3PromptTemplate from "../../server/assets/prompt-templates/model-3-prompt-template.md?raw";
 
 type ModelRequestState = {
   status: RequestStatus;
@@ -20,6 +21,7 @@ export type OutputPanelState = {
 export function useComparisonUiState(options: {
   model1State: ModelRequestState;
   model2State: ModelRequestState;
+  submittedPrompt: Ref<string>;
   submittedModelIdModel1: Ref<string>;
   submittedModelIdModel2: Ref<string>;
   submittedModelIdModel3: Ref<string>;
@@ -89,6 +91,25 @@ export function useComparisonUiState(options: {
       `New feature coming soon: Using ${options.submittedModelIdModel3.value} to compare responses from ${options.submittedModelIdModel1.value} and ${options.submittedModelIdModel2.value}`,
   );
 
+  const generatedModel3Prompt = computed(() => {
+    if (!hasBothOuterSuccess.value) {
+      return null;
+    }
+
+    const originalPrompt = options.submittedPrompt.value.trim();
+    const response1 = options.model1State.data?.trim();
+    const response2 = options.model2State.data?.trim();
+
+    if (!originalPrompt || !response1 || !response2) {
+      return null;
+    }
+
+    return model3PromptTemplate
+      .replaceAll("{{ORIGINAL_PROMPT}}", originalPrompt)
+      .replaceAll("{{RESPONSE_1}}", response1)
+      .replaceAll("{{RESPONSE_2}}", response2);
+  });
+
   const comparisonErrorText = computed(() => {
     const erroredModelDescriptors: string[] = [];
 
@@ -123,6 +144,7 @@ export function useComparisonUiState(options: {
     hasAnyOuterError,
     hasBothOuterSuccess,
     comparisonPlaceholderText,
+    generatedModel3Prompt,
     comparisonErrorText,
     comparisonPanelHeading,
   };

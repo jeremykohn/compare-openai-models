@@ -10,10 +10,12 @@ import { useComparisonUiState } from "./composables/use-comparison-ui-state";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
+const submittedPrompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
 const selectedModelIdModel3 = ref("");
 const submittedModelIdModel3 = ref(DEFAULT_MODEL);
+const comparisonPromptResetKey = ref(0);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -37,11 +39,13 @@ const {
   hasAnyOuterError,
   hasBothOuterSuccess,
   comparisonPlaceholderText,
+  generatedModel3Prompt,
   comparisonErrorText,
   comparisonPanelHeading,
 } = useComparisonUiState({
   model1State: model1RequestState,
   model2State: model2RequestState,
+  submittedPrompt,
   submittedModelIdModel1,
   submittedModelIdModel2,
   submittedModelIdModel3,
@@ -63,6 +67,8 @@ async function handleSubmit(): Promise<void> {
 
   submittedModelIdModel3.value =
     selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
+  submittedPrompt.value = promptResult.trimmedPrompt;
+  comparisonPromptResetKey.value += 1;
 
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
@@ -171,6 +177,8 @@ async function handleSubmit(): Promise<void> {
             :has-both-outer-success="hasBothOuterSuccess"
             :error-text="comparisonErrorText"
             :placeholder-text="comparisonPlaceholderText"
+            :generated-prompt-text="generatedModel3Prompt"
+            :prompt-reset-key="comparisonPromptResetKey"
           />
         </div>
       </section>
