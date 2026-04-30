@@ -326,6 +326,9 @@ describe("app ui", () => {
     expect(generatedPrompt.text()).toContain(
       "The text of the original prompt was:",
     );
+    expect(generatedPrompt.text()).toContain(
+      "<<UNTRUSTED_ORIGINAL_PROMPT_START>>",
+    );
     expect(generatedPrompt.text()).toContain("hello");
     expect(generatedPrompt.text()).toContain("Left response");
     expect(generatedPrompt.text()).toContain("Right response");

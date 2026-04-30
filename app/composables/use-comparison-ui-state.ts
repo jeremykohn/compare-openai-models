@@ -1,7 +1,8 @@
 import { computed, type Ref } from "vue";
 import type { RequestStatus } from "~~/types/api";
 import type { NormalizedUiError } from "../utils/error-normalization";
-import model3PromptTemplate from "../../server/assets/prompt-templates/model-3-prompt-template.md?raw";
+import comparisonPromptTemplate from "../../server/assets/prompt-templates/prompt-comparison-template.md?raw";
+import { buildSafeComparisonPrompt } from "../utils/prompt-template-safety";
 
 type ModelRequestState = {
   status: RequestStatus;
@@ -104,10 +105,12 @@ export function useComparisonUiState(options: {
       return null;
     }
 
-    return model3PromptTemplate
-      .replaceAll("{{ORIGINAL_PROMPT}}", originalPrompt)
-      .replaceAll("{{RESPONSE_1}}", response1)
-      .replaceAll("{{RESPONSE_2}}", response2);
+    return buildSafeComparisonPrompt({
+      template: comparisonPromptTemplate,
+      originalPrompt,
+      response1,
+      response2,
+    });
   });
 
   const comparisonErrorText = computed(() => {

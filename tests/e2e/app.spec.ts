@@ -117,6 +117,9 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(generatedPrompt).toContainText(
     "The text of the original prompt was:",
   );
+  await expect(generatedPrompt).toContainText(
+    "<<UNTRUSTED_ORIGINAL_PROMPT_START>>",
+  );
   await expect(generatedPrompt).toContainText("Write a greeting");
   await expect(generatedPrompt).toContainText("Hello from ChatGPT");
 
