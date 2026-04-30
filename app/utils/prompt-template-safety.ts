@@ -17,6 +17,9 @@ function stripDisallowedControlCharacters(value: string): string {
   return sanitized;
 }
 
+const MAX_UNTRUSTED_SECTION_CHARACTERS = 12000;
+const TRUNCATION_MARKER = "\n<<UNTRUSTED_CONTENT_TRUNCATED>>";
+
 const MARKERS = {
   originalPrompt: {
     start: "<<UNTRUSTED_ORIGINAL_PROMPT_START>>",
@@ -38,11 +41,26 @@ function normalizeUntrustedText(value: string): string {
   ).replaceAll("```", "``\\`");
 }
 
+function enforceSizeLimit(value: string): string {
+  if (value.length <= MAX_UNTRUSTED_SECTION_CHARACTERS) {
+    return value;
+  }
+
+  const maxWithoutMarker =
+    MAX_UNTRUSTED_SECTION_CHARACTERS - TRUNCATION_MARKER.length;
+
+  if (maxWithoutMarker <= 0) {
+    return TRUNCATION_MARKER.slice(0, MAX_UNTRUSTED_SECTION_CHARACTERS);
+  }
+
+  return `${value.slice(0, maxWithoutMarker)}${TRUNCATION_MARKER}`;
+}
+
 function toUntrustedBlock(
   value: string,
   marker: { start: string; end: string },
 ): string {
-  const normalized = normalizeUntrustedText(value);
+  const normalized = enforceSizeLimit(normalizeUntrustedText(value));
   return `${marker.start}\n${normalized}\n${marker.end}`;
 }
 

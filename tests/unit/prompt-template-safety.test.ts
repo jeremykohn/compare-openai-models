@@ -53,4 +53,45 @@ describe("buildSafeComparisonPrompt", () => {
 
     expect(first).toBe(second);
   });
+
+  it("removes disallowed control characters from untrusted sections", () => {
+    const result = buildSafeComparisonPrompt({
+      template: TEMPLATE,
+      originalPrompt: "hello\u0007world",
+      response1: "ok",
+      response2: "ok",
+    });
+
+    expect(result).toContain("helloworld");
+    expect(result).not.toContain("\u0007");
+  });
+
+  it("applies a deterministic size limit with truncation marker", () => {
+    const oversizedResponse = "A".repeat(13000);
+
+    const result = buildSafeComparisonPrompt({
+      template: TEMPLATE,
+      originalPrompt: "hello",
+      response1: oversizedResponse,
+      response2: "right",
+    });
+
+    const startMarker = "<<UNTRUSTED_RESPONSE_1_START>>\n";
+    const endMarker = "\n<<UNTRUSTED_RESPONSE_1_END>>";
+    const startIndex = result.indexOf(startMarker);
+    const endIndex = result.indexOf(endMarker);
+
+    expect(startIndex).toBeGreaterThanOrEqual(0);
+    expect(endIndex).toBeGreaterThan(startIndex);
+
+    const blockContent = result.slice(
+      startIndex + startMarker.length,
+      endIndex,
+    );
+
+    expect(blockContent.length).toBeLessThanOrEqual(12000);
+    expect(blockContent.endsWith("\n<<UNTRUSTED_CONTENT_TRUNCATED>>")).toBe(
+      true,
+    );
+  });
 });
