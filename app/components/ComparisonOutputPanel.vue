@@ -5,9 +5,7 @@ const props = defineProps<{
   isWaiting: boolean;
   heading: string;
   hasOuterError: boolean;
-  hasBothOuterSuccess: boolean;
   errorText: string;
-  placeholderText: string;
   generatedPromptText: string | null;
   promptResetKey: number;
 }>();
@@ -45,7 +43,7 @@ function togglePromptVisibility(): void {
 <template>
   <article
     data-testid="comparison-output-panel"
-    class="min-w-0 max-w-full overflow-x-hidden rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm"
+    class="grid min-w-0 max-w-full gap-3 overflow-x-hidden rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm"
   >
     <h2
       data-testid="comparison-output-heading"
@@ -62,7 +60,7 @@ function togglePromptVisibility(): void {
       :disabled="isPromptToggleDisabled"
       @click="togglePromptVisibility"
     >
-      Prompt for Model 3
+      Comparison prompt for Model 3
     </button>
     <pre
       v-if="isPromptVisible && generatedPromptText"
@@ -91,13 +89,6 @@ function togglePromptVisibility(): void {
         data-testid="comparison-output-error"
       >
         {{ errorText }}
-      </p>
-      <p
-        v-else-if="hasBothOuterSuccess"
-        class="text-sm italic text-slate-600"
-        data-testid="comparison-output-placeholder"
-      >
-        {{ placeholderText }}
       </p>
     </div>
   </article>

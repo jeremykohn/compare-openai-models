@@ -306,7 +306,7 @@ describe("app ui", () => {
     expect(responseParagraphs[0]?.text()).toBe("Left response");
     expect(responseParagraphs[1]?.text()).toBe("Right response");
     expect(wrapper.text()).toContain(
-      "Comparison of responses from Model 1 and Model 2",
+      "Response from Model 3 (gpt-4o) comparing responses from Model 1 and Model 2",
     );
     const comparisonPanel = wrapper.get(
       '[data-testid="comparison-output-panel"]',
@@ -314,7 +314,7 @@ describe("app ui", () => {
     const promptToggle = comparisonPanel.get(
       '[data-testid="comparison-model3-prompt-toggle"]',
     );
-    expect(promptToggle.text()).toBe("Prompt for Model 3");
+    expect(promptToggle.text()).toBe("Comparison prompt for Model 3");
     expect(promptToggle.attributes("aria-expanded")).toBe("false");
 
     await promptToggle.trigger("click");
@@ -333,13 +333,9 @@ describe("app ui", () => {
     expect(generatedPrompt.text()).toContain("Left response");
     expect(generatedPrompt.text()).toContain("Right response");
 
-    const placeholderText = comparisonPanel.get(
-      '[data-testid="comparison-output-placeholder"]',
-    );
-    expect(placeholderText.text()).toBe(
-      "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
-    );
-    expect(placeholderText.classes()).toContain("italic");
+    expect(
+      comparisonPanel.find('[data-testid="comparison-output-placeholder"]').exists(),
+    ).toBe(false);
   });
 
   it("resets model 3 prompt toggle to collapsed on a new submission", async () => {

@@ -90,20 +90,18 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
   await expect(
     page.getByRole("heading", {
-      name: "Comparison of responses from Model 1 and Model 2",
+      name: "Response from Model 3 (gpt-4o) comparing responses from Model 1 and Model 2",
     }),
   ).toBeVisible();
   await expect(
     page.locator('[data-testid="comparison-output-placeholder"]'),
-  ).toContainText(
-    "New feature coming soon: Using gpt-4o to compare responses from gpt-4.1-mini and gpt-4.1-mini",
-  );
+  ).toHaveCount(0);
 
   const promptToggle = page.locator(
     '[data-testid="comparison-model3-prompt-toggle"]',
   );
   await expect(promptToggle).toBeVisible();
-  await expect(promptToggle).toHaveText("Prompt for Model 3");
+  await expect(promptToggle).toHaveText("Comparison prompt for Model 3");
   await expect(promptToggle).toHaveAttribute("aria-expanded", "false");
 
   const generatedPrompt = page.locator(
@@ -210,9 +208,7 @@ test("shows left completion while right response is still pending", async ({
   await expect(page.getByText("Right delayed response")).toBeVisible();
   await expect(
     page.locator('[data-testid="comparison-output-placeholder"]'),
-  ).toContainText(
-    "New feature coming soon: Using gpt-4o to compare responses from gpt-4o and gpt-4.1-mini",
-  );
+  ).toHaveCount(0);
 
   capture.stop();
 });

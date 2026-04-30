@@ -37,8 +37,6 @@ const {
   outputPanels,
   isComparisonWaiting,
   hasAnyOuterError,
-  hasBothOuterSuccess,
-  comparisonPlaceholderText,
   generatedModel3Prompt,
   comparisonErrorText,
   comparisonPanelHeading,
@@ -174,9 +172,7 @@ async function handleSubmit(): Promise<void> {
             :is-waiting="isComparisonWaiting"
             :heading="comparisonPanelHeading"
             :has-outer-error="hasAnyOuterError"
-            :has-both-outer-success="hasBothOuterSuccess"
             :error-text="comparisonErrorText"
-            :placeholder-text="comparisonPlaceholderText"
             :generated-prompt-text="generatedModel3Prompt"
             :prompt-reset-key="comparisonPromptResetKey"
           />

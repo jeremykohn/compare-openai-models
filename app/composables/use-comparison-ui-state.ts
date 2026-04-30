@@ -87,11 +87,6 @@ export function useComparisonUiState(options: {
       options.model2State.status === "success",
   );
 
-  const comparisonPlaceholderText = computed(
-    () =>
-      `New feature coming soon: Using ${options.submittedModelIdModel3.value} to compare responses from ${options.submittedModelIdModel1.value} and ${options.submittedModelIdModel2.value}`,
-  );
-
   const generatedModel3Prompt = computed(() => {
     if (!hasBothOuterSuccess.value) {
       return null;
@@ -136,7 +131,7 @@ export function useComparisonUiState(options: {
       return "Error: Cannot produce comparison";
     }
 
-    return "Comparison of responses from Model 1 and Model 2";
+    return `Response from Model 3 (${options.submittedModelIdModel3.value}) comparing responses from Model 1 and Model 2`;
   });
 
   return {
@@ -146,7 +141,6 @@ export function useComparisonUiState(options: {
     isComparisonWaiting,
     hasAnyOuterError,
     hasBothOuterSuccess,
-    comparisonPlaceholderText,
     generatedModel3Prompt,
     comparisonErrorText,
     comparisonPanelHeading,

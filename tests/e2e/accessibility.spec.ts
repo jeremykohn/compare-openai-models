@@ -113,7 +113,7 @@ test("has no critical accessibility violations on success response state", async
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Comparison of responses from Model 1 and Model 2",
+      name: /Response from Model 3 \(.+\) comparing responses from Model 1 and Model 2/,
     }),
   ).toBeVisible();
 
