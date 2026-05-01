@@ -20,7 +20,7 @@ The second LLM returned this response:
 {{RESPONSE_2}}
 ```
 
-Compare the two responses and highlight key differences.
+Compare Response 1 and Response 2, and highlight key differences.
 
 Produce a concise comparison report in Markdown with these sections:
 
