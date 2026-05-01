@@ -102,7 +102,7 @@ const selectorDescribedBy = computed(() =>
       id="models-select-help"
       class="text-xs text-slate-500"
     >
-      Uses gpt-4.1-mini by default if none is selected.
+      Each model is gpt-4.1-mini by default if not otherwise selected.
     </p>
 
     <p

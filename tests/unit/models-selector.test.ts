@@ -61,7 +61,7 @@ describe("ModelsSelector", () => {
 
     expect(wrapper.text()).toContain("Select a model");
     expect(wrapper.text()).toContain(
-      "Uses gpt-4.1-mini by default if none is selected.",
+      "Each model is gpt-4.1-mini by default if not otherwise selected.",
     );
     expect(wrapper.text()).toContain("Note: List of OpenAI models");
 

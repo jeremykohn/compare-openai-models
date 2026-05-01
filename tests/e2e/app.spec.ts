@@ -36,7 +36,7 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { name: "ChatGPT prompt tester" }),
+    page.getByRole("heading", { name: "Compare OpenAI Models" }),
   ).toBeVisible();
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
@@ -289,7 +289,7 @@ test("shows error details toggle when submission fails", async ({ page }) => {
 
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "ChatGPT prompt tester" }),
+    page.getByRole("heading", { name: "Compare OpenAI Models" }),
   ).toBeVisible();
   await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
     2,

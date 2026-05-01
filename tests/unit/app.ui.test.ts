@@ -34,7 +34,7 @@ describe("app ui", () => {
     const wrapper = mount(App);
     await flushPromises();
 
-    expect(wrapper.text()).toContain("ChatGPT prompt tester");
+    expect(wrapper.text()).toContain("Compare OpenAI Models");
     expect(wrapper.text()).toContain("Send");
   });
 

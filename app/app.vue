@@ -99,10 +99,11 @@ async function handleSubmit(): Promise<void> {
     <header class="mx-auto max-w-3xl pb-8 pt-12 text-center">
       <a href="#maincontent" class="sr-only">Skip to main</a>
       <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
-        ChatGPT prompt tester
+        Compare OpenAI Models
       </h1>
       <p class="mt-3 text-base text-slate-600 sm:text-lg">
-        Send a prompt and see the response.
+        Send a prompt to two models, and compare the two responses using a third
+        model.
       </p>
     </header>
 
