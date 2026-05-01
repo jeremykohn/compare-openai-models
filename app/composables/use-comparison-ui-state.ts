@@ -1,7 +1,7 @@
 import { computed, type Ref } from "vue";
 import type { RequestStatus } from "~~/types/api";
 import type { NormalizedUiError } from "../utils/error-normalization";
-import comparisonPromptTemplate from "../../server/assets/prompt-templates/prompt-comparison-template.md?raw";
+import comparisonPromptTemplate from "../../server/assets/prompt-templates/model-3-prompt-template.md?raw";
 import { buildSafeComparisonPrompt } from "../utils/prompt-template-safety";
 
 type ModelRequestState = {
