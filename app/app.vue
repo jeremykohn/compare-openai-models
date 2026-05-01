@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
+import { DEFAULT_MODEL } from "~~/shared/constants/models";
 import ModelsSelector from "./components/ModelsSelector.vue";
 import ModelOutputPanel from "./components/ModelOutputPanel.vue";
+import ComparisonOutputPanel from "./components/ComparisonOutputPanel.vue";
 import { useModelsState } from "./composables/use-models-state";
 import { useModelQuery } from "./composables/use-model-query";
+import { useComparisonUiState } from "./composables/use-comparison-ui-state";
 import { validatePrompt } from "./utils/prompt-validation";
 
 const prompt = ref("");
+const submittedPrompt = ref("");
 const selectedModelIdModel1 = ref("");
 const selectedModelIdModel2 = ref("");
+const selectedModelIdModel3 = ref("");
+const submittedModelIdModel3 = ref(DEFAULT_MODEL);
+const comparisonPromptResetKey = ref(0);
 const validationError = ref<string | null>(null);
 const promptRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -23,49 +30,32 @@ const {
   query: queryModel2,
 } = useModelQuery("model2");
 const { state: modelsState, fetchModels } = useModelsState();
+const {
+  state: model3RequestState,
+  query: queryModel3,
+  reset: resetModel3,
+} = useModelQuery("model3");
 
-const isLoading = computed(
-  () =>
-    model1RequestState.status === "loading" ||
-    model2RequestState.status === "loading",
-);
-
-const showOutputPanels = computed(
-  () =>
-    model1RequestState.status === "loading" ||
-    model2RequestState.status === "loading" ||
-    model1RequestState.status === "success" ||
-    model1RequestState.status === "error" ||
-    model2RequestState.status === "success" ||
-    model2RequestState.status === "error",
-);
-
-const model1OutputHeading = computed(
-  () => `Response from Model 1 (${submittedModelIdModel1.value})`,
-);
-
-const model2OutputHeading = computed(
-  () => `Response from Model 2 (${submittedModelIdModel2.value})`,
-);
-
-const outputPanels = computed(() => [
-  {
-    key: "model1",
-    label: "Model 1",
-    heading: model1OutputHeading.value,
-    status: model1RequestState.status,
-    data: model1RequestState.data,
-    error: model1RequestState.error,
-  },
-  {
-    key: "model2",
-    label: "Model 2",
-    heading: model2OutputHeading.value,
-    status: model2RequestState.status,
-    data: model2RequestState.data,
-    error: model2RequestState.error,
-  },
-]);
+const {
+  isLoading,
+  showOutputPanels,
+  outputPanels,
+  isComparisonWaiting,
+  hasAnyOuterError,
+  generatedModel3Prompt,
+  comparisonPromptPreviewText,
+  comparisonErrorText,
+  comparisonPanelHeading,
+  isModel3Loading,
+} = useComparisonUiState({
+  model1State: model1RequestState,
+  model2State: model2RequestState,
+  model3State: model3RequestState,
+  submittedPrompt,
+  submittedModelIdModel1,
+  submittedModelIdModel2,
+  submittedModelIdModel3,
+});
 
 async function handleSubmit(): Promise<void> {
   if (isLoading.value) {
@@ -81,10 +71,24 @@ async function handleSubmit(): Promise<void> {
     return;
   }
 
+  submittedModelIdModel3.value =
+    selectedModelIdModel3.value.trim() || DEFAULT_MODEL;
+  submittedPrompt.value = promptResult.trimmedPrompt;
+  comparisonPromptResetKey.value += 1;
+  resetModel3();
+
   await Promise.all([
     queryModel1(promptResult.trimmedPrompt, selectedModelIdModel1.value),
     queryModel2(promptResult.trimmedPrompt, selectedModelIdModel2.value),
   ]);
+
+  if (
+    model1RequestState.status === "success" &&
+    model2RequestState.status === "success" &&
+    generatedModel3Prompt.value
+  ) {
+    await queryModel3(generatedModel3Prompt.value, selectedModelIdModel3.value);
+  }
 }
 </script>
 
@@ -95,10 +99,11 @@ async function handleSubmit(): Promise<void> {
     <header class="mx-auto max-w-3xl pb-8 pt-12 text-center">
       <a href="#maincontent" class="sr-only">Skip to main</a>
       <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
-        ChatGPT prompt tester
+        Compare OpenAI Models
       </h1>
       <p class="mt-3 text-base text-slate-600 sm:text-lg">
-        Send a prompt and see the response.
+        Send a prompt to two models, and compare the two responses using a third
+        model.
       </p>
     </header>
 
@@ -113,6 +118,7 @@ async function handleSubmit(): Promise<void> {
         <ModelsSelector
           :selected-model-id-model1="selectedModelIdModel1"
           :selected-model-id-model2="selectedModelIdModel2"
+          :selected-model-id-model3="selectedModelIdModel3"
           :status="modelsState.status"
           :models="modelsState.data"
           :error="modelsState.error"
@@ -120,6 +126,7 @@ async function handleSubmit(): Promise<void> {
           :disabled="isLoading"
           @update:selected-model-id-model1="selectedModelIdModel1 = $event"
           @update:selected-model-id-model2="selectedModelIdModel2 = $event"
+          @update:selected-model-id-model3="selectedModelIdModel3 = $event"
           @retry="fetchModels"
         />
 
@@ -178,6 +185,19 @@ async function handleSubmit(): Promise<void> {
               :error="panel.error"
             />
           </div>
+
+          <ComparisonOutputPanel
+            :is-waiting="isComparisonWaiting"
+            :heading="comparisonPanelHeading"
+            :has-outer-error="hasAnyOuterError"
+            :error-text="comparisonErrorText"
+            :generated-prompt-text="comparisonPromptPreviewText"
+            :prompt-reset-key="comparisonPromptResetKey"
+            :model3-status="model3RequestState.status"
+            :model3-data="model3RequestState.data"
+            :model3-error="model3RequestState.error"
+            :is-model3-loading="isModel3Loading"
+          />
         </div>
       </section>
     </main>

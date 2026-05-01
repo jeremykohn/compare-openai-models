@@ -38,7 +38,9 @@ test("has no critical accessibility violations on idle-ready state", async ({
   await page.goto("/");
   await expect(page.getByLabel("Model 1 *")).toBeVisible();
   await expect(page.getByLabel("Model 2 *")).toBeVisible();
-  await expect(page.locator("#model-comparison-select")).toHaveCount(0);
+  await expect(
+    page.getByLabel("Model 3 for comparing responses *"),
+  ).toBeVisible();
 
   const results = await analyzePage(page);
   expect(results.violations).toEqual([]);
@@ -95,7 +97,7 @@ test("has no critical accessibility violations on success response state", async
   const capture = startRespondRequestCapture(page);
   await page.getByRole("button", { name: "Send" }).click();
 
-  await expect.poll(() => capture.requests.length).toBe(2);
+  await expect.poll(() => capture.requests.length).toBeGreaterThanOrEqual(2);
   expect(capture.getParseError()).toBeNull();
 
   await expect(page.getByText("Hello from success state")).toHaveCount(2);
@@ -108,6 +110,14 @@ test("has no critical accessibility violations on success response state", async
     page.getByRole("heading", {
       name: "Response from Model 2 (gpt-4.1-mini)",
     }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: /Response from Model 3 \(.+\) comparing responses from Model 1 and Model 2/,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-testid="comparison-model3-response"]'),
   ).toBeVisible();
 
   capture.stop();

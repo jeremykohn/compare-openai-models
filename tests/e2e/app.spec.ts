@@ -1,4 +1,5 @@
 import { test, expect, type Locator } from "@playwright/test";
+import { MODEL_SELECT_IDS } from "../../shared/constants/model-selectors";
 import {
   mockModelsSuccess,
   mockRespondError,
@@ -8,6 +9,7 @@ import {
 import {
   getModel1Select,
   getModel2Select,
+  getModel3Select,
   getPromptInput,
 } from "./helpers/selectors";
 
@@ -34,23 +36,34 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { name: "ChatGPT prompt tester" }),
+    page.getByRole("heading", { name: "Compare OpenAI Models" }),
   ).toBeVisible();
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
+  const model3Select = getModel3Select(page);
   await expect(model1Select).toBeVisible();
   await expect(model2Select).toBeVisible();
+  await expect(model3Select).toBeVisible();
   await expect(model1Select).toBeEnabled();
   await expect(model2Select).toBeEnabled();
-  await expect(page.locator("#model1-select option")).toHaveCount(3);
-  await expect(page.locator("#model2-select option")).toHaveCount(3);
-  await expect(page.locator("#model-comparison-select")).toHaveCount(0);
+  await expect(model3Select).toBeEnabled();
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
+    3,
+  );
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model2} option`)).toHaveCount(
+    3,
+  );
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model3} option`)).toHaveCount(
+    3,
+  );
   await expect(model1Select).toHaveValue("");
   await expect(model2Select).toHaveValue("");
+  await expect(model3Select).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
 
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
+  await model3Select.selectOption("gpt-4o");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
@@ -74,12 +87,122 @@ test("runs happy path from load to rendered response", async ({ page }) => {
       name: "Response from Model 2 (gpt-4.1-mini)",
     }),
   ).toBeVisible();
-  await expect(page.getByText("Hello from ChatGPT")).toHaveCount(2);
+  await expect(page.getByText("Hello from ChatGPT")).toHaveCount(3);
   await expect(
-    page.locator('[data-testid="comparison-output-panel"]'),
-  ).toHaveCount(0);
+    page.getByRole("heading", {
+      name: "Response from Model 3 (gpt-4o) comparing responses from Model 1 and Model 2",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-testid="comparison-model3-loading"]'),
+  ).toBeHidden();
+  await expect(
+    page.locator('[data-testid="comparison-model3-response"]'),
+  ).toBeVisible();
+  await expect(
+    page.locator('[data-testid="comparison-model3-response"]'),
+  ).toContainText("Hello from ChatGPT");
+
+  const promptToggle = page.locator(
+    '[data-testid="comparison-model3-prompt-toggle"]',
+  );
+  await expect(promptToggle).toBeVisible();
+  await expect(promptToggle).toHaveText("Comparison prompt for Model 3");
+  await expect(promptToggle).toHaveAttribute("aria-expanded", "false");
+
+  const generatedPrompt = page.locator(
+    '[data-testid="comparison-model3-generated-prompt"]',
+  );
+  await expect(generatedPrompt).toBeHidden();
+
+  await promptToggle.click();
+  await expect(promptToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(generatedPrompt).toBeVisible();
+  await expect(generatedPrompt).toContainText(
+    "Compare Response 1 and Response 2, and highlight key differences.",
+  );
+  await expect(generatedPrompt).toContainText("## High-Level Summary");
+  await expect(generatedPrompt).not.toContainText("Write a greeting");
+  await expect(generatedPrompt).not.toContainText("Hello from ChatGPT");
 
   capture.stop();
+});
+
+test("renders model 3 error panel with details when comparison request fails", async ({
+  page,
+}) => {
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
+
+  let respondCallCount = 0;
+
+  await page.route("**/api/respond", async (route) => {
+    respondCallCount += 1;
+
+    if (respondCallCount <= 2) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          response: `Outer response ${respondCallCount}`,
+          model: "gpt-4.1-mini",
+        }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 503,
+      contentType: "application/json",
+      body: JSON.stringify({
+        message: "Model 3 comparison unavailable",
+        details: "upstream timeout",
+      }),
+    });
+  });
+
+  await page.goto("/");
+
+  await getModel1Select(page).selectOption("gpt-4o");
+  await getModel2Select(page).selectOption("gpt-4.1-mini");
+  await getModel3Select(page).selectOption("gpt-4o");
+  await getPromptInput(page).fill("Write a greeting");
+
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(3);
+  expect(capture.getParseError()).toBeNull();
+
+  const comparisonPanel = page.locator(
+    '[data-testid="comparison-output-panel"]',
+  );
+
+  await expect(
+    comparisonPanel.locator('[data-testid="comparison-model3-error"]'),
+  ).toBeVisible();
+  const model3ErrorDetailsToggle = comparisonPanel.locator(
+    '[data-testid="comparison-model3-error-details-toggle"]',
+  );
+  await expect(model3ErrorDetailsToggle).toBeVisible();
+  await model3ErrorDetailsToggle.locator("summary").click();
+  await expect(model3ErrorDetailsToggle).toHaveAttribute("open", "");
+  await expect(model3ErrorDetailsToggle.getByText("Status Code")).toBeVisible();
+  await expect(model3ErrorDetailsToggle.getByText("503")).toBeVisible();
+
+  capture.stop();
+});
+
+test("exposes stable literal selector ID contract values", async ({ page }) => {
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
+
+  await page.goto("/");
+
+  await expect(page.locator("#model1-select")).toBeVisible();
+  await expect(page.locator("#model2-select")).toBeVisible();
+  await expect(page.locator("#model3-select")).toBeVisible();
+  await expect(page.locator("#model1-select option")).toHaveCount(3);
+  await expect(page.locator("#model2-select option")).toHaveCount(3);
+  await expect(page.locator("#model3-select option")).toHaveCount(3);
 });
 
 test("shows left completion while right response is still pending", async ({
@@ -125,8 +248,10 @@ test("shows left completion while right response is still pending", async ({
 
   const model1Select = getModel1Select(page);
   const model2Select = getModel2Select(page);
+  const model3Select = getModel3Select(page);
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
+  await model3Select.selectOption("gpt-4o");
 
   await getPromptInput(page).fill("Write a greeting");
   const capture = startRespondRequestCapture(page);
@@ -144,14 +269,11 @@ test("shows left completion while right response is still pending", async ({
   await expect(page.getByText("Waiting for Model 2 response...")).toBeVisible();
   await expect(
     page.getByText("Waiting for Model 1 and Model 2 responses..."),
-  ).toHaveCount(0);
+  ).toBeVisible();
 
   (releaseRightResponse as (() => void) | null)?.();
 
   await expect(page.getByText("Right delayed response")).toBeVisible();
-  await expect(
-    page.locator('[data-testid="comparison-output-panel"]'),
-  ).toHaveCount(0);
 
   capture.stop();
 });
@@ -167,9 +289,11 @@ test("shows error details toggle when submission fails", async ({ page }) => {
 
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "ChatGPT prompt tester" }),
+    page.getByRole("heading", { name: "Compare OpenAI Models" }),
   ).toBeVisible();
-  await expect(page.locator("#model1-select option")).toHaveCount(2);
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
+    2,
+  );
 
   const promptInput = getPromptInput(page);
   await promptInput.fill("Write a greeting");
@@ -183,8 +307,10 @@ test("shows error details toggle when submission fails", async ({ page }) => {
 
   await expect(page.getByText("Something went wrong")).toHaveCount(2);
   await expect(
-    page.locator('[data-testid="comparison-output-panel"]'),
-  ).toHaveCount(0);
+    page.locator('[data-testid="comparison-output-error"]'),
+  ).toContainText(
+    "Unable to compare model outputs due to errors when querying Model 1 (gpt-4.1-mini), Model 2 (gpt-4.1-mini)",
+  );
 
   const details = page.locator('[data-testid="error-details-toggle"]');
   await expect(details).toHaveCount(2);
@@ -219,7 +345,9 @@ test("renders typed error metadata when API provides type/code/param", async ({
   });
 
   await page.goto("/");
-  await expect(page.locator("#model1-select option")).toHaveCount(2);
+  await expect(page.locator(`#${MODEL_SELECT_IDS.model1} option`)).toHaveCount(
+    2,
+  );
   await getPromptInput(page).fill("Write a greeting");
 
   const capture = startRespondRequestCapture(page);
