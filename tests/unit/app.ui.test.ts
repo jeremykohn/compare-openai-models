@@ -338,14 +338,12 @@ describe("app ui", () => {
     );
     expect(generatedPrompt.isVisible()).toBe(true);
     expect(generatedPrompt.text()).toContain(
-      "The text of the original prompt was:",
+      "Compare Response 1 and Response 2, and highlight key differences.",
     );
-    expect(generatedPrompt.text()).toContain(
-      "<<UNTRUSTED_ORIGINAL_PROMPT_START>>",
-    );
-    expect(generatedPrompt.text()).toContain("hello");
-    expect(generatedPrompt.text()).toContain("Left response");
-    expect(generatedPrompt.text()).toContain("Right response");
+    expect(generatedPrompt.text()).toContain("## High-Level Summary");
+    expect(generatedPrompt.text()).not.toContain("hello");
+    expect(generatedPrompt.text()).not.toContain("Left response");
+    expect(generatedPrompt.text()).not.toContain("Right response");
 
     expect(
       comparisonPanel

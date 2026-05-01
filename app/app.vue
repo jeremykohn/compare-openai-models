@@ -43,6 +43,7 @@ const {
   isComparisonWaiting,
   hasAnyOuterError,
   generatedModel3Prompt,
+  comparisonPromptPreviewText,
   comparisonErrorText,
   comparisonPanelHeading,
   isModel3Loading,
@@ -189,7 +190,7 @@ async function handleSubmit(): Promise<void> {
             :heading="comparisonPanelHeading"
             :has-outer-error="hasAnyOuterError"
             :error-text="comparisonErrorText"
-            :generated-prompt-text="generatedModel3Prompt"
+            :generated-prompt-text="comparisonPromptPreviewText"
             :prompt-reset-key="comparisonPromptResetKey"
             :model3-status="model3RequestState.status"
             :model3-data="model3RequestState.data"

@@ -2,6 +2,7 @@ import { computed, type Ref } from "vue";
 import type { RequestStatus } from "~~/types/api";
 import type { NormalizedUiError } from "../utils/error-normalization";
 import comparisonPromptTemplate from "../../server/assets/prompt-templates/model-3-prompt-template.md?raw";
+import comparisonPromptPreviewTemplate from "../../server/assets/prompt-templates/comparison-prompt.md?raw";
 import { buildSafeComparisonPrompt } from "../utils/prompt-template-safety";
 
 type ModelRequestState = {
@@ -143,6 +144,7 @@ export function useComparisonUiState(options: {
     hasAnyOuterError,
     hasBothOuterSuccess,
     generatedModel3Prompt,
+    comparisonPromptPreviewText: comparisonPromptPreviewTemplate,
     comparisonErrorText,
     comparisonPanelHeading,
     isModel3Loading: computed(() => options.model3State.status === "loading"),

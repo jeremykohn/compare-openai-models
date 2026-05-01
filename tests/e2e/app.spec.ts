@@ -119,13 +119,11 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(promptToggle).toHaveAttribute("aria-expanded", "true");
   await expect(generatedPrompt).toBeVisible();
   await expect(generatedPrompt).toContainText(
-    "The text of the original prompt was:",
+    "Compare Response 1 and Response 2, and highlight key differences.",
   );
-  await expect(generatedPrompt).toContainText(
-    "<<UNTRUSTED_ORIGINAL_PROMPT_START>>",
-  );
-  await expect(generatedPrompt).toContainText("Write a greeting");
-  await expect(generatedPrompt).toContainText("Hello from ChatGPT");
+  await expect(generatedPrompt).toContainText("## High-Level Summary");
+  await expect(generatedPrompt).not.toContainText("Write a greeting");
+  await expect(generatedPrompt).not.toContainText("Hello from ChatGPT");
 
   capture.stop();
 });
