@@ -402,7 +402,16 @@ describe("app ui", () => {
     await wrapper.get("#prompt-input").setValue("second prompt");
     await wrapper.get("form").trigger("submit");
 
-    expect(promptToggle.attributes("aria-expanded")).toBe("false");
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-prompt-toggle"]')
+        .exists(),
+    ).toBe(false);
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-generated-prompt"]')
+        .exists(),
+    ).toBe(false);
   });
 
   it("renders left error and right success independently", async () => {
@@ -728,6 +737,11 @@ describe("app ui", () => {
         .find('[data-testid="comparison-model3-response"]')
         .exists(),
     ).toBe(false);
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-prompt-toggle"]')
+        .exists(),
+    ).toBe(false);
   });
 
   it("renders model 3 response text in third panel on model 3 success", async () => {
@@ -770,10 +784,11 @@ describe("app ui", () => {
     const togglePos = html.indexOf("comparison-model3-prompt-toggle");
     expect(responsePos).toBeLessThan(togglePos);
     // Toggle is enabled on success
-    const toggle = comparisonPanel.get(
-      '[data-testid="comparison-model3-prompt-toggle"]',
-    );
-    expect(toggle.attributes("disabled")).toBeUndefined();
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-prompt-toggle"]')
+        .exists(),
+    ).toBe(true);
   });
 
   it("renders markdown HTML in third panel and strips unsafe content", async () => {
@@ -893,6 +908,9 @@ describe("app ui", () => {
     ).toBe(false);
     expect(
       wrapper.find('[data-testid="comparison-model3-response"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="comparison-model3-prompt-toggle"]').exists(),
     ).toBe(false);
   });
 });

@@ -60,6 +60,9 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(model2Select).toHaveValue("");
   await expect(model3Select).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
+  await expect(
+    page.locator('[data-testid="comparison-model3-prompt-toggle"]'),
+  ).toBeHidden();
 
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
@@ -236,6 +239,9 @@ test("renders model 3 error panel with details when comparison request fails", a
   await expect(
     comparisonPanel.locator('[data-testid="comparison-model3-error"]'),
   ).toBeVisible();
+  await expect(
+    comparisonPanel.locator('[data-testid="comparison-model3-prompt-toggle"]'),
+  ).toBeHidden();
   const model3ErrorDetailsToggle = comparisonPanel.locator(
     '[data-testid="comparison-model3-error-details-toggle"]',
   );
