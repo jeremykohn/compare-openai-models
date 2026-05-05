@@ -776,6 +776,46 @@ describe("app ui", () => {
     expect(toggle.attributes("disabled")).toBeUndefined();
   });
 
+  it("renders markdown HTML in third panel and strips unsafe content", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
+    );
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Left response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        response:
+          "## Summary\n\n- First item\n- Second item\n\n[Unsafe](javascript:alert('x'))\n\n<script>alert('x')</script>",
+        model: "gpt-4o",
+      }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#model3-select").setValue("gpt-4o");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const response = wrapper.get('[data-testid="comparison-model3-response"]');
+    expect(response.find("h2").exists()).toBe(true);
+    expect(response.find("h2").text()).toBe("Summary");
+    expect(response.findAll("li")).toHaveLength(2);
+    expect(response.html()).not.toContain("<script");
+    expect(response.html()).not.toContain("javascript:alert");
+  });
+
   it("renders error in third panel when model 3 query fails", async () => {
     fetchMock.mockResolvedValueOnce(
       modelsResponse([

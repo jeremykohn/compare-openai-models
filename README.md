@@ -8,6 +8,7 @@
 - Prompt validation (`trim`, required, max 4000 chars)
 - Single send action that triggers two `POST /api/respond` requests (one per selected model)
 - Independent per-panel response states, so one side can complete while the other is still loading
+- Model 3 comparison output renders Markdown as sanitized HTML (headings, lists, code)
 - Default model fallback to `gpt-4.1-mini`
 - Error normalization (`network`, `api`, `unknown`)
 - Sanitized error details (redacts keys/tokens/authorization headers)
