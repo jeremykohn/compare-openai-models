@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+env:
+  NPM_VERSION: 11.6.2
+
 jobs:
   lockfile_guard:
     name: Lockfile Guard
@@ -20,7 +23,7 @@ jobs:
           cache: npm
 
       - name: Set up npm
-        run: npm install -g npm@11.6.2
+        run: npm install -g npm@${NPM_VERSION}
 
       - name: Show tool versions
         run: |
@@ -44,7 +47,7 @@ jobs:
           cache: npm
 
       - name: Set up npm
-        run: npm install -g npm@11.6.2
+        run: npm install -g npm@${NPM_VERSION}
 
       - name: Show tool versions
         run: |
@@ -80,7 +83,7 @@ jobs:
           cache: npm
 
       - name: Set up npm
-        run: npm install -g npm@11.6.2
+        run: npm install -g npm@${NPM_VERSION}
 
       - name: Show tool versions
         run: |
