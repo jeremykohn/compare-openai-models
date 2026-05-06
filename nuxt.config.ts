@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2026-02-05",
   app: {
     head: {
-      title: "ChatGPT prompt tester - Compare OpenAI Models",
+      title: "Compare OpenAI Models",
       htmlAttrs: {
         lang: "en",
       },
