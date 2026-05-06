@@ -12,6 +12,7 @@ import type {
   TextNode,
   UnorderedListNode,
 } from "../types/markdown-ast";
+import sanitizeHtml from "sanitize-html";
 
 const HEADING_PATTERN = /^(#{1,6})\s+(.+)$/;
 const ORDERED_LIST_PATTERN = /^\s*(\d+)\.\s+(.+)$/;
@@ -400,110 +401,19 @@ function sanitizeText(value: string): string {
     return "";
   }
 
-  const decoded = decodeHtmlEntities(value);
-  const withoutDangerousBlocks = stripDangerousElementBlocks(decoded);
-  const withoutTags = stripHtmlTags(withoutDangerousBlocks);
-  const withoutEventHandlers = removeEventHandlerAssignments(withoutTags);
+  const decodedInput = decodeHtmlEntities(value);
+  const sanitized = sanitizeHtml(decodedInput, {
+    allowedTags: [],
+    allowedAttributes: {},
+    allowedSchemes: [],
+    disallowedTagsMode: "discard",
+  });
+  const withoutEventHandlers = removeEventHandlerAssignments(sanitized);
+  const decodedOutput = decodeHtmlEntities(withoutEventHandlers);
 
   return stripAsciiControlCharacters(
-    removeDangerousProtocolPrefixes(withoutEventHandlers),
+    removeDangerousProtocolPrefixes(decodedOutput),
   );
-}
-
-const DANGEROUS_BLOCK_TAGS = ["script", "style", "iframe", "object", "embed"];
-
-function stripDangerousElementBlocks(value: string): string {
-  let sanitized = value;
-
-  for (const tag of DANGEROUS_BLOCK_TAGS) {
-    sanitized = removeElementBlockByTag(sanitized, tag);
-  }
-
-  return sanitized;
-}
-
-function removeElementBlockByTag(value: string, tag: string): string {
-  const closeTag = `</${tag}>`;
-  let current = value;
-  let searchFrom = 0;
-
-  while (searchFrom < current.length) {
-    const lower = current.toLowerCase();
-    const openIndex = lower.indexOf(`<${tag}`, searchFrom);
-    if (openIndex < 0) {
-      break;
-    }
-
-    const openTagEnd = findTagEnd(current, openIndex + 1);
-    if (openTagEnd < 0) {
-      return current.slice(0, openIndex);
-    }
-
-    const closeIndex = lower.indexOf(closeTag, openTagEnd + 1);
-    if (closeIndex < 0) {
-      return current.slice(0, openIndex);
-    }
-
-    current =
-      current.slice(0, openIndex) + current.slice(closeIndex + closeTag.length);
-    searchFrom = openIndex;
-  }
-
-  return current;
-}
-
-function stripHtmlTags(value: string): string {
-  let result = "";
-  let index = 0;
-
-  while (index < value.length) {
-    const char = value[index] ?? "";
-
-    if (char === "<" && isHtmlTagStart(value, index)) {
-      const endIndex = findTagEnd(value, index + 1);
-      if (endIndex < 0) {
-        break;
-      }
-
-      index = endIndex + 1;
-      continue;
-    }
-
-    result += char;
-    index += 1;
-  }
-
-  return result;
-}
-
-function isHtmlTagStart(value: string, index: number): boolean {
-  const next = value[index + 1] ?? "";
-  return /[a-zA-Z!/]/.test(next);
-}
-
-function findTagEnd(value: string, from: number): number {
-  let quote: '"' | "'" | undefined;
-
-  for (let index = from; index < value.length; index += 1) {
-    const char = value[index] ?? "";
-    if (quote) {
-      if (char === quote) {
-        quote = undefined;
-      }
-      continue;
-    }
-
-    if (char === '"' || char === "'") {
-      quote = char;
-      continue;
-    }
-
-    if (char === ">") {
-      return index;
-    }
-  }
-
-  return -1;
 }
 
 function removeEventHandlerAssignments(value: string): string {
@@ -573,7 +483,12 @@ function stripAsciiControlCharacters(value: string): string {
   for (let index = 0; index < value.length; index += 1) {
     const char = value[index] ?? "";
     const code = char.charCodeAt(0);
-    const isControl = code <= 31 || code === 127;
+    const isControl =
+      (code >= 0 && code <= 8) ||
+      code === 11 ||
+      code === 12 ||
+      (code >= 14 && code <= 31) ||
+      code === 127;
 
     if (!isControl) {
       result += char;
