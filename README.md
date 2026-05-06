@@ -57,9 +57,7 @@ App starts on `http://127.0.0.1:3000`.
 
 - `GET /api/models`
   - Proxies upstream `/models`
-  - Applies optional local filtering from `server/assets/models/openai-models.json` using only `unavailable-models`
-  - Ignores extra keys in that config file and logs a warning when they are present
-  - Falls back to unfiltered models and shows the UI note when config file is missing/invalid or `unavailable-models` is missing
+  - Applies local filtering from `shared/constants/unavailable-models.ts`
   - Returns `usedConfigFilter` and `showFallbackNote` metadata
 
 - `POST /api/respond`

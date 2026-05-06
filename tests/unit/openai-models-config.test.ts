@@ -1,135 +1,39 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { tmpdir } from "node:os";
+import { describe, expect, it } from "vitest";
+import { UNAVAILABLE_MODELS } from "../../shared/constants/unavailable-models";
 import {
   buildExclusionSet,
   loadOpenAIModelsConfig,
 } from "../../server/utils/openai-models-config-loader";
 
 describe("openai-models-config-loader", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  it("loads unavailable models from constants", async () => {
+    const result = await loadOpenAIModelsConfig();
 
-  it("loads valid schema with unavailable-models", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "models-config-"));
-    const file = join(dir, "openai-models.json");
+    expect(result.isValid).toBe(true);
 
-    try {
-      await writeFile(
-        file,
-        JSON.stringify({
-          "unavailable-models": ["bad-model", "legacy-model", "bad-model"],
-        }),
-        "utf8",
-      );
-
-      const result = await loadOpenAIModelsConfig(file);
-      expect(result.isValid).toBe(true);
-
-      if (result.isValid) {
-        const exclusion = buildExclusionSet(result.config);
-        expect(exclusion.size).toBe(2);
-        expect(exclusion.has("bad-model")).toBe(true);
-        expect(exclusion.has("legacy-model")).toBe(true);
-      }
-    } finally {
-      await rm(dir, { recursive: true, force: true });
+    if (result.isValid) {
+      expect(result.config["unavailable-models"]).toEqual(UNAVAILABLE_MODELS);
+      expect(result.config["unavailable-models"]).toContain("babbage-002");
     }
   });
 
-  it("logs warning when extra keys are present", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "models-config-"));
-    const file = join(dir, "openai-models.json");
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+  it("ignores file path argument and returns constants", async () => {
+    const result = await loadOpenAIModelsConfig("/does/not/matter.json");
 
-    try {
-      await writeFile(
-        file,
-        JSON.stringify({
-          "unavailable-models": ["bad-model"],
-          "other-models": ["legacy-key"],
-        }),
-        "utf8",
-      );
+    expect(result.isValid).toBe(true);
 
-      const result = await loadOpenAIModelsConfig(file);
-
-      expect(result.isValid).toBe(true);
-      expect(warnSpy).toHaveBeenCalledTimes(1);
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining("other-models"),
-      );
-      expect(warnSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Only "unavailable-models" is a valid key'),
-      );
-    } finally {
-      await rm(dir, { recursive: true, force: true });
+    if (result.isValid) {
+      expect(result.config["unavailable-models"].length).toBeGreaterThan(0);
     }
   });
 
-  it("logs error and returns invalid when unavailable-models is missing", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "models-config-"));
-    const file = join(dir, "openai-models.json");
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  it("builds a de-duplicated exclusion set", () => {
+    const exclusionSet = buildExclusionSet({
+      "unavailable-models": ["legacy-model", "legacy-model", "new-model"],
+    });
 
-    try {
-      await writeFile(file, JSON.stringify({ "other-models": [] }), "utf8");
-
-      const result = await loadOpenAIModelsConfig(file);
-
-      expect(result.isValid).toBe(false);
-      expect(errorSpy).toHaveBeenCalledTimes(1);
-      expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('missing required key "unavailable-models"'),
-      );
-    } finally {
-      await rm(dir, { recursive: true, force: true });
-    }
-  });
-
-  it("returns invalid when unavailable-models is not a string array", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "models-config-"));
-    const file = join(dir, "openai-models.json");
-
-    try {
-      await writeFile(
-        file,
-        JSON.stringify({ "unavailable-models": ["valid", 42] }),
-        "utf8",
-      );
-
-      const result = await loadOpenAIModelsConfig(file);
-      expect(result.isValid).toBe(false);
-    } finally {
-      await rm(dir, { recursive: true, force: true });
-    }
-  });
-
-  it("returns invalid on non-object JSON", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "models-config-"));
-    const file = join(dir, "openai-models.json");
-
-    try {
-      await writeFile(file, JSON.stringify(["unavailable-models"]), "utf8");
-
-      const result = await loadOpenAIModelsConfig(file);
-      expect(result.isValid).toBe(false);
-    } finally {
-      await rm(dir, { recursive: true, force: true });
-    }
-  });
-
-  it("returns invalid on unreadable or missing file", async () => {
-    const dir = await mkdtemp(join(tmpdir(), "models-config-"));
-    const file = join(dir, "missing-openai-models.json");
-
-    try {
-      const result = await loadOpenAIModelsConfig(file);
-      expect(result.isValid).toBe(false);
-    } finally {
-      await rm(dir, { recursive: true, force: true });
-    }
+    expect(exclusionSet.size).toBe(2);
+    expect(exclusionSet.has("legacy-model")).toBe(true);
+    expect(exclusionSet.has("new-model")).toBe(true);
   });
 });
