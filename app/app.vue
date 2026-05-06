@@ -138,17 +138,11 @@ async function handleSubmit(): Promise<void> {
             id="prompt-input"
             ref="promptRef"
             v-model="prompt"
-            maxlength="4000"
             :aria-required="true"
             :aria-invalid="Boolean(validationError)"
-            :aria-describedby="
-              validationError ? 'prompt-help prompt-error' : 'prompt-help'
-            "
+            :aria-describedby="validationError ? 'prompt-error' : undefined"
             class="min-h-32 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
           />
-          <p id="prompt-help" class="text-xs text-slate-500">
-            Maximum 4000 characters.
-          </p>
           <p
             v-if="validationError"
             id="prompt-error"

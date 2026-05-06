@@ -107,9 +107,9 @@ describe("app ui", () => {
     await flushPromises();
 
     const prompt = wrapper.get("#prompt-input");
-    expect(prompt.attributes("maxlength")).toBe("4000");
+    expect(prompt.attributes("maxlength")).toBeUndefined();
     expect(prompt.attributes("aria-required")).toBe("true");
-    expect(prompt.attributes("aria-describedby")).toBe("prompt-help");
+    expect(prompt.attributes("aria-describedby")).toBeUndefined();
   });
 
   it("validates empty prompt and updates aria-invalid/alert", async () => {
