@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import type { RequestStatus } from "~~/types/api";
-import { renderMarkdown } from "../utils/render-markdown";
+import MarkdownRenderer from "./MarkdownRenderer.vue";
+import { parseMarkdownSafe } from "../utils/parse-markdown-safe";
 import type { NormalizedUiError } from "../utils/error-normalization";
 import UiErrorAlert from "./UiErrorAlert.vue";
 
@@ -25,12 +26,12 @@ const isPromptToggleDisabled = computed(
   () => !props.generatedPromptText || props.model3Status !== "success",
 );
 
-const renderedModel3Html = computed(() => {
+const renderedModel3Nodes = computed(() => {
   if (props.model3Status !== "success" || !props.model3Data) {
-    return "";
+    return [];
   }
 
-  return renderMarkdown(props.model3Data);
+  return parseMarkdownSafe(props.model3Data);
 });
 
 watch(
@@ -96,14 +97,13 @@ function togglePromptVisibility(): void {
         />
         <span>Waiting for Model 3 response...</span>
       </div>
-      <!-- eslint-disable vue/no-v-html -->
       <div
         v-else-if="model3Status === 'success' && model3Data"
         data-testid="comparison-model3-response"
         class="prose prose-sm max-w-none min-w-0 break-words text-slate-900 prose-headings:break-words prose-p:text-slate-900 prose-li:text-slate-900 prose-strong:text-slate-900 prose-code:break-words prose-code:text-slate-900 prose-pre:overflow-x-auto prose-pre:break-words prose-pre:bg-slate-900 prose-pre:text-slate-100"
-        v-html="renderedModel3Html"
-      />
-      <!-- eslint-enable vue/no-v-html -->
+      >
+        <MarkdownRenderer :nodes="renderedModel3Nodes" />
+      </div>
       <UiErrorAlert
         v-else-if="model3Status === 'error' && model3Error"
         data-testid="comparison-model3-error"

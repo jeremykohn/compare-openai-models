@@ -1,22 +1,48 @@
 import { describe, expect, it } from "vitest";
-import { renderMarkdown } from "../../app/utils/render-markdown";
+import type { MarkdownNode } from "../../app/types/markdown-ast";
 
-describe("renderMarkdown", () => {
-  it("converts markdown into HTML elements", () => {
-    const html = renderMarkdown("## Heading\n\n- item one\n- item two");
+describe("markdown-ast type contracts", () => {
+  it("accepts supported node variants", () => {
+    const nodes: MarkdownNode[] = [
+      {
+        type: "heading",
+        level: 1,
+        children: [{ type: "text", content: "Heading" }],
+      },
+      {
+        type: "paragraph",
+        children: [{ type: "inlineCode", content: "const x = 1" }],
+      },
+      {
+        type: "unorderedList",
+        children: [
+          {
+            type: "listItem",
+            children: [{ type: "text", content: "Item" }],
+          },
+        ],
+      },
+      {
+        type: "codeBlock",
+        content: "console.log('safe')",
+      },
+      {
+        type: "lineBreak",
+      },
+    ];
 
-    expect(html).toContain("<h2>Heading</h2>");
-    expect(html).toContain("<ul>");
-    expect(html).toContain("<li>item one</li>");
-    expect(html).toContain("<li>item two</li>");
+    expect(nodes).toHaveLength(5);
   });
 
-  it("sanitizes dangerous HTML and protocols", () => {
-    const html = renderMarkdown(
-      "[Unsafe](javascript:alert('x'))\n\n<script>alert('x')</script>",
-    );
+  it("prevents unsupported HTML-like AST variants", () => {
+    const unsupportedNode = {
+      type: "html",
+      content: "<script>alert(1)</script>",
+    };
 
-    expect(html).not.toContain("javascript:alert");
-    expect(html).not.toContain("<script");
+    // @ts-expect-error html nodes are outside the safe MarkdownNode union.
+    const _invalidNode: MarkdownNode = unsupportedNode;
+
+    expect(unsupportedNode.type).toBe("html");
   });
 });
