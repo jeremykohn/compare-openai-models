@@ -41,3 +41,5 @@ Spec 042 is a focused, subtractive change across four locations. All modificatio
 ## Run History
 
 > **Prompt 5 run — 2026-05-06:** All 4 tasks implemented. ✓ P1-T1: Removed `MAX_PROMPT_MESSAGE` constant and length guard from `validatePrompt()`. ✓ P1-T2: Removed `maxlength="4000"` attr, `prompt-help` paragraph, and simplified `aria-describedby` in `app.vue`. ✓ P2-T1: Replaced over-limit test with long-prompt-passes test in `prompt-validation.test.ts`. ✓ P2-T2: Updated `app.ui.test.ts` maxlength assertion to `toBeUndefined()`. No editor errors reported.
+
+> **Prompt 6 run — 2026-05-06:** No unresolved discrepancies found. Workflow complete.
