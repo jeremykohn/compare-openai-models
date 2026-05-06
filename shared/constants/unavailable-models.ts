@@ -64,4 +64,13 @@ export const UNAVAILABLE_MODELS: readonly string[] = [
   "gpt-5.4-pro-2026-03-05",
   "o1-pro",
   "o1-pro-2025-03-19",
+  "gpt-3.5-turbo",
+  "gpt-3.5-turbo-0125",
+  "gpt-3.5-turbo-1106",
+  "gpt-4",
+  "gpt-4-0613",
+  "gpt-4-turbo",
+  "gpt-4-turbo-2024-04-09",
+  "gpt-image-2",
+  "gpt-image-2-2026-04-21",
 ];
