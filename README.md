@@ -1,19 +1,17 @@
 # Compare OpenAI Models
 
-`compare-openai-models` is a Nuxt 4 application that sends one prompt to two selected OpenAI models and renders independent side-by-side loading, success, and error states with accessible UI semantics.
+`compare-openai-models` is a Nuxt 4 application that sends a user-specified prompt to two selected OpenAI models, then prompts a third selected OpenAI model to compare the other two models' responses.
 
 ## Features
 
-- Two active model selectors (`Model 1` and `Model 2`) populated from `GET /api/models`
-- Prompt validation (`trim`, required, max 4000 chars)
-- Single send action that triggers two `POST /api/respond` requests (one per selected model)
+- Three model selectors (`Model 1`, `Model 2`, `Model 3`)
+- Single send action that triggers two concurrent requests for Model 1 and Model 2
 - Independent per-panel response states, so one side can complete while the other is still loading
+- Model 3 auto-runs after both Model 1 and Model 2 succeed, receiving both responses to generate a comparison
 - Model 3 comparison output renders Markdown as sanitized HTML (headings, lists, code)
-- Default model fallback to `gpt-4.1-mini`
+- Default model fallback to `gpt-4.1-mini` for all three selectors
 - Error normalization (`network`, `api`, `unknown`)
 - Sanitized error details (redacts keys/tokens/authorization headers)
-- 24-hour models response cache with stale-while-revalidate behavior
-- 5-minute model-validation cache
 
 ## Requirements
 
