@@ -6,7 +6,32 @@ on:
     branches: [main]
 
 jobs:
+  lockfile_guard:
+    name: Lockfile Guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Set up npm
+        run: npm install -g npm@11.6.2
+
+      - name: Show tool versions
+        run: |
+          node -v
+          npm -v
+
+      - name: Validate lockfile sync
+        run: npm ci
+
   test:
+    needs: lockfile_guard
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,6 +67,7 @@ jobs:
         run: npm run test:integration
 
   e2e:
+    needs: lockfile_guard
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
