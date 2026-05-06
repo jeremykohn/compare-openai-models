@@ -101,7 +101,9 @@ describe("parseMarkdownSafe", () => {
   });
 
   it("removes malformed and mixed-case script tag payloads", () => {
-    const nodes = parseMarkdownSafe("<ScRiPt type='text/javascript'>x()</sCriPt>");
+    const nodes = parseMarkdownSafe(
+      "<ScRiPt type='text/javascript'>x()</sCriPt>",
+    );
 
     expect(nodes).toHaveLength(0);
   });
