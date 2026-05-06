@@ -100,7 +100,7 @@ test("has no critical accessibility violations on success response state", async
   await expect.poll(() => capture.requests.length).toBeGreaterThanOrEqual(2);
   expect(capture.getParseError()).toBeNull();
 
-  await expect(page.getByText("Hello from success state")).toHaveCount(2);
+  await expect(page.getByText("Hello from success state")).toHaveCount(3);
   await expect(
     page.getByRole("heading", {
       name: "Response from Model 1 (gpt-4.1-mini)",

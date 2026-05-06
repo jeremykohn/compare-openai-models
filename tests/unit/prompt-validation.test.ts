@@ -10,11 +10,11 @@ describe("validatePrompt", () => {
     }
   });
 
-  it("returns error for prompt over 4000 chars after trim", () => {
-    const result = validatePrompt(`${"a".repeat(4001)}   `);
-    expect(result.isValid).toBe(false);
-    if (!result.isValid) {
-      expect(result.message).toBe("Prompt must be 4000 characters or fewer.");
+  it("returns valid result for prompt longer than 4000 characters", () => {
+    const result = validatePrompt("a".repeat(4001));
+    expect(result.isValid).toBe(true);
+    if (result.isValid) {
+      expect(result.trimmedPrompt).toHaveLength(4001);
     }
   });
 

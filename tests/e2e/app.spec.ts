@@ -60,6 +60,9 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   await expect(model2Select).toHaveValue("");
   await expect(model3Select).toHaveValue("");
   await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
+  await expect(
+    page.locator('[data-testid="comparison-model3-prompt-toggle"]'),
+  ).toBeHidden();
 
   await model1Select.selectOption("gpt-4o");
   await model2Select.selectOption("gpt-4.1-mini");
@@ -128,6 +131,62 @@ test("runs happy path from load to rendered response", async ({ page }) => {
   capture.stop();
 });
 
+test("renders markdown structure in model 3 success response", async ({
+  page,
+}) => {
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }, { id: "gpt-4o" }]);
+
+  let respondCallCount = 0;
+
+  await page.route("**/api/respond", async (route) => {
+    respondCallCount += 1;
+
+    if (respondCallCount <= 2) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          response: `Outer response ${respondCallCount}`,
+          model: "gpt-4.1-mini",
+        }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        response: "## Summary\n\n- First item\n- Second item\n\n`inline-code`",
+        model: "gpt-4o",
+      }),
+    });
+  });
+
+  await page.goto("/");
+
+  await getModel1Select(page).selectOption("gpt-4o");
+  await getModel2Select(page).selectOption("gpt-4.1-mini");
+  await getModel3Select(page).selectOption("gpt-4o");
+  await getPromptInput(page).fill("Write a greeting");
+
+  const capture = startRespondRequestCapture(page);
+  await page.getByRole("button", { name: "Send" }).click();
+
+  await expect.poll(() => capture.requests.length).toBe(3);
+  expect(capture.getParseError()).toBeNull();
+
+  const response = page.locator('[data-testid="comparison-model3-response"]');
+  await expect(response).toBeVisible();
+  await expect(
+    response.getByRole("heading", { name: "Summary" }),
+  ).toBeVisible();
+  await expect(response.locator("li")).toHaveCount(2);
+  await expect(response.locator("code")).toContainText("inline-code");
+
+  capture.stop();
+});
+
 test("renders model 3 error panel with details when comparison request fails", async ({
   page,
 }) => {
@@ -180,6 +239,9 @@ test("renders model 3 error panel with details when comparison request fails", a
   await expect(
     comparisonPanel.locator('[data-testid="comparison-model3-error"]'),
   ).toBeVisible();
+  await expect(
+    comparisonPanel.locator('[data-testid="comparison-model3-prompt-toggle"]'),
+  ).toBeHidden();
   const model3ErrorDetailsToggle = comparisonPanel.locator(
     '[data-testid="comparison-model3-error-details-toggle"]',
   );

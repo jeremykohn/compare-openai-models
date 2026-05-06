@@ -23,7 +23,8 @@
     "test:a11y": "npm run test:a11y:unit && npm run test:a11y:e2e"
   },
   "dependencies": {
-    "nuxt": "^4.0.0"
+    "nuxt": "^4.0.0",
+    "sanitize-html": "^2.17.0"
   },
   "overrides": {
     "serialize-javascript": "^7.0.4"
@@ -34,7 +35,9 @@
     "@nuxt/test-utils": "^3.11.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@playwright/test": "^1.49.1",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^22.10.2",
+    "@types/sanitize-html": "^2.16.1",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.24",

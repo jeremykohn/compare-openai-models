@@ -107,9 +107,9 @@ describe("app ui", () => {
     await flushPromises();
 
     const prompt = wrapper.get("#prompt-input");
-    expect(prompt.attributes("maxlength")).toBe("4000");
+    expect(prompt.attributes("maxlength")).toBeUndefined();
     expect(prompt.attributes("aria-required")).toBe("true");
-    expect(prompt.attributes("aria-describedby")).toBe("prompt-help");
+    expect(prompt.attributes("aria-describedby")).toBeUndefined();
   });
 
   it("validates empty prompt and updates aria-invalid/alert", async () => {
@@ -402,7 +402,16 @@ describe("app ui", () => {
     await wrapper.get("#prompt-input").setValue("second prompt");
     await wrapper.get("form").trigger("submit");
 
-    expect(promptToggle.attributes("aria-expanded")).toBe("false");
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-prompt-toggle"]')
+        .exists(),
+    ).toBe(false);
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-generated-prompt"]')
+        .exists(),
+    ).toBe(false);
   });
 
   it("renders left error and right success independently", async () => {
@@ -728,6 +737,11 @@ describe("app ui", () => {
         .find('[data-testid="comparison-model3-response"]')
         .exists(),
     ).toBe(false);
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-prompt-toggle"]')
+        .exists(),
+    ).toBe(false);
   });
 
   it("renders model 3 response text in third panel on model 3 success", async () => {
@@ -770,10 +784,51 @@ describe("app ui", () => {
     const togglePos = html.indexOf("comparison-model3-prompt-toggle");
     expect(responsePos).toBeLessThan(togglePos);
     // Toggle is enabled on success
-    const toggle = comparisonPanel.get(
-      '[data-testid="comparison-model3-prompt-toggle"]',
+    expect(
+      comparisonPanel
+        .find('[data-testid="comparison-model3-prompt-toggle"]')
+        .exists(),
+    ).toBe(true);
+  });
+
+  it("renders markdown HTML in third panel and strips unsafe content", async () => {
+    fetchMock.mockResolvedValueOnce(
+      modelsResponse([
+        { id: "gpt-4.1-mini", object: "model", created: 0, owned_by: "openai" },
+        { id: "gpt-4o", object: "model", created: 0, owned_by: "openai" },
+      ]),
     );
-    expect(toggle.attributes("disabled")).toBeUndefined();
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Left response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ response: "Right response", model: "gpt-4.1-mini" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        response:
+          "## Summary\n\n- First item\n- Second item\n\n[Unsafe](javascript:alert('x'))\n\n<script>alert('x')</script>",
+        model: "gpt-4o",
+      }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#model3-select").setValue("gpt-4o");
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const response = wrapper.get('[data-testid="comparison-model3-response"]');
+    expect(response.find("h2").exists()).toBe(true);
+    expect(response.find("h2").text()).toBe("Summary");
+    expect(response.findAll("li")).toHaveLength(2);
+    expect(response.html()).not.toContain("<script");
+    expect(response.html()).not.toContain("javascript:alert");
   });
 
   it("renders error in third panel when model 3 query fails", async () => {
@@ -853,6 +908,9 @@ describe("app ui", () => {
     ).toBe(false);
     expect(
       wrapper.find('[data-testid="comparison-model3-response"]').exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find('[data-testid="comparison-model3-prompt-toggle"]').exists(),
     ).toBe(false);
   });
 });

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import type { RequestStatus } from "~~/types/api";
+import MarkdownRenderer from "./MarkdownRenderer.vue";
+import { parseMarkdownSafe } from "../utils/parse-markdown-safe";
 import type { NormalizedUiError } from "../utils/error-normalization";
 import UiErrorAlert from "./UiErrorAlert.vue";
 
@@ -23,6 +25,14 @@ const promptRegionId = "comparison-model-3-prompt";
 const isPromptToggleDisabled = computed(
   () => !props.generatedPromptText || props.model3Status !== "success",
 );
+
+const renderedModel3Nodes = computed(() => {
+  if (props.model3Status !== "success" || !props.model3Data) {
+    return [];
+  }
+
+  return parseMarkdownSafe(props.model3Data);
+});
 
 watch(
   () => props.promptResetKey,
@@ -87,13 +97,13 @@ function togglePromptVisibility(): void {
         />
         <span>Waiting for Model 3 response...</span>
       </div>
-      <p
+      <div
         v-else-if="model3Status === 'success' && model3Data"
         data-testid="comparison-model3-response"
-        class="min-w-0 break-words whitespace-pre-wrap text-sm text-slate-900"
+        class="prose prose-sm max-w-none min-w-0 break-words text-slate-900 prose-headings:break-words prose-p:text-slate-900 prose-li:text-slate-900 prose-strong:text-slate-900 prose-code:break-words prose-code:text-slate-900 prose-pre:overflow-x-auto prose-pre:break-words prose-pre:bg-slate-900 prose-pre:text-slate-100"
       >
-        {{ model3Data }}
-      </p>
+        <MarkdownRenderer :nodes="renderedModel3Nodes" />
+      </div>
       <UiErrorAlert
         v-else-if="model3Status === 'error' && model3Error"
         data-testid="comparison-model3-error"
@@ -110,12 +120,12 @@ function togglePromptVisibility(): void {
       </p>
     </div>
     <button
+      v-if="!isPromptToggleDisabled"
       type="button"
       data-testid="comparison-model3-prompt-toggle"
-      class="mt-2 inline-flex items-center justify-center self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-500"
+      class="mt-2 inline-flex items-center justify-center self-start rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
       :aria-expanded="isPromptVisible"
       :aria-controls="promptRegionId"
-      :disabled="isPromptToggleDisabled"
       @click="togglePromptVisibility"
     >
       Comparison prompt for Model 3

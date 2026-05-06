@@ -23,6 +23,18 @@ export default createConfigForNuxt({
     rules: {
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-debugger": "warn",
+      "vue/html-self-closing": [
+        "warn",
+        {
+          html: {
+            void: "any",
+            normal: "always",
+            component: "always",
+          },
+          svg: "always",
+          math: "always",
+        },
+      ],
     },
   })
   .append({
