@@ -396,11 +396,229 @@ function clampHeadingLevel(level: number): HeadingNode["level"] {
 }
 
 function sanitizeText(value: string): string {
-  return value
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<\/?[a-zA-Z][^>]*>/g, "")
-    .replace(/javascript\s*:/gi, "")
-    .replace(/data\s*:/gi, "")
-    .replace(/on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s]+)/gi, "")
-    .replace(/[<>"']/g, "");
+  if (!value) {
+    return "";
+  }
+
+  const decoded = decodeHtmlEntities(value);
+  const withoutDangerousBlocks = stripDangerousElementBlocks(decoded);
+  const withoutTags = stripHtmlTags(withoutDangerousBlocks);
+  const withoutEventHandlers = removeEventHandlerAssignments(withoutTags);
+
+  return stripAsciiControlCharacters(
+    removeDangerousProtocolPrefixes(withoutEventHandlers),
+  );
+}
+
+const DANGEROUS_BLOCK_TAGS = ["script", "style", "iframe", "object", "embed"];
+
+function stripDangerousElementBlocks(value: string): string {
+  let sanitized = value;
+
+  for (const tag of DANGEROUS_BLOCK_TAGS) {
+    sanitized = removeElementBlockByTag(sanitized, tag);
+  }
+
+  return sanitized;
+}
+
+function removeElementBlockByTag(value: string, tag: string): string {
+  const closeTag = `</${tag}>`;
+  let current = value;
+  let searchFrom = 0;
+
+  while (searchFrom < current.length) {
+    const lower = current.toLowerCase();
+    const openIndex = lower.indexOf(`<${tag}`, searchFrom);
+    if (openIndex < 0) {
+      break;
+    }
+
+    const openTagEnd = findTagEnd(current, openIndex + 1);
+    if (openTagEnd < 0) {
+      return current.slice(0, openIndex);
+    }
+
+    const closeIndex = lower.indexOf(closeTag, openTagEnd + 1);
+    if (closeIndex < 0) {
+      return current.slice(0, openIndex);
+    }
+
+    current =
+      current.slice(0, openIndex) + current.slice(closeIndex + closeTag.length);
+    searchFrom = openIndex;
+  }
+
+  return current;
+}
+
+function stripHtmlTags(value: string): string {
+  let result = "";
+  let index = 0;
+
+  while (index < value.length) {
+    const char = value[index] ?? "";
+
+    if (char === "<" && isHtmlTagStart(value, index)) {
+      const endIndex = findTagEnd(value, index + 1);
+      if (endIndex < 0) {
+        break;
+      }
+
+      index = endIndex + 1;
+      continue;
+    }
+
+    result += char;
+    index += 1;
+  }
+
+  return result;
+}
+
+function isHtmlTagStart(value: string, index: number): boolean {
+  const next = value[index + 1] ?? "";
+  return /[a-zA-Z!/]/.test(next);
+}
+
+function findTagEnd(value: string, from: number): number {
+  let quote: '"' | "'" | undefined;
+
+  for (let index = from; index < value.length; index += 1) {
+    const char = value[index] ?? "";
+    if (quote) {
+      if (char === quote) {
+        quote = undefined;
+      }
+      continue;
+    }
+
+    if (char === '"' || char === "'") {
+      quote = char;
+      continue;
+    }
+
+    if (char === ">") {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+function removeEventHandlerAssignments(value: string): string {
+  return value.replace(/\bon[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s]+)/gi, "");
+}
+
+function removeDangerousProtocolPrefixes(value: string): string {
+  const protocols = ["javascript:", "data:"];
+  let result = "";
+  let index = 0;
+
+  while (index < value.length) {
+    const matchLength = protocols
+      .map((protocol) => matchObfuscatedTokenLength(value, index, protocol))
+      .find((length) => length > 0);
+
+    if (matchLength) {
+      index += matchLength;
+      continue;
+    }
+
+    result += value[index] ?? "";
+    index += 1;
+  }
+
+  return result;
+}
+
+function matchObfuscatedTokenLength(
+  value: string,
+  from: number,
+  token: string,
+): number {
+  let index = from;
+
+  for (let tokenIndex = 0; tokenIndex < token.length; tokenIndex += 1) {
+    if (tokenIndex > 0) {
+      while (index < value.length && isProtocolSeparator(value[index] ?? "")) {
+        index += 1;
+      }
+    }
+
+    const sourceChar = (value[index] ?? "").toLowerCase();
+    const tokenChar = token[tokenIndex] ?? "";
+    if (sourceChar !== tokenChar) {
+      return 0;
+    }
+
+    index += 1;
+  }
+
+  return index - from;
+}
+
+function isProtocolSeparator(char: string): boolean {
+  const code = char.charCodeAt(0);
+  if (Number.isNaN(code)) {
+    return false;
+  }
+
+  return code <= 32 || code === 127;
+}
+
+function stripAsciiControlCharacters(value: string): string {
+  let result = "";
+
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index] ?? "";
+    const code = char.charCodeAt(0);
+    const isControl = code <= 31 || code === 127;
+
+    if (!isControl) {
+      result += char;
+    }
+  }
+
+  return result;
+}
+
+function decodeHtmlEntities(value: string): string {
+  let current = value;
+
+  for (let pass = 0; pass < 3; pass += 1) {
+    const decoded = current
+      .replace(/&#(\d+);?/g, (_, codePointRaw: string) => {
+        const codePoint = Number.parseInt(codePointRaw, 10);
+        return Number.isNaN(codePoint) ? "" : String.fromCodePoint(codePoint);
+      })
+      .replace(/&#x([0-9a-f]+);?/gi, (_, codePointRaw: string) => {
+        const codePoint = Number.parseInt(codePointRaw, 16);
+        return Number.isNaN(codePoint) ? "" : String.fromCodePoint(codePoint);
+      })
+      .replace(/&(lt|gt|amp|quot|apos);/gi, (_, entity: string) => {
+        const normalized = entity.toLowerCase();
+        if (normalized === "lt") {
+          return "<";
+        }
+        if (normalized === "gt") {
+          return ">";
+        }
+        if (normalized === "amp") {
+          return "&";
+        }
+        if (normalized === "quot") {
+          return '"';
+        }
+        return "'";
+      });
+
+    if (decoded === current) {
+      return current;
+    }
+
+    current = decoded;
+  }
+
+  return current;
 }

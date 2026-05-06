@@ -94,6 +94,38 @@ describe("parseMarkdownSafe", () => {
     expect(nodes).toHaveLength(0);
   });
 
+  it("removes encoded script tag payloads", () => {
+    const nodes = parseMarkdownSafe("&lt;script&gt;alert(1)&lt;/script&gt;");
+
+    expect(nodes).toHaveLength(0);
+  });
+
+  it("removes malformed and mixed-case script tag payloads", () => {
+    const nodes = parseMarkdownSafe(
+      "<ScRiPt type='text/javascript'>x()</sCriPt>",
+    );
+
+    expect(nodes).toHaveLength(0);
+  });
+
+  it("preserves normal text and comparison symbols", () => {
+    const nodes = parseMarkdownSafe('Use 2 < 3 and "quoted" text.');
+
+    expect(nodes).toHaveLength(1);
+
+    const paragraph = nodes[0];
+    if (!paragraph || paragraph.type !== "paragraph") {
+      throw new Error("expected paragraph");
+    }
+
+    const text = paragraph.children
+      .filter((node) => node.type === "text")
+      .map((node) => node.content)
+      .join(" ");
+
+    expect(text).toContain('Use 2 < 3 and "quoted" text.');
+  });
+
   it("does not throw on malformed markdown", () => {
     expect(() =>
       parseMarkdownSafe("**unterminated\n```js\nconst x = 1"),
