@@ -49,8 +49,7 @@ function codeBlockAriaLabel(
   <template v-for="(node, index) in safeNodes" :key="`${node.type}-${index}`">
     <template v-if="node.type === 'text'">{{ node.content }}</template>
 
-    <br v-else-if="node.type === 'lineBreak'">
-
+    <br v-else-if="node.type === 'lineBreak'" />
     <code v-else-if="node.type === 'inlineCode'">{{ node.content }}</code>
 
     <strong v-else-if="node.type === 'bold'">

@@ -119,3 +119,21 @@ test("shows fallback note when server indicates fallback mode", async ({
     ),
   ).toBeVisible();
 });
+
+test("does not show fallback note when server indicates filtered mode", async ({
+  page,
+}) => {
+  const fallbackNote = page.getByText(
+    "Note: List of OpenAI models may include some older models that are no longer available.",
+  );
+
+  await mockModelsSuccess(page, [{ id: "gpt-4.1-mini" }], {
+    showFallbackNote: false,
+    usedConfigFilter: true,
+  });
+
+  await page.goto("/");
+
+  await expect(getModel1Select(page)).toBeVisible();
+  await expect(fallbackNote).not.toBeVisible();
+});

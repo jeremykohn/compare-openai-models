@@ -17,10 +17,7 @@ async function writeValidConfig(): Promise<void> {
     modelsConfigFilePath,
     JSON.stringify(
       {
-        "available-models": [],
-        "models-with-error": ["z-model"],
-        "models-with-no-response": ["legacy-model"],
-        "other-models": ["other-model"],
+        "unavailable-models": ["z-model", "legacy-model"],
       },
       null,
       2,
@@ -94,6 +91,90 @@ describe("/api/models route integration", () => {
       "b-model",
     ]);
     expect(response.data.every((item) => item.object === "model")).toBe(true);
+  });
+
+  it("keeps filtering and logs warning when extra keys are present", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    await writeFile(
+      modelsConfigFilePath,
+      JSON.stringify(
+        {
+          "unavailable-models": ["z-model"],
+          "legacy-key": ["ignored-model"],
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+
+    mockFetchImplementation(
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({
+          data: [
+            { id: "a-model", created: 1, owned_by: "openai" },
+            { id: "z-model", created: 2, owned_by: "openai" },
+          ],
+        }),
+      })) as unknown as typeof fetch,
+    );
+
+    const handler = await loadModelsHandler(
+      buildRuntimeConfig({ openaiModelsConfigPath: modelsConfigFilePath }),
+    );
+    const response = (await handler()) as {
+      data: Array<{ id: string }>;
+      usedConfigFilter: boolean;
+      showFallbackNote: boolean;
+    };
+
+    expect(response.usedConfigFilter).toBe(true);
+    expect(response.showFallbackNote).toBe(false);
+    expect(response.data.map((item) => item.id)).toEqual(["a-model"]);
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("legacy-key"));
+  });
+
+  it("returns fallback note when unavailable-models key is missing", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    await writeFile(
+      modelsConfigFilePath,
+      JSON.stringify({ "legacy-only": [] }, null, 2),
+      "utf8",
+    );
+
+    mockFetchImplementation(
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({
+          data: [
+            { id: "b-model", created: 2, owned_by: "openai" },
+            { id: "a-model", created: 1, owned_by: "openai" },
+          ],
+        }),
+      })) as unknown as typeof fetch,
+    );
+
+    const handler = await loadModelsHandler(
+      buildRuntimeConfig({ openaiModelsConfigPath: modelsConfigFilePath }),
+    );
+    const response = (await handler()) as {
+      data: Array<{ id: string }>;
+      usedConfigFilter: boolean;
+      showFallbackNote: boolean;
+    };
+
+    expect(response.usedConfigFilter).toBe(false);
+    expect(response.showFallbackNote).toBe(true);
+    expect(response.data.map((item) => item.id)).toEqual([
+      "a-model",
+      "b-model",
+    ]);
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('missing required key "unavailable-models"'),
+    );
   });
 
   it("returns fallback flags when config is invalid", async () => {
