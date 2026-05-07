@@ -82,12 +82,12 @@ test("runs happy path from load to rendered response", async ({ page }) => {
 
   await expect(
     page.getByRole("heading", {
-      name: "Response from Model 1 (gpt-4.1-mini)",
+      name: /Response from Model 1 \(.+\) in .+ seconds/,
     }),
   ).toBeVisible();
   await expect(
     page.getByRole("heading", {
-      name: "Response from Model 2 (gpt-4.1-mini)",
+      name: /Response from Model 2 \(.+\) in .+ seconds/,
     }),
   ).toBeVisible();
   await expect(page.getByText("Hello from ChatGPT")).toHaveCount(3);

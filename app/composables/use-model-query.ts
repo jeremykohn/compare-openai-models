@@ -69,15 +69,19 @@ async function fetchModelResponse(
 
 export function useModelQuery(role: "model1" | "model2" | "model3") {
   const submittedModelId = ref(DEFAULT_MODEL);
-  const { state, start, succeed, fail, reset } = useRequestState();
+  const elapsedSeconds = ref<number | null>(null);
+  const { state, start, succeed, fail, reset: resetState } = useRequestState();
 
   async function query(promptText: string, modelId: string): Promise<void> {
     start();
+    elapsedSeconds.value = null;
     submittedModelId.value = modelId.trim() || DEFAULT_MODEL;
 
+    const t0 = performance.now();
     const result = await fetchModelResponse(promptText, modelId, role);
 
     if (result.ok) {
+      elapsedSeconds.value = (performance.now() - t0) / 1000;
       submittedModelId.value = result.model;
       succeed(result.response);
     } else {
@@ -85,5 +89,10 @@ export function useModelQuery(role: "model1" | "model2" | "model3") {
     }
   }
 
-  return { state, submittedModelId, query, reset };
+  function reset(): void {
+    resetState();
+    elapsedSeconds.value = null;
+  }
+
+  return { state, submittedModelId, query, reset, elapsedSeconds };
 }

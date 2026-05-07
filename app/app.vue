@@ -23,11 +23,13 @@ const {
   state: model1RequestState,
   submittedModelId: submittedModelIdModel1,
   query: queryModel1,
+  elapsedSeconds: elapsedSecondsModel1,
 } = useModelQuery("model1");
 const {
   state: model2RequestState,
   submittedModelId: submittedModelIdModel2,
   query: queryModel2,
+  elapsedSeconds: elapsedSecondsModel2,
 } = useModelQuery("model2");
 const { state: modelsState, fetchModels } = useModelsState();
 const {
@@ -55,6 +57,8 @@ const {
   submittedModelIdModel1,
   submittedModelIdModel2,
   submittedModelIdModel3,
+  elapsedSecondsModel1,
+  elapsedSecondsModel2,
 });
 
 async function handleSubmit(): Promise<void> {
