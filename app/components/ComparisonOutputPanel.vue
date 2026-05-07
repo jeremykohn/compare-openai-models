@@ -128,7 +128,7 @@ function togglePromptVisibility(): void {
       :aria-controls="promptRegionId"
       @click="togglePromptVisibility"
     >
-      Comparison prompt for Model 3
+      View the prompt sent to Model 3 for comparing Response 1 and Response 2
     </button>
     <pre
       v-if="isPromptVisible && generatedPromptText"
