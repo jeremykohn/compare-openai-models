@@ -28,14 +28,26 @@ export function useComparisonUiState(options: {
   submittedModelIdModel1: Ref<string>;
   submittedModelIdModel2: Ref<string>;
   submittedModelIdModel3: Ref<string>;
+  elapsedSecondsModel1?: Ref<number | null>;
+  elapsedSecondsModel2?: Ref<number | null>;
 }) {
-  const model1OutputHeading = computed(
-    () => `Response from Model 1 (${options.submittedModelIdModel1.value})`,
-  );
+  const model1OutputHeading = computed(() => {
+    const modelId = options.submittedModelIdModel1.value;
+    const elapsed = options.elapsedSecondsModel1?.value;
+    if (options.model1State.status === "success" && elapsed != null) {
+      return `Response from Model 1 (${modelId}) in ${elapsed.toFixed(1)} seconds`;
+    }
+    return `Response from Model 1 (${modelId})`;
+  });
 
-  const model2OutputHeading = computed(
-    () => `Response from Model 2 (${options.submittedModelIdModel2.value})`,
-  );
+  const model2OutputHeading = computed(() => {
+    const modelId = options.submittedModelIdModel2.value;
+    const elapsed = options.elapsedSecondsModel2?.value;
+    if (options.model2State.status === "success" && elapsed != null) {
+      return `Response from Model 2 (${modelId}) in ${elapsed.toFixed(1)} seconds`;
+    }
+    return `Response from Model 2 (${modelId})`;
+  });
 
   const outputPanels = computed<OutputPanelState[]>(() => [
     {

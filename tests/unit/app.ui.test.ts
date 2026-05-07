@@ -176,6 +176,55 @@ describe("app ui", () => {
     await flushPromises();
   });
 
+  it("keeps model output headings free of timing suffix while loading", async () => {
+    fetchMock.mockResolvedValueOnce(modelsResponse());
+
+    let resolveLeftRespond: (value: unknown) => void = () => undefined;
+    const leftRespondPromise = new Promise((resolve) => {
+      resolveLeftRespond = resolve;
+    });
+
+    let resolveRightRespond: (value: unknown) => void = () => undefined;
+    const rightRespondPromise = new Promise((resolve) => {
+      resolveRightRespond = resolve;
+    });
+
+    fetchMock.mockImplementationOnce(
+      async () => (await leftRespondPromise) as never,
+    );
+    fetchMock.mockImplementationOnce(
+      async () => (await rightRespondPromise) as never,
+    );
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const headings = wrapper
+      .get('[data-testid="model-output-panels-grid"]')
+      .findAll("article h2")
+      .map((heading) => heading.text());
+
+    expect(headings).toHaveLength(2);
+    expect(headings[0]).toBe("Response from Model 1 (gpt-4.1-mini)");
+    expect(headings[1]).toBe("Response from Model 2 (gpt-4.1-mini)");
+    expect(headings[0]).not.toContain(" in ");
+    expect(headings[1]).not.toContain(" in ");
+
+    resolveLeftRespond({
+      ok: true,
+      json: async () => ({ response: "ok", model: "gpt-4.1-mini" }),
+    });
+    resolveRightRespond({
+      ok: true,
+      json: async () => ({ response: "ok-2", model: "gpt-4.1-mini" }),
+    });
+    await flushPromises();
+  });
+
   it("shows left success while right side remains loading", async () => {
     fetchMock.mockResolvedValueOnce(
       modelsResponse([
@@ -306,8 +355,8 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini)");
-    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini) in");
+    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini) in");
 
     const modelGrid = wrapper.get('[data-testid="model-output-panels-grid"]');
     const responseParagraphs = modelGrid.findAll(
@@ -448,7 +497,7 @@ describe("app ui", () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain("Response from Model 1 (gpt-4o)");
-    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
+    expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini) in");
     expect(wrapper.text()).toContain("Something went wrong");
     expect(wrapper.text()).toContain("Right success");
     expect(wrapper.get('[data-testid="comparison-output-error"]').text()).toBe(
@@ -500,7 +549,7 @@ describe("app ui", () => {
     await wrapper.get("form").trigger("submit");
     await flushPromises();
 
-    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini)");
+    expect(wrapper.text()).toContain("Response from Model 1 (gpt-4.1-mini) in");
     expect(wrapper.text()).toContain("Response from Model 2 (gpt-4.1-mini)");
     expect(wrapper.text()).toContain("Left success");
     expect(wrapper.text()).toContain("Something went wrong");
@@ -550,6 +599,40 @@ describe("app ui", () => {
     expect(
       wrapper.get('[data-testid="comparison-output-heading"]').text(),
     ).toBe("Error: Cannot produce comparison");
+  });
+
+  it("keeps model output headings free of timing suffix in error state", async () => {
+    fetchMock.mockResolvedValueOnce(modelsResponse());
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: "Bad Request",
+      json: async () => ({ message: "left failed" }),
+    });
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      json: async () => ({ message: "right failed" }),
+    });
+
+    const wrapper = mount(App);
+    await flushPromises();
+
+    await wrapper.get("#prompt-input").setValue("hello");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    const headings = wrapper
+      .get('[data-testid="model-output-panels-grid"]')
+      .findAll("article h2")
+      .map((heading) => heading.text());
+
+    expect(headings).toHaveLength(2);
+    expect(headings[0]).toBe("Response from Model 1 (gpt-4.1-mini)");
+    expect(headings[1]).toBe("Response from Model 2 (gpt-4.1-mini)");
+    expect(headings[0]).not.toContain(" in ");
+    expect(headings[1]).not.toContain(" in ");
   });
 
   it("applies overflow-safe classes to long headings and response text", async () => {
