@@ -5,8 +5,12 @@ on:
   push:
     branches: [main]
 
+env:
+  NPM_VERSION: 11.6.2
+
 jobs:
-  test:
+  lockfile_guard:
+    name: Lockfile Guard
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,7 +23,31 @@ jobs:
           cache: npm
 
       - name: Set up npm
-        run: npm install -g npm@11.6.2
+        run: npm install -g npm@${NPM_VERSION}
+
+      - name: Show tool versions
+        run: |
+          node -v
+          npm -v
+
+      - name: Validate lockfile sync
+        run: npm ci
+
+  test:
+    needs: lockfile_guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Set up npm
+        run: npm install -g npm@${NPM_VERSION}
 
       - name: Show tool versions
         run: |
@@ -42,6 +70,7 @@ jobs:
         run: npm run test:integration
 
   e2e:
+    needs: lockfile_guard
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -54,7 +83,7 @@ jobs:
           cache: npm
 
       - name: Set up npm
-        run: npm install -g npm@11.6.2
+        run: npm install -g npm@${NPM_VERSION}
 
       - name: Show tool versions
         run: |
