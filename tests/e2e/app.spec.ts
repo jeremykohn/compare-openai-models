@@ -110,7 +110,9 @@ test("runs happy path from load to rendered response", async ({ page }) => {
     '[data-testid="comparison-model3-prompt-toggle"]',
   );
   await expect(promptToggle).toBeVisible();
-  await expect(promptToggle).toHaveText("Comparison prompt for Model 3");
+  await expect(promptToggle).toHaveText(
+    "View the prompt sent to Model 3 for comparing Response 1 and Response 2",
+  );
   await expect(promptToggle).toHaveAttribute("aria-expanded", "false");
 
   const generatedPrompt = page.locator(

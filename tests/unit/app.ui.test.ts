@@ -377,7 +377,9 @@ describe("app ui", () => {
     const promptToggle = comparisonPanel.get(
       '[data-testid="comparison-model3-prompt-toggle"]',
     );
-    expect(promptToggle.text()).toBe("Comparison prompt for Model 3");
+    expect(promptToggle.text()).toBe(
+      "View the prompt sent to Model 3 for comparing Response 1 and Response 2",
+    );
     expect(promptToggle.attributes("aria-expanded")).toBe("false");
 
     await promptToggle.trigger("click");
