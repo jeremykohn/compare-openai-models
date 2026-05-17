@@ -38,7 +38,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^22.10.2",
     "@types/sanitize-html": "^2.16.1",
-    "@vitejs/plugin-vue": "^6.0.4",
+    "@vitejs/plugin-vue": "^6.0.7",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.39.4",
