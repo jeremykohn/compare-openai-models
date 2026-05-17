@@ -23,7 +23,7 @@
     "test:a11y": "npm run test:a11y:unit && npm run test:a11y:e2e"
   },
   "dependencies": {
-    "nuxt": "^4.0.0",
+    "nuxt": "^4.4.5",
     "sanitize-html": "^2.17.0"
   },
   "overrides": {
